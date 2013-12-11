@@ -10,10 +10,14 @@
 // 4.	Update your code with adequate commenting before pushing. 
 
 public class mainClass {
-	static World island=new World();
+	static World island;
+	
 	
 	 public static void main(String arg[]){
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
+		D.seedRand();
+		island=new World();
+		System.out.println("Final World Generation\n");
 		island.printWorld();
 	}
 }
