@@ -10,6 +10,7 @@ public class D {
 	public static final int SAND=3;
 	public static final int DIRT=4;
 	public static final int STONE=5;
+	public static long seed;
 	
 	
 	public static String stringifyLand(int land){
@@ -34,7 +35,7 @@ public class D {
 		return ret;
 	}
 	public static void seedRand(){
-		long seed=System.currentTimeMillis();
+		seed=System.currentTimeMillis();
 		RAND.setSeed(seed);
 	}
 

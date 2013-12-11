@@ -1,3 +1,5 @@
+import javax.swing.JLabel;
+
 /*
  * @Authors
  * Nic Pereira
@@ -16,8 +18,8 @@ public class mainClass {
 	 public static void main(String arg[]){
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
 		D.seedRand();
-		island=new World();
-		System.out.println("Final World Generation\n");
+		island=new World(70);
+		System.out.println("\nFinal World Generation using :"+D.seed);
 		island.printWorld();
 	}
 }
