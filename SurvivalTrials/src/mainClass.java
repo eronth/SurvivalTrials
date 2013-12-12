@@ -4,6 +4,7 @@ import javax.swing.text.BadLocationException;
 /*
  * @Authors
  * Nic Pereira
+ * Tim Kinealy
  */
 
 // NOTICE: All general notices for this project will be kept here.
