@@ -59,8 +59,8 @@ public class World {
 		{ 
 			initializeIslandAid(x+1,y,xc,yc); 
 		}
-		System.out.println("\n");
-		printWorld();
+		//System.out.println("\n");
+		//printWorld();
 	}
 	void purifyWater(){
 		// The following code plugs up the little 1x1 holes of water.

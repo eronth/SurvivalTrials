@@ -1,4 +1,5 @@
 import javax.swing.JLabel;
+import javax.swing.text.BadLocationException;
 
 /*
  * @Authors
@@ -13,12 +14,16 @@ import javax.swing.JLabel;
 
 public class mainClass {
 	static World island;
+        static Display window;
 	
 	
-	 public static void main(String arg[]){
+	 public static void main(String arg[]) throws BadLocationException{
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
 		D.seedRand();
+                window=new Display();
+                window.setVisible(true);
 		island=new World(70);
+                window.display(island);
 		System.out.println("\nFinal World Generation using :"+D.seed);
 		island.printWorld();
 	}
