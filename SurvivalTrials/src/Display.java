@@ -33,7 +33,7 @@ public class Display extends javax.swing.JFrame {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         MapDisplay.setBackground(new java.awt.Color(1, 1, 1));
-        MapDisplay.setFont(new java.awt.Font("Calibri", 0, 6)); // NOI18N
+        MapDisplay.setFont(new java.awt.Font("Courier New", 0, 6)); // NOI18N
 
         javax.swing.GroupLayout MapPanelLayout = new javax.swing.GroupLayout(MapPanel);
         MapPanel.setLayout(MapPanelLayout);
@@ -41,7 +41,7 @@ public class Display extends javax.swing.JFrame {
             MapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MapPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(MapDisplay, javax.swing.GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE)
+                .addComponent(MapDisplay)
                 .addContainerGap())
         );
         MapPanelLayout.setVerticalGroup(
@@ -174,15 +174,15 @@ public class Display extends javax.swing.JFrame {
         
         switch (str) {
             case "w":
-                str+=" ";
+                //str+=" ";
                 document.insertString(document.getLength(), str, water);
                 break;
             case "l":
-                str+="    ";
+                //str+="    ";
                 document.insertString(document.getLength(), str, land);
                 break;
             case "~":
-                str+="   ";
+                //str+="   ";
                 document.insertString(document.getLength(), str, null);
                 break;
             default:
