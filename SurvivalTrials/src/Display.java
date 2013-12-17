@@ -141,7 +141,7 @@ public class Display extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     
-  //TODO CODE
+  //TODO REWRITE TO USE DATA CLASS
   public void display(World test) throws BadLocationException {
         for (int i = 0; i < test.world.length; i++) {
             for (int j = 0; j < test.world[0].length; j++) {
