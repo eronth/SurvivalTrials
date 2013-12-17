@@ -115,14 +115,10 @@ public class World {
 	
 	void placeCreature(Creature p, int x, int y){
 		if(p.xPos!=-1){
-			//todo: remove from old spot here.
 			world[p.xPos][p.yPos].creature=null;
 		}
 		world[x][y].creature=p;
 		p.xPos=x;
 		p.yPos=y;
 	}
-		
-		
-
 }
