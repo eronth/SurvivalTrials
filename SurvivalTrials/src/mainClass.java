@@ -80,6 +80,5 @@ public class mainClass {
 					System.out.print("\n");
 				}
 			}/**/
-		System.out.println("\n"+person[0].xPos+" "+person[0].yPos);
 	 }
 }

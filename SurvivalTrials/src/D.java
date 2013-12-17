@@ -2,7 +2,7 @@ import java.util.Random;
 
 
 public class D {
-	// remember to use "public static final" to make it accessable, universal, and unchanging.
+	// remember to use "public static final" to make it accessible, universal, and unchanging.
 	public static Random RAND=new Random();
 	public static long seed;
 	public static final int NONE=0;
