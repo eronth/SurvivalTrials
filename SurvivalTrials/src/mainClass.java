@@ -48,7 +48,7 @@ public class mainClass {
 		// This loop will eventually be infinite until user selects to end game.
 		int n=200;
 		int maxn=n;
-		long mspt=(long) (.426*1000);//milliseconds per turn
+		long mspt=(long) (.426*1000);//milliseconds per turn // .2*1000 is desired turn length .426 SHOULD work, but doesn't always
 		long startTime,endTime,elapsedTime;
 		while(n!=0){
 			startTime=System.currentTimeMillis();
@@ -56,7 +56,7 @@ public class mainClass {
 				person[i].action(island);
 			}
 			System.out.println("Turn "+(maxn-n));
-			island.printWorld();
+			//island.printWorld();
 			window.display(island);
 			endTime=System.currentTimeMillis();
 			elapsedTime=endTime-startTime;
