@@ -13,6 +13,7 @@ public class World {
 		initializeIslandLand(center,center,center,center);
 		smallWaterCleanup(); // Last touches to the water system.
 		addSalt(0,0);
+		enlargeLakes(); // Add much needed size to lakes. They tend to form pitifully small.
 		initializeBiomes();
 	}
 	void initializeWorldsLand(){
@@ -56,8 +57,6 @@ public class World {
 		{ 
 			initializeIslandLand(x+1,y,xc,yc); 
 		}
-		// System.out.println("\n");
-		// printWorld();
 	}
 
 	void smallWaterCleanup(){
@@ -70,6 +69,44 @@ public class World {
 				}
 			}
 		}
+	}
+	void enlargeLakes(){
+		for (int i=0;i<world.length;i++){
+			for (int j=0;j<world[0].length;j++){
+				if(world[i][j].landType==D.WATER){
+					world[i][j].landType=D.STONE;	// Stone is acting as a temporary placeholder here.
+				}
+			}
+		}
+		for (int i=0;i<world.length;i++){
+			for (int j=0;j<world[0].length;j++){
+				if(world[i][j].landType==D.STONE){
+					fillLake(i,j); // Replace stone with lake water, additionally, expand!
+				}
+			}
+		}
+	}
+	void fillLake(int x,int y){
+		int oldType=world[x][y].landType;
+		world[x][y].landType=D.WATER;
+		if(oldType!=0 && oldType!=D.SALTWATER){
+			if(world[x+1][y].landType==0 || world[x][y].landType==D.STONE && !touchingSaltWater(x+1,y)){
+				fillLake(x+1,y);
+			}
+			if(world[x][y+1].landType==0 || world[x][y].landType==D.STONE && !touchingSaltWater(x,y+1)){
+				fillLake(x,y+1);
+			}
+			if(world[x-1][y].landType==0 || world[x][y].landType==D.STONE && !touchingSaltWater(x-1,y)){
+				fillLake(x-1,y);
+			}
+			if(world[x][y-1].landType==0 || world[x][y].landType==D.STONE && !touchingSaltWater(x,y-1)){
+				fillLake(x,y-1);
+			}
+			//TODO: Consider adding if statements for diagonals, possibly with only a % chance of success
+		}
+	}
+	boolean touchingSaltWater(int x, int y){
+		return( world[x+1][y].landType==D.SALTWATER || world[x][y+1].landType==D.SALTWATER || world[x-1][y].landType==D.SALTWATER || world[x][y-1].landType==D.SALTWATER);
 	}
 	private void addSalt(int i,int j){
 		world[i][j].landType=D.SALTWATER;
@@ -130,14 +167,10 @@ public class World {
 	
 	void placeCreature(Creature p, int x, int y){
 		if(p.xPos!=-1){
-			//todo: remove from old spot here.
 			world[p.xPos][p.yPos].creature=null;
 		}
 		world[x][y].creature=p;
 		p.xPos=x;
 		p.yPos=y;
 	}
-		
-		
-
 }
