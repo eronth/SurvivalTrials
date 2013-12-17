@@ -22,7 +22,6 @@ public class mainClass {
 	
 	
 	 public static void main(String arg[]) throws BadLocationException{
-		 
 		 D.seedRand();
 		 System.out.print("Main begins here\n======================\n\nWaterworld\n");
 		 window=new Display();
@@ -32,14 +31,14 @@ public class mainClass {
 		 System.out.println("\nFinal World Generation using :"+D.seed);
 		 island.printWorld();
 		 for(int i=0;i<person.length;i++){
-			 person[i]=new Creature(1,70,50,50,50,100,100,100);
+			 person[i]=new Creature("Jack","MeHoff",1,70,50,50,50,100,100,100);
 			 person[i].actionChoice=i;
+			 person[1].firstName="Jill";
+			 person[1].lastName="MeHoff";
 		 }
 		 island.placeCreature(person[0],island.worldDimension/2,island.worldDimension/2);
 		 island.placeCreature(person[1],island.worldDimension/2+1,island.worldDimension/2+1);
-		 
-		 System.out.println("Initial Island");
-		 island.printWorld();
+		
 		
 		 System.out.println("\n"+person[0].xPos+" "+person[0].yPos);
 		
@@ -49,21 +48,25 @@ public class mainClass {
 		 // This loop will eventually be infinite until user selects to end game.
 		 int n=200;
 		 int maxn=n;
-		 long mspt=(long) (.2*1000);//mspt = milliseconds per turn
+		 long mspt=(long) (.5*1000);//mspt = milliseconds per turn
 		 long startTime,endTime,elapsedTime;
 		 while(n!=0){
 			 startTime=System.currentTimeMillis();
 			 for(int i=0;i<person.length;i++){
 				 person[i].action(island);
 			 }
-			 System.out.println("Turn "+(maxn-n));
-			 island.printWorld();
+			 
+			 //island.printWorld();
+			window.display(island);
 			 endTime=System.currentTimeMillis();
 			 elapsedTime=endTime-startTime;
-			 try {
-				 Thread.sleep(mspt-elapsedTime);
-			 }catch(InterruptedException ex){
-				 Thread.currentThread().interrupt();
+			 System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
+			 if(mspt>elapsedTime){
+				 try {
+					 Thread.sleep(mspt-elapsedTime);
+				 }catch(InterruptedException ex){
+					 Thread.currentThread().interrupt();
+				 }
 			 }
 			 n--;
 		 }
@@ -77,5 +80,6 @@ public class mainClass {
 					System.out.print("\n");
 				}
 			}/**/
+		System.out.println("\n"+person[0].xPos+" "+person[0].yPos);
 	 }
 }
