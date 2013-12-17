@@ -107,11 +107,26 @@ public class World {
 		System.out.print(ret);
 		return ret;
 	}
+	//Inits biomes for the world
 	void initializeBiomes(){
 		//TODO: initialize biomes. Probably create 1-2 biome functions that take in a biome type variable and seed location.
+		//find biome location
+		//add beach
+		addBiome('B',findBiomeX('B'),findBiomeY('B'));
+		//add Mountain (stone)
 	}
 	
-	
+	private int findBiomeY(char c) {
+		// TODO Auto-generated method stub
+		return -1;
+	}
+	private int findBiomeX(char c) {
+		// TODO Auto-generated method stub
+		return -1;
+	}
+	void addBiome(char c, int x, int y){
+		
+	}
 	
 	void placeCreature(Creature p, int x, int y){
 		if(p.xPos!=-1){
