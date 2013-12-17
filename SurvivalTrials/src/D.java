@@ -15,12 +15,20 @@ public class D {
 	public static final int DIRT=4;
 	public static final int STONE=5;
 	
+	// Land type display characters
+	public static final String LAND_GFX="l";
+	public static final String SAND_GFX=".";
+	public static final String WATER_GFX="~";
+	public static final String SALTWATER_GFX="w";
+	public static final String DIRT_GFX=",";
+	public static final String STONE_GFX="-";
+	public static final String BLANK_GFX="/";
+	
 	// Cardinal directions
 	public static final int NORTH=1;
 	public static final int EAST=2;
 	public static final int WEST=3;
 	public static final int SOUTH=4;
-	
 	
 	public static String stringifyCreature(Creature creature){
 		return "†";
@@ -34,19 +42,19 @@ public class D {
 	public static String stringifyLand(int land){
 		String ret="";
 		switch (land){
-			case NONE: ret="l";
+			case NONE: ret=LAND_GFX;
 					break;
-			case SALTWATER: ret="w";
+			case SALTWATER: ret=SALTWATER_GFX;
 					break;
-			case WATER: ret="~";
+			case WATER: ret=WATER_GFX;
 					break;
-			case SAND: ret=".";
+			case SAND: ret=SAND_GFX;
 					break;
-			case DIRT: ret=",";
+			case DIRT: ret=DIRT_GFX;
 					break;
-			case STONE: ret="-";
+			case STONE: ret=DIRT_GFX;
 					break;
-			case 6: ret="/";
+			case 6: ret=BLANK_GFX;
 					default:
 						ret+=land;
 		}
