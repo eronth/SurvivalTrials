@@ -33,9 +33,9 @@ public class mainClass {
 		 for(int i=0;i<person.length;i++){
 			 person[i]=new Creature("Jack","MeHoff",1,70,50,50,50,100,100,100);
 			 person[i].actionChoice=i;
-			 person[1].firstName="Jill";
-			 person[1].lastName="MeHoff";
 		 }
+
+		 person[1].firstName="Jill";
 		 island.placeCreature(person[0],island.worldDimension/2,island.worldDimension/2);
 		 island.placeCreature(person[1],island.worldDimension/2+1,island.worldDimension/2+1);
 		
