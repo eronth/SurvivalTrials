@@ -1,4 +1,3 @@
-
 import java.awt.Color;
 import javax.swing.text.*;
 
@@ -191,4 +190,3 @@ public class Display extends javax.swing.JFrame {
         }
     }
 }
-
