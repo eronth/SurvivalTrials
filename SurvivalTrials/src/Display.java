@@ -147,7 +147,7 @@ public class Display extends javax.swing.JFrame {
         for (int i = 0; i < test.world.length; i++) {
             for (int j = 0; j < test.world[0].length; j++) {
                 appendString(" ");
-                if (test.world[j][i].creature[0] != 0) {
+                if (test.world[j][i].creature != null && test.world[j][i].creature.creatureType != 0) {
                     appendString("c");
                 } else if (test.world[j][i].structure != 0) {
                     appendString("s");
