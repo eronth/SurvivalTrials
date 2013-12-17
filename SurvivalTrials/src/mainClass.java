@@ -5,6 +5,7 @@ import javax.swing.text.BadLocationException;
  * @Authors
  * Nic Pereira
  * Tim Kinealy
+ * Austin Davis
  */
 
 // NOTICE: All general notices for this project will be kept here.
