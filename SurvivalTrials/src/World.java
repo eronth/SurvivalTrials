@@ -149,20 +149,70 @@ public class World {
 		//TODO: initialize biomes. Probably create 1-2 biome functions that take in a biome type variable and seed location.
 		//find biome location
 		//add beach
-		addBiome('B',findBiomeX('B'),findBiomeY('B'));
+		System.out.println(1);
+		addBiome("Beach",findBiomeX("Beach"),findBiomeY("Beach"));
 		//add Mountain (stone)
 	}
 	
-	private int findBiomeY(char c) {
-		// TODO Auto-generated method stub
-		return -1;
-	}
-	private int findBiomeX(char c) {
-		// TODO Auto-generated method stub
-		return -1;
-	}
-	void addBiome(char c, int x, int y){
+	//Finds the Y portion for Biome C according to Austin's strategy at the time.
+		//Beach goes straight down from center
+	//current biomes: Beach, Mountain
+	//Input: String matching a current biome type.
+	//Output: 
+	private int findBiomeY(String c) {
+		int retVal = 0;
+		int center=(world[0].length-1)/2;
 		
+		switch(c){
+		
+		case("Beach"):
+			//from center of land, go down until we find saltwater
+			retVal = center;
+			while(world[center][retVal].landType != D.SALTWATER)
+				retVal++;
+			//make the spot we're on land(go north 1)
+			retVal--;
+			break;
+			
+		case("Mountain"):
+			break;
+		
+		}
+		
+		return retVal;
+	}
+	private int findBiomeX(String c) {
+		int retVal = 0;
+		int center=(world[0].length-1)/2;
+		
+		switch(c){
+		case("Beach"):
+			retVal = center;
+			break;
+		case("Mountain"):
+		}
+		
+		return retVal;
+	}
+	
+	void addBiome(String c, int x, int y){
+		switch(c){
+		
+		case("Beach")://current strat, circle around center, replacing land
+			x--;
+			y-=3;
+			for(int i = 0; i < 4; i++){
+				y++;
+				x--;
+				for(int j = 0; j < 5+2*i; j++){
+					if(world[x+j][y].landType == D.NONE)
+						world[x+j][y].landType = D.SAND;
+				}
+			}
+			break;
+		
+		}
+	
 	}
 	
 	void placeCreature(Creature p, int x, int y){
