@@ -1,5 +1,5 @@
-import javax.swing.JLabel;
 import javax.swing.text.BadLocationException;
+
 
 /*
  * @Authors
@@ -25,9 +25,10 @@ public class mainClass {
 		 D.seedRand();
 		 System.out.print("Main begins here\n======================\n\nWaterworld\n");
 		window=new Display();
-        window.setVisible(true);
+		window.setVisible(true);
 		island=new World(50);
 		window.display(island);
+
 		System.out.println("\nFinal World Generation using :"+D.seed);
 		island.printWorld();
 		for(int i=0;i<person.length;i++){
@@ -48,7 +49,7 @@ public class mainClass {
 		// This loop will eventually be infinite until user selects to end game.
 		int n=200;
 		int maxn=n;
-		long mspt=(long) (.426*1000);//milliseconds per turn // .2*1000 is desired turn length .426 SHOULD work, but doesn't always
+		long mspt=(long) (.28*1000);//milliseconds per turn // .2*1000 is desired turn length
 		long startTime,endTime,elapsedTime;
 		while(n!=0){
 			startTime=System.currentTimeMillis();
@@ -60,6 +61,11 @@ public class mainClass {
 			window.display(island);
 			endTime=System.currentTimeMillis();
 			elapsedTime=endTime-startTime;
+			
+			if((maxn-n)==0){//Initial turn for Displayed Map takes ~450 milliseconds for unknown reason.
+				elapsedTime=100;
+			}
+			
 			try {
 			Thread.sleep(mspt-elapsedTime);
 			}catch(InterruptedException ex){

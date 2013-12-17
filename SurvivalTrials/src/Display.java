@@ -1,129 +1,141 @@
 import java.awt.*;
-
 import javax.swing.*;
 import javax.swing.text.*;
 
 
 public class Display extends JFrame {
 
-    private JTextPane MapDisplay;
+	//Added to make Eclipse Happy
+	private static final long serialVersionUID = 1L;
+	
+	private JTextPane MapDisplay;
     
     public Display() {
-        MapDisplay = new JTextPane();
-
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setAlwaysOnTop(true);
-        setBackground(new Color(255, 255, 255));
-        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        setSize(1100,800);
-
-        MapDisplay.setBackground(new java.awt.Color(1, 1, 1));
-        MapDisplay.setFont(new Font("Courier New", 0, 12));
-        
-        add(MapDisplay);
+		MapDisplay = new JTextPane();
+		
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setAlwaysOnTop(true);
+		setBackground(new Color(255, 255, 255));
+		setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		setSize(1100,800);
+		
+		MapDisplay.setBackground(new java.awt.Color(1, 1, 1));
+		MapDisplay.setFont(new Font("Courier New", 0, 12));
+		
+		add(MapDisplay);
     }
     
-  //TODO REWRITE TO MAKE FASTER
-  public void display(World test) throws BadLocationException {
-	  	MapDisplay.setText("");
-	    Document temp = MapDisplay.getDocument();
-	    Document blank = new DefaultStyledDocument();
-	    MapDisplay.setDocument(blank);
-        for (int i = 0; i < test.world.length; i++) {
-            for (int j = 0; j < test.world[0].length; j++) {
-            	addSpace(temp, " ");
-                if (test.world[j][i].creature != null && test.world[j][i].creature.creatureType != 0) {
-                    appendCreature(temp, D.stringifyCreature(test.world[j][i].creature), test.world[j][i].creature.creatureType);
-                } else if (test.world[j][i].structure != 0) {
-                    appendStructure(D.stringifyStructure(test.world[j][i].structure), 0);
-                } else if (test.world[j][i].item[0] != 0) {
-                    appendItem(D.stringifyItem(test.world[j][i].item[0]), 0);
-                } else {
-                	appendLand(temp, D.stringifyLand(test.world[j][i].landType), test.world[j][i].landType);
-                }
-                addSpace(temp, " ");
-            }
-            addSpace(temp, "\n");
-        }
-	    MapDisplay.setDocument(temp);
+	//TODO REWRITE TO MAKE EVEN FASTER
+    public void display(World canvas) throws BadLocationException {
+    	Document current = MapDisplay.getDocument();
+		Document blank = new DefaultStyledDocument();
+    	current.remove(0, current.getLength()); //setText("");
+		MapDisplay.setDocument(blank);
+		for (int i = 0; i < canvas.world.length; i++) {
+			for (int j = 0; j < canvas.world[0].length; j++) {
+				addSpace(current, " ");
+				drawLand(current, canvas, D.stringifyLand(canvas.world[j][i].landType), canvas.world[j][i].landType, j, i);
+				addSpace(current, " ");
+			}
+			addSpace(current, "\n");
+		}
+		MapDisplay.setDocument(current);
     }
 
-    public void appendLand(Document tempDoc, String str, int type) throws BadLocationException {
-        StyledDocument document = (StyledDocument) MapDisplay.getDocument();
-        Style blank = MapDisplay.addStyle("blank", null);
-        StyleConstants.setForeground(blank, Color.white);
-        Style saltwater = MapDisplay.addStyle("saltwater", null);
-        StyleConstants.setForeground(saltwater, Color.blue);
-        Color waterC = new Color(156, 245, 245);
-        Style water = MapDisplay.addStyle("water", null);
-        StyleConstants.setForeground(water, waterC);
-        Style land = MapDisplay.addStyle("land", null);
-        //Color dkGreen = Color.green.darker();
-        StyleConstants.setForeground(land, Color.green.darker());
-        
-        switch (type) {
-            case D.SALTWATER:
-            	tempDoc.insertString(tempDoc.getLength(), str, saltwater);
-                break;
-            case D.NONE:
-            	tempDoc.insertString(tempDoc.getLength(), str, land);
-                break;
-            case D.WATER:
-            	tempDoc.insertString(tempDoc.getLength(), str, water);
-                break;
-            default:
-            	tempDoc.insertString(tempDoc.getLength(), str, null);
-                break;
-        }
-    }
-    
-    public void appendCreature(Document tempDoc, String str, int type) throws BadLocationException {
-        StyledDocument document = (StyledDocument) MapDisplay.getDocument();
-        Style blank = MapDisplay.addStyle("blank", null);
-        StyleConstants.setForeground(blank, Color.white);
-        
-        switch (type) {
-            case D.NONE:
-            	tempDoc.insertString(tempDoc.getLength(), str, blank);
-                break;
-            default:
-            	tempDoc.insertString(tempDoc.getLength(), str, null);
-                break;
-        }
-    }
-    
-    public void appendStructure(String str, int type) throws BadLocationException {
-        StyledDocument document = (StyledDocument) MapDisplay.getDocument();
-        Style blank = MapDisplay.addStyle("blank", null);
-        StyleConstants.setForeground(blank, Color.white);
-        
-        switch (type) {
-            case D.NONE:
-                document.insertString(document.getLength(), str, blank);
-                break;
-            default:
-                document.insertString(document.getLength(), str, null);
-                break;
-        }
-    }
-    
-    public void appendItem(String str, int type) throws BadLocationException {
-        StyledDocument document = (StyledDocument) MapDisplay.getDocument();
-        Style blank = MapDisplay.addStyle("blank", null);
-        StyleConstants.setForeground(blank, Color.white);
-        
-        switch (type) {
-            case D.NONE:
-                document.insertString(document.getLength(), str, blank);
-                break;
-            default:
-                document.insertString(document.getLength(), str, null);
-                break;
-        }
-    }
-    
-    public void addSpace(Document tempDoc, String str) throws BadLocationException {
-        StyledDocument document = (StyledDocument) MapDisplay.getDocument(); 
-        tempDoc.insertString(tempDoc.getLength(), str, null);
-    }
+    //TODO Use highlight to paint land and water in background.
+	public void drawLand(Document workingCanvas,World canvas, String str, int type, int xpos, int ypos) throws BadLocationException {
+		Style blank = MapDisplay.addStyle("blank", null);
+		StyleConstants.setForeground(blank, Color.white);
+		DefaultHighlighter.DefaultHighlightPainter blankH=new DefaultHighlighter.DefaultHighlightPainter(Color.white);
+		Style saltwater = MapDisplay.addStyle("saltwater", null);
+		StyleConstants.setForeground(saltwater, Color.blue);
+		DefaultHighlighter.DefaultHighlightPainter saltwaterH=new DefaultHighlighter.DefaultHighlightPainter(Color.blue);
+		Color waterC = new Color(156, 245, 245);
+		Style water = MapDisplay.addStyle("water", null);
+		StyleConstants.setForeground(water, waterC);
+		DefaultHighlighter.DefaultHighlightPainter waterH=new DefaultHighlighter.DefaultHighlightPainter(waterC);
+		Style land = MapDisplay.addStyle("land", null);
+		Color landC = Color.green.darker();
+		StyleConstants.setForeground(land, landC);
+		DefaultHighlighter.DefaultHighlightPainter landH=new DefaultHighlighter.DefaultHighlightPainter(landC);
+		
+		int index=workingCanvas.getLength();
+
+		if (canvas.world[xpos][ypos].creature != null && canvas.world[xpos][ypos].creature.creatureType != 0) {
+			drawCreature(workingCanvas, D.stringifyCreature(canvas.world[xpos][ypos].creature), canvas.world[xpos][ypos].creature.creatureType);
+		} else if (canvas.world[xpos][ypos].structure != 0) {
+			appendStructure(workingCanvas, D.stringifyStructure(canvas.world[xpos][ypos].structure), 0);
+		} else if (canvas.world[xpos][ypos].item[0] != 0) {
+			drawItem(workingCanvas, D.stringifyItem(canvas.world[xpos][ypos].item[0]), 0);
+		} else {
+			switch (type) {
+				case D.SALTWATER:
+					workingCanvas.insertString(index, str, saltwater);
+					//workingCanvas.insertString(index, " ", saltwater);
+					//MapDisplay.getHighlighter().addHighlight(index, index+1, saltwaterH);
+					break;
+				case D.NONE:
+					workingCanvas.insertString(index, str, land);
+					//workingCanvas.insertString(index, "  ", land);
+				    //MapDisplay.getHighlighter().addHighlight(index, index+1, landH);
+					break;
+				case D.WATER:
+					workingCanvas.insertString(index, str, water);
+					//workingCanvas.insertString(index, " ", water);
+				    //MapDisplay.getHighlighter().addHighlight(index, index+1, waterH);
+					break;
+				default:
+					workingCanvas.insertString(index, str, null);
+					//workingCanvas.insertString(index, " ", null);
+				    //MapDisplay.getHighlighter().addHighlight(index, index+1, blankH);
+					break;
+			}
+		}
+	}
+
+	public void drawCreature(Document workingCanvas, String str, int type) throws BadLocationException {
+		Style blank = MapDisplay.addStyle("blank", null);
+		StyleConstants.setForeground(blank, Color.WHITE);
+		
+		switch (type) {
+			case 1:
+		    	workingCanvas.insertString(workingCanvas.getLength(), str, blank);
+		        break;
+		    default:
+		    	workingCanvas.insertString(workingCanvas.getLength(), str, null);
+		        break;
+		}
+	}
+
+	public void appendStructure(Document workingCanvas, String str, int type) throws BadLocationException {
+		Style blank = MapDisplay.addStyle("blank", null);
+		StyleConstants.setForeground(blank, Color.white);
+		
+		switch (type) {
+		    case D.NONE:
+		        workingCanvas.insertString(workingCanvas.getLength(), str, blank);
+		        break;
+		    default:
+		    	workingCanvas.insertString(workingCanvas.getLength(), str, null);
+		        break;
+		}
+	}
+
+	public void drawItem(Document workingCanvas, String str, int type) throws BadLocationException {
+		Style blank = MapDisplay.addStyle("blank", null);
+		StyleConstants.setForeground(blank, Color.white);
+		
+		switch (type) {
+			case D.NONE:
+				workingCanvas.insertString(workingCanvas.getLength(), str, blank);
+				break;
+		    default:
+		    	workingCanvas.insertString(workingCanvas.getLength(), str, null);
+		        break;
+		}
+	}
+
+	public void addSpace(Document workingCanvas, String str) throws BadLocationException {
+		workingCanvas.insertString(workingCanvas.getLength(), str, null);
+	}
 }
