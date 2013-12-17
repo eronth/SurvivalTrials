@@ -24,10 +24,10 @@ public class mainClass {
 	 public static void main(String arg[]) throws BadLocationException{
 		 D.seedRand();
 		 System.out.print("Main begins here\n======================\n\nWaterworld\n");
-		//window=new Display();
-        //window.setVisible(true);
+		window=new Display();
+        window.setVisible(true);
 		island=new World(50);
-		//window.display(island);
+		window.display(island);
 		System.out.println("\nFinal World Generation using :"+D.seed);
 		island.printWorld();
 		for(int i=0;i<person.length;i++){
@@ -48,7 +48,7 @@ public class mainClass {
 		// This loop will eventually be infinite until user selects to end game.
 		int n=200;
 		int maxn=n;
-		long mspt=(long) (.2*1000);//milliseconds per turn
+		long mspt=(long) (.426*1000);//milliseconds per turn
 		long startTime,endTime,elapsedTime;
 		while(n!=0){
 			startTime=System.currentTimeMillis();
@@ -57,6 +57,7 @@ public class mainClass {
 			}
 			System.out.println("Turn "+(maxn-n));
 			island.printWorld();
+			window.display(island);
 			endTime=System.currentTimeMillis();
 			elapsedTime=endTime-startTime;
 			try {
