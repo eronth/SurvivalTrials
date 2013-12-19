@@ -1,5 +1,7 @@
 
 public class Creature {
+	String firstName="Phillip";
+	String lastName="Fry";
 	public int creatureType=0;
 	public int xPos=-1,yPos=-1;
 	int actionChoice=0;
@@ -24,7 +26,9 @@ public class Creature {
 	Creature(){
 		creatureType=0;
 	}
-	Creature(int type, int weight, int enduranceStart, int strengthStart, int intelligenceStart, int sanityStart, int humanityStart, int galvanyStart){
+	Creature(String fn, String ln,int type, int weight, int enduranceStart, int strengthStart, int intelligenceStart, int sanityStart, int humanityStart, int galvanyStart){
+		firstName=fn;
+		lastName=ln;
 		creatureType=type;
 		baseEndurance=enduranceStart;
 		baseStrength=strengthStart;
@@ -81,7 +85,7 @@ public class Creature {
 			}
 			int x=xPos+xmod;
 			int y=yPos+ymod;
-			if (w.world[x][y].creature!=null && w.world[x][y].landType!=D.SALTWATER){
+			if (w.world[x][y].creature!=null && w.world[x][y].landType!=D.SALTWATER && w.world[x][y].landType!=D.WATER){
 				w.placeCreature(this,x,y);
 			}
 			actionCountdown=10;

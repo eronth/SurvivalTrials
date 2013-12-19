@@ -4,8 +4,6 @@ import java.util.Random;
 public class D {
 	// remember to use "public static final" to make it accessible, universal, and unchanging.
 	public static Random RAND=new Random();
-	// land types follow
-	
 	public static long seed;
 	public static final int NONE=0;
 	// Land type ints
@@ -13,7 +11,8 @@ public class D {
 	public static final int WATER=2;
 	public static final int SALTWATER=3;
 	public static final int DIRT=4;
-	public static final int STONE=5;
+	public static final int GRASS=5;
+	public static final int STONE=6;
 	
 	// Land type display characters
 	public static final String LAND_GFX="l";
@@ -22,7 +21,7 @@ public class D {
 	public static final String SALTWATER_GFX="w";
 	public static final String DIRT_GFX=",";
 	public static final String STONE_GFX="-";
-	public static final String BLANK_GFX="/";
+	public static final String GRASS_GFX="/";
 	
 	// Cardinal directions
 	public static final int NORTH=1;
@@ -31,7 +30,7 @@ public class D {
 	public static final int SOUTH=4;
 	
 	public static String stringifyCreature(Creature creature){
-		return "†";
+		return "Y";// save for grave"†";
 	}
 	public static String stringifyStructure(int structure){
 		return "s";
@@ -52,11 +51,11 @@ public class D {
 					break;
 			case DIRT: ret=DIRT_GFX;
 					break;
-			case STONE: ret=DIRT_GFX;
+			case GRASS: ret=GRASS_GFX;
 					break;
-			case 6: ret=BLANK_GFX;
+			case STONE: ret=STONE_GFX;
 					default:
-						ret+=land;
+						ret=""+land;
 		}
 		return ret;
 	}
