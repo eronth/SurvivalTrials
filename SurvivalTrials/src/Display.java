@@ -63,7 +63,7 @@ public class Display extends JFrame {
 
 		if (canvas.world[xpos][ypos].creature != null && canvas.world[xpos][ypos].creature.creatureType != 0) {
 			drawCreature(workingCanvas, D.stringifyCreature(canvas.world[xpos][ypos].creature), canvas.world[xpos][ypos].creature.creatureType);
-		} else if (canvas.world[xpos][ypos].structure != 0) {
+		} else if (canvas.world[xpos][ypos].structure != null && canvas.world[xpos][ypos].structure.structureType != 0) {
 			appendStructure(workingCanvas, D.stringifyStructure(canvas.world[xpos][ypos].structure), 0);
 		} else if (canvas.world[xpos][ypos].item[0] != 0) {
 			drawItem(workingCanvas, D.stringifyItem(canvas.world[xpos][ypos].item[0]), 0);
