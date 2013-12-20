@@ -27,7 +27,7 @@ public class D {
 	public static final String LAND_GFX="l";
 	public static final String SAND_GFX=".";
 	public static final String WATER_GFX="~";
-	public static final String SALTWATER_GFX="▒";
+	public static final String SALTWATER_GFX="w";
 	public static final String DIRT_GFX=",";
 	public static final String STONE_GFX="-";
 	public static final String GRASS_GFX="/";

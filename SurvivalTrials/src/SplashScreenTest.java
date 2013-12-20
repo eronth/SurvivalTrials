@@ -5,7 +5,7 @@ import java.awt.*;
 public class SplashScreenTest {
  
 	public static void main(String[] args) {
-		SplashScreen splash = SplashScreen.getSplashScreen();
+		SplashScreen splash = SplashScreen.getSplashScreen(); // Get splashcreen from commandline arguement
 		if (splash == null) {
 			System.err.println("Splash Screen not available!");
 		} else {
@@ -13,7 +13,7 @@ public class SplashScreenTest {
 			Dimension splashBounds=splash.getSize();
 			Graphics2D g2d=splash.createGraphics();
 	 
-			// Simulate a progress bar
+			// Simulate a progress bar fix later?
 			for (int i = 0; i < 100; i += 5) {
 				g2d.setColor(Color.green);
 				g2d.fillRect(0, splashBounds.height / 2,
@@ -23,12 +23,16 @@ public class SplashScreenTest {
 					Thread.sleep(200); // Some delays
 				} catch (Exception e) {}
 			}
+			// Call the mainClass to start the program that will run continuously
 			invokeMain("mainClass",null);
+			
+			// Exit the splash screen and get rid of it
 			g2d.dispose();
 			splash.close();
 		}
 	}
    
+	// Function to run the main class that will run the rest of the program
 	public static void invokeMain(String className, String[] args) {
 		try {
 			Class.forName(className).getMethod("main", new Class[] {String[].class}).invoke(null, new Object[] {args});

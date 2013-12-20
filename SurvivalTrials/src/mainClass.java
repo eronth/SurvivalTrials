@@ -26,6 +26,7 @@ public class mainClass {
 		 window=new Display();
 		 window.setVisible(true);
 		 island=new World(50);
+		 window.makeAlt(island);
 		 window.display(island);
 		 System.out.println("\nFinal World Generation using :"+D.seed);
 		 island.printWorld();
@@ -37,7 +38,6 @@ public class mainClass {
 			 person[i].actionChoice=i;
 		 }
 		 person[1].firstName="Jill";
-		
 		 island.placeCreature(person[0], island.worldDimension/2+1, island.worldDimension/2);
 		 island.placeCreature(person[1], island.worldDimension/2+2, island.worldDimension/2);
 			
@@ -46,7 +46,7 @@ public class mainClass {
 		 // This loop will eventually be infinite until user selects to end game.
 		 int n=200;
 		 int maxn=n;
-		 long mspt=(long) (.3*1000);//mspt = milliseconds per turn
+		 long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
 		 long startTime,endTime,elapsedTime;
 		 while(n!=0){
 			 startTime=System.currentTimeMillis();
@@ -55,7 +55,7 @@ public class mainClass {
 			 }
 			 
 			 //island.printWorld();
-			window.display(island);
+			 window.display(island);
 			 endTime=System.currentTimeMillis();
 			 elapsedTime=endTime-startTime;
 			 System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
