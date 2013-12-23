@@ -152,11 +152,20 @@ public class World {
 		//TODO: initialize biomes. Probably create 1-2 biome functions that take in a biome type variable and seed location.
 		//find biome location
 		//add beach
-		System.out.println(1);
 		addBiome("Beach",findBiomeX("Beach"),findBiomeY("Beach"));
-		//add Mountain (stone)
+		//add set biomes; forest, desert, mountain
+		addBiome("Mountain",findBiomeX("Mountain"),findBiomeY("Mountain"));
+		addBiome("Desert",findBiomeX("Desert"),findBiomeY("Desert"));
+		addBiome("Forest",findBiomeX("Forest"),findBiomeY("Forest"));
+		//add maybe biomes; tiaga, tundra, 
+		//fill in non-biome squares
+		fillInEmptyCells();
 	}
 	
+	private void fillInEmptyCells() {
+		// TODO Auto-generated method stub
+		
+	}
 	//Finds the Y portion for Biome C according to Austin's strategy at the time.
 		//Beach goes straight down from center
 	//current biomes: Beach, Mountain
@@ -178,6 +187,7 @@ public class World {
 			break;
 			
 		case("Mountain"):
+			retVal = center;
 			break;
 		
 		}
@@ -193,6 +203,8 @@ public class World {
 			retVal = center;
 			break;
 		case("Mountain"):
+			retVal = center;
+			break;
 		}
 		
 		return retVal;
@@ -201,10 +213,24 @@ public class World {
 	void addBiome(String c, int x, int y){
 		switch(c){
 		
-		//new strat, go back 3 to foward 3, find shore, then count up x number and replace with sand.
+		//Strategy: find south shores for +-(4-6) and each puts sand up for 3-5 squares
 		case("Beach")://current strat, circle around center, replacing land
-			//go back length/20
-		
+			int beachSize = D.RAND.nextInt(4)+5;
+			int beachLength = D.RAND.nextInt(4)+3;
+			for(int i = x-(beachSize/2);i< x+(beachSize/2);i++){
+				int southShore = y-5;
+				while(world[i][southShore].landType != D.SALTWATER)
+					southShore++;
+				southShore--;
+				for(int j = 0; j < beachLength;j++){
+					world[i][southShore-j].landType = D.SAND;
+				}
+			}
+		break;
+		case("Mountain"):
+			//x and y are center of island. generate mountain around
+			//TODO AUSTIN YOU WERE HERE
+			break;
 		}
 	
 	}
