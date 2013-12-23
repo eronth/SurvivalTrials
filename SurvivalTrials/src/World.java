@@ -198,18 +198,9 @@ public class World {
 	void addBiome(String c, int x, int y){
 		switch(c){
 		
+		//new strat, go back 3 to foward 3, find shore, then count up x number and replace with sand.
 		case("Beach")://current strat, circle around center, replacing land
-			x--;
-			y-=3;
-			for(int i = 0; i < 4; i++){
-				y++;
-				x--;
-				for(int j = 0; j < 5+2*i; j++){
-					if(world[x+j][y].landType == D.NONE)
-						world[x+j][y].landType = D.SAND;
-				}
-			}
-			break;
+			//go back length/20
 		
 		}
 	

@@ -46,7 +46,7 @@ public class mainClass {
 		 // ==================================================================================================
 		 // Rudamentary game loop starts here. int n is used to iterate the number of turns you'd like to run.
 		 // This loop will eventually be infinite until user selects to end game.
-		 int n=200;
+		 int n=0;
 		 int maxn=n;
 		 long mspt=(long) (.5*1000);//mspt = milliseconds per turn
 		 long startTime,endTime,elapsedTime;
