@@ -37,18 +37,23 @@ public class Creature {
 		humanity=humanityStart;
 		galvany=galvanyStart;
 	}
+	// This is the switch case for which action the creature will be performing this turn.
 	void action(World w){
 		switch (actionChoice){
 		case 0:
 			break;
-		case 1: initWalk(w,0,D.NORTH);
+		case 1: 
+			initWalk(w,0,D.NORTH);
 			break;
-		case 2:	walk(w, 0, D.NORTH);
+		case 2:	
+			walk(w, 0, D.NORTH);
 			break;
 			
-		case 3: initWalk(w,0,D.EAST);
+		case 3: 
+			initWalk(w,0,D.EAST);
 			break;
-		case 4:	walk(w, D.EAST, 0);
+		case 4:	
+			walk(w, D.EAST, 0);
 			break;
 			
 		case 5:
@@ -58,18 +63,23 @@ public class Creature {
 			walk(w,D.WEST,0);
 			break;
 			
-		case 7: initWalk(w, 0, D.SOUTH);
+		case 7: 
+			initWalk(w, 0, D.SOUTH);
 			break;
-		case 8: walk(w,0,D.SOUTH);
+		case 8: 
+			walk(w,0,D.SOUTH);
+			break;
 		default:
 			break;
 		}
 	}
+	// Walking prep function. Sets the countdown to 10
 	void initWalk(World w, int xDirection, int yDirection){
 		actionChoice=actionChoice+1;
 		actionCountdown=10;
 		walk(w,xDirection,yDirection);
 	}
+	// Walk function. Moves creature in a direction given by xDirection and yDirection 
 	void walk(World w, int xDirection, int yDirection){
 		if(actionCountdown<=0){
 			int xmod=0,ymod=0;
@@ -85,7 +95,7 @@ public class Creature {
 			}
 			int x=xPos+xmod;
 			int y=yPos+ymod;
-			if (w.world[x][y].creature!=null && w.world[x][y].landType!=D.SALTWATER && w.world[x][y].landType!=D.WATER){
+			if ((w.world[x][y].creature==null||w.world[x][y].creature.creatureType==0) && w.world[x][y].landType!=D.SALTWATER && w.world[x][y].landType!=D.WATER){
 				w.placeCreature(this,x,y);
 			}
 			actionCountdown=10;

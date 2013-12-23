@@ -81,33 +81,36 @@ public class World {
 		for (int i=0;i<world.length;i++){
 			for (int j=0;j<world[0].length;j++){
 				if(world[i][j].landType==D.STONE){
-					fillLake(i,j); // Replace stone with lake water, additionally, expand!
+					fillLake(i,j); // Replace stone with lake water, additionally, expand! sort of a crappy function name for now.
 				}
 			}
 		}
 	}
 	void fillLake(int x,int y){
+		// fillLake spreads water outwards from the first viable source it finds... then moves 1 space further out to help enlarge the lake.
 		int oldType=world[x][y].landType;
 		world[x][y].landType=D.WATER;
 		if(oldType!=0 && oldType!=D.SALTWATER){
-			if(world[x+1][y].landType==0 || world[x][y].landType==D.STONE && !touchingSaltWater(x+1,y)){
+			if((world[x+1][y].landType==0 || world[x][y].landType==D.STONE) && !touchingSaltWater(x+1,y)){
 				fillLake(x+1,y);
 			}
-			if(world[x][y+1].landType==0 || world[x][y].landType==D.STONE && !touchingSaltWater(x,y+1)){
+			if((world[x][y+1].landType==0 || world[x][y].landType==D.STONE) && !touchingSaltWater(x,y+1)){
 				fillLake(x,y+1);
 			}
-			if(world[x-1][y].landType==0 || world[x][y].landType==D.STONE && !touchingSaltWater(x-1,y)){
+			if((world[x-1][y].landType==0 || world[x][y].landType==D.STONE) && !touchingSaltWater(x-1,y)){
 				fillLake(x-1,y);
 			}
-			if(world[x][y-1].landType==0 || world[x][y].landType==D.STONE && !touchingSaltWater(x,y-1)){
+			if((world[x][y-1].landType==0 || world[x][y].landType==D.STONE) && !touchingSaltWater(x,y-1)){
 				fillLake(x,y-1);
 			}
 			//TODO: Consider adding if statements for diagonals, possibly with only a % chance of success
 		}
 	}
+	// == Takes in the x, y location of a piece of land. The land then returns true if it is touching SALTWATER vertically or horizontally. Diagonally is not included.
 	boolean touchingSaltWater(int x, int y){
 		return( world[x+1][y].landType==D.SALTWATER || world[x][y+1].landType==D.SALTWATER || world[x-1][y].landType==D.SALTWATER || world[x][y-1].landType==D.SALTWATER);
 	}
+	// == Takes in the x and y positions for a block of water. Turns the entire body of water including the initial square from WATER to SALTWATER. 
 	private void addSalt(int i,int j){
 		world[i][j].landType=D.SALTWATER;
 		if(i>0 && world[i-1][j].landType==D.WATER){
@@ -130,7 +133,7 @@ public class World {
 				ret+=" ";
 				if (world[j][i].creature!=null && world[j][i].creature.creatureType!=0){
 					ret += D.stringifyCreature(world[j][i].creature);
-				}else if (world[j][i].structure!=0){			
+				}else if (world[j][i].structure != null && world[j][i].structure.structureType != 0){			
 					ret += D.stringifyStructure(world[j][i].structure);
 				}else if (world[j][i].item[0]!=0){
 					ret += D.stringifyItem(world[j][i].item[0]);
@@ -206,6 +209,10 @@ public class World {
 	
 	}
 	
+	
+	void placeStructure(Structure s, int x, int y){
+		world[x][y].structure=s;
+	}
 	void placeCreature(Creature p, int x, int y){
 		if(p.xPos!=-1){
 			world[p.xPos][p.yPos].creature=null;
@@ -214,4 +221,5 @@ public class World {
 		p.xPos=x;
 		p.yPos=y;
 	}
+	
 }
