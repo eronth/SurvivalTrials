@@ -153,13 +153,22 @@ public class World {
 		//find biome location
 		//add beach
 		addBiome("Beach",findBiomeX("Beach"),findBiomeY("Beach"));
+		for(int i = 0;i < world.length;i++){
+			for(int j = 0; j < world.length;j++){
+				if(world[i][j].landType == D.NONE){
+					world[i][j].landType = D.RAND.nextInt(6)+1;
+				}
+			}
+		}
+		
+		/*
 		//add set biomes; forest, desert, mountain
 		addBiome("Mountain",findBiomeX("Mountain"),findBiomeY("Mountain"));
 		addBiome("Desert",findBiomeX("Desert"),findBiomeY("Desert"));
 		addBiome("Forest",findBiomeX("Forest"),findBiomeY("Forest"));
 		//add maybe biomes; tiaga, tundra, 
 		//fill in non-biome squares
-		fillInEmptyCells();
+		fillInEmptyCells();*/
 	}
 	
 	private void fillInEmptyCells() {
