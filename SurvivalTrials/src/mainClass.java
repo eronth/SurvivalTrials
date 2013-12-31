@@ -7,6 +7,8 @@ import javax.swing.text.BadLocationException;
  * Austin Davis
  */
 
+// Suck my dick, @Austin Davis
+
 // NOTICE: All general notices for this project will be kept here.
 // 1.	All pushes should be both compilable and have any added data-structures tested for reliability.
 // 2.	Use the D class for common data types. Any instances that require data change will be made much easier this way.
