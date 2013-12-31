@@ -149,32 +149,33 @@ public class World {
 	}
 	//Inits biomes for the world
 	void initializeBiomes(){
-		//TODO: initialize biomes. Probably create 1-2 biome functions that take in a biome type variable and seed location.
-		//find biome location
-		//add beach
+		int[] chances = {20,20,0,20,20,20};
+		//biomes: forest, mountain, plain, beach, desert
 		addBiome("Beach",findBiomeX("Beach"),findBiomeY("Beach"));
+		addBiome("Mountain",findBiomeX("Mountain"),findBiomeY("Mountain"));
+		addBiome("Forest",findBiomeX("Forest"),findBiomeY("Forest"));
+		addBiome("Desert",findBiomeX("Desert"),findBiomeY("Desert"));
+		
+		
 		for(int i = 0;i < world.length;i++){
 			for(int j = 0; j < world.length;j++){
 				if(world[i][j].landType == D.NONE){
-					world[i][j].landType = D.RAND.nextInt(6)+1;
+					lookAroundYou(chances);
+					int rand = D.RAND.nextInt(6)+1;
+					while(rand == D.SALTWATER || rand == D.WATER){
+						rand = D.DIRT;
+					}
+					world[i][j].landType = rand;
 				}
 			}
 		}
-		
-		/*
-		//add set biomes; forest, desert, mountain
-		addBiome("Mountain",findBiomeX("Mountain"),findBiomeY("Mountain"));
-		addBiome("Desert",findBiomeX("Desert"),findBiomeY("Desert"));
-		addBiome("Forest",findBiomeX("Forest"),findBiomeY("Forest"));
-		//add maybe biomes; tiaga, tundra, 
-		//fill in non-biome squares
-		fillInEmptyCells();*/
 	}
 	
-	private void fillInEmptyCells() {
+	private void lookAroundYou(int[] chances) {
 		// TODO Auto-generated method stub
 		
 	}
+
 	//Finds the Y portion for Biome C according to Austin's strategy at the time.
 		//Beach goes straight down from center
 	//current biomes: Beach, Mountain
@@ -196,9 +197,14 @@ public class World {
 			break;
 			
 		case("Mountain"):
-			retVal = center;
+			retVal = center - 2;
 			break;
-		
+		case("Forest"):
+			retVal = center - 10;
+			break;
+		case("Desert"):
+			retVal = center - 10;
+			break;
 		}
 		
 		return retVal;
@@ -212,7 +218,13 @@ public class World {
 			retVal = center;
 			break;
 		case("Mountain"):
-			retVal = center;
+			retVal = center - 2;
+			break;
+		case("Forest"):
+			retVal = center + 10;
+			break;
+		case("Desert"):
+			retVal = center - 10;
 			break;
 		}
 		
@@ -237,10 +249,32 @@ public class World {
 			}
 		break;
 		case("Mountain"):
-			//x and y are center of island. generate mountain around
-			//TODO AUSTIN YOU WERE HERE
+			for(int i = y; i < y+5;i++){
+				for(int j = x; j< x+5; j++){
+					world[i][j].landType = D.STONE;
+				}
+			}
+			break;
+		case("Forest"):
+			for(int i = y; i < y+5;i++){
+				for(int j = x; j< x+5; j++){
+					world[i][j].landType = D.GRASS;
+					if(D.RAND.nextFloat() > 0.75)
+						placeStructure(new Structure(D.TREE,D.MAT_WOOD), i, j);
+				}
+			}
+			break;
+		case("Desert"):
+			for(int i = y; i < y+5;i++){
+				for(int j = x; j< x+5; j++){
+					world[i][j].landType = D.SAND;
+					if(D.RAND.nextFloat() > 0.75)
+						placeStructure(new Structure(D.CACTUS,D.MAT_CACTIPODE), i, j);
+				}
+			}
 			break;
 		}
+		
 	
 	}
 	

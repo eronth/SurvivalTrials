@@ -29,8 +29,8 @@ public class D {
 	public static final String WATER_GFX="~";
 	public static final String SALTWATER_GFX="w";
 	public static final String DIRT_GFX=",";
-	public static final String STONE_GFX="-";
-	public static final String GRASS_GFX="/";
+	public static final String STONE_GFX="E";
+	public static final String GRASS_GFX=",";
 	
 	// Structure type ints
 	public static final int TREE=1;
