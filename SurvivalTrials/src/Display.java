@@ -87,6 +87,16 @@ public class Display extends JFrame {
 		//DefaultHighlighter.DefaultHighlightPainter blankH=new DefaultHighlighter.DefaultHighlightPainter(Color.white);
 		Style saltwater = MapDisplay.addStyle("saltwater", null);
 		StyleConstants.setForeground(saltwater, Color.blue);
+		//-------------------------------------------------------------
+		Style dirt = MapDisplay.addStyle("dirt", null);
+		StyleConstants.setForeground(dirt, Color.decode("#964B00"));
+		Style grass = MapDisplay.addStyle("grass", null);
+		StyleConstants.setForeground(grass, Color.green);
+		Style stone = MapDisplay.addStyle("stone", null);
+		StyleConstants.setForeground(stone, Color.gray);
+		Style sand = MapDisplay.addStyle("sand", null);
+		StyleConstants.setForeground(sand, Color.yellow);
+		//-------------------------------------------------------------
 		//DefaultHighlighter.DefaultHighlightPainter saltwaterH=new DefaultHighlighter.DefaultHighlightPainter(Color.blue);
 		Color waterC = new Color(156, 245, 245);
 		Style water = MapDisplay.addStyle("water", null);
@@ -114,6 +124,18 @@ public class Display extends JFrame {
 				workingCanvas.insertString(index, str, water);
 				//workingCanvas.insertString(index, " ", water); // Used for highlighting 
 			    //MapDisplay.getHighlighter().addHighlight(index, index+1, waterH); // Used for highlighting 
+				break;
+			case D.DIRT:
+				workingCanvas.insertString(index, str, dirt);
+				break;
+			case D.SAND:
+				workingCanvas.insertString(index, str, sand);
+				break;
+			case D.GRASS:
+				workingCanvas.insertString(index, str, grass);
+				break;
+			case D.STONE:
+				workingCanvas.insertString(index, str, stone);
 				break;
 			default:
 				workingCanvas.insertString(index, str, null);

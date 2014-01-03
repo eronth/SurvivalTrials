@@ -7,6 +7,8 @@ import javax.swing.text.BadLocationException;
  * Austin Davis
  */
 
+// Suck my dick, @Austin Davis
+
 // NOTICE: All general notices for this project will be kept here.
 // 1.	All pushes should be both compilable and have any added data-structures tested for reliability.
 // 2.	Use the D class for common data types. Any instances that require data change will be made much easier this way.
@@ -46,7 +48,7 @@ public class mainClass {
 		 // ==================================================================================================
 		 // Rudamentary game loop starts here. int n is used to iterate the number of turns you'd like to run.
 		 // This loop will eventually be infinite until user selects to end game.
-		 int n=200;
+		 int n=0;
 		 int maxn=n;
 		 long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
 		 long startTime,endTime,elapsedTime;
