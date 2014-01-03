@@ -40,6 +40,8 @@ public class mainClass {
 		 person[1].firstName="Jill";
 		 island.placeCreature(person[0], island.worldDimension/2+1, island.worldDimension/2);
 		 island.placeCreature(person[1], island.worldDimension/2+2, island.worldDimension/2);
+		 Item it=new Item(1);
+		 island.placeItem(it, island.worldDimension/2+2, island.worldDimension/2+1);
 			
 		 // ==================================================================================================
 		 // Rudamentary game loop starts here. int n is used to iterate the number of turns you'd like to run.

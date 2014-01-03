@@ -40,37 +40,37 @@ public class Creature {
 	// This is the switch case for which action the creature will be performing this turn.
 	void action(World w){
 		switch (actionChoice){
-		case 0:
-			break;
-		case 1: 
-			initWalk(w,0,D.NORTH);
-			break;
-		case 2:	
-			walk(w, 0, D.NORTH);
-			break;
-			
-		case 3: 
-			initWalk(w,0,D.EAST);
-			break;
-		case 4:	
-			walk(w, D.EAST, 0);
-			break;
-			
-		case 5:
-			initWalk(w, D.WEST, 0);
-			break;
-		case 6:
-			walk(w,D.WEST,0);
-			break;
-			
-		case 7: 
-			initWalk(w, 0, D.SOUTH);
-			break;
-		case 8: 
-			walk(w,0,D.SOUTH);
-			break;
-		default:
-			break;
+			case 0:
+				break;
+			case 1: 
+				initWalk(w,0,D.NORTH);
+				break;
+			case 2:	
+				walk(w, 0, D.NORTH);
+				break;
+				
+			case 3: 
+				initWalk(w,0,D.EAST);
+				break;
+			case 4:	
+				walk(w, D.EAST, 0);
+				break;
+				
+			case 5:
+				initWalk(w, D.WEST, 0);
+				break;
+			case 6:
+				walk(w,D.WEST,0);
+				break;
+				
+			case 7: 
+				initWalk(w, 0, D.SOUTH);
+				break;
+			case 8: 
+				walk(w,0,D.SOUTH);
+				break;
+			default:
+				break;
 		}
 	}
 	// Walking prep function. Sets the countdown to 10

@@ -165,5 +165,16 @@ public class World {
 		p.xPos=x;
 		p.yPos=y;
 	}
+	void placeItem(Item i, int x, int y){
+		int j;
+		for(j=0; j<world[x][y].items.length; j++){ // Cycle through items that can be on each land and look for open spot
+			if(world[x][y].item[j]==0){
+				world[x][y].items[j]=i;
+				world[x][y].item[j]=i.itemType;
+				i.xPos=x;
+				i.yPos=y;
+			}
+		}
+	}
 	
 }

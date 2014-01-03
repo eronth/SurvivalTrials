@@ -92,6 +92,19 @@ public class D {
 	public static final int MAT_CACTIPODE=RES_CACTIPODE;
 	// TODO: fill out with more materials.
 	
+	// Item type ints
+	public static final int ITM_RES_WOOD=1;
+	public static final int ITM_RES_STONE=2;
+	public static final int ITM_RES_FRUIT=3;
+	public static final int ITM_RES_CACTIPODE=4;
+	
+	// Land type display characters
+	public static final String ITM_GFX="ǂ";
+	public static final String ITM_RES_WOOD_GFX="ɯ";
+	public static final String ITM_RES_STONE_GFX="Ƨ";
+	public static final String ITM_RES_FRUIT_GFX="ǒ";
+	public static final String ITM_RES_CACTIPODE_GFX="ǫ";
+	
 	// Cardinal directions
 	public static final int NORTH=1;
 	public static final int EAST=2;
@@ -105,56 +118,71 @@ public class D {
 		String ret="";
 		boolean hasResource = structure.resourceCount>0;
 		switch (structure.structureType){
-		case NONE: 
-			ret=STRUCTURE_GFX;
-			break;
-		case TREE: 
-			ret=(hasResource?FULL_TREE_GFX:REDUCED_TREE_GFX);
-			break;
-		case FRUITTREE: 
-			ret=(hasResource?FULL_FRUITTREE_GFX:REDUCED_FRUITTREE_GFX);
-			break;
-		case CACTUS:
-			ret=(hasResource?FULL_CACTUS_GFX:REDUCED_CACTUS_GFX);
-			break;
-		case BOULDER:
-			ret=(hasResource?FULL_BOULDER_GFX:REDUCED_BOULDER_GFX);
-			break;
-		case FIREPIT:
-			ret=(hasResource?LIT_FIREPIT_GFX:UNLIT_FIREPIT_GFX);
-			break;
-		case WALL: 
-			ret=(hasResource?UNDAMAGED_WALL_GFX:DAMAGED_WALL_GFX);
-			break;
-		case DOOR:
-			ret=DOOR_GFX;
-		default:
-			ret=""+structure.structureType;
+			case NONE: 
+				ret=STRUCTURE_GFX;
+				break;
+			case TREE: 
+				ret=(hasResource?FULL_TREE_GFX:REDUCED_TREE_GFX);
+				break;
+			case FRUITTREE: 
+				ret=(hasResource?FULL_FRUITTREE_GFX:REDUCED_FRUITTREE_GFX);
+				break;
+			case CACTUS:
+				ret=(hasResource?FULL_CACTUS_GFX:REDUCED_CACTUS_GFX);
+				break;
+			case BOULDER:
+				ret=(hasResource?FULL_BOULDER_GFX:REDUCED_BOULDER_GFX);
+				break;
+			case FIREPIT:
+				ret=(hasResource?LIT_FIREPIT_GFX:UNLIT_FIREPIT_GFX);
+				break;
+			case WALL: 
+				ret=(hasResource?UNDAMAGED_WALL_GFX:DAMAGED_WALL_GFX);
+				break;
+			case DOOR:
+				ret=DOOR_GFX;
+			default:
+				ret=""+structure.structureType;
 		}
 		return ret;
 	}
 	public static String stringifyItem(int item){
-		return "i";
+		String ret="";
+		switch (item){
+			case NONE: ret=ITM_GFX;
+					break;
+			case ITM_RES_WOOD: ret=ITM_RES_WOOD_GFX;
+					break;
+			case ITM_RES_STONE: ret=ITM_RES_STONE_GFX;
+					break;
+			case ITM_RES_FRUIT: ret=ITM_RES_FRUIT_GFX;
+					break;
+			case ITM_RES_CACTIPODE: ret=ITM_RES_CACTIPODE_GFX;
+					break;
+			default:
+				ret=""+item;
+		}
+		return ret;
 	}
 	public static String stringifyLand(int land){
 		String ret="";
 		switch (land){
-		case NONE: ret=LAND_GFX;
+			case NONE: ret=LAND_GFX;
+					break;
+			case SALTWATER: ret=SALTWATER_GFX;
+					break;
+			case WATER: ret=WATER_GFX;
+					break;
+			case SAND: ret=SAND_GFX;
+					break;
+			case DIRT: ret=DIRT_GFX;
+					break;
+			case GRASS: ret=GRASS_GFX;
+					break;
+			case STONE: ret=STONE_GFX;
 				break;
-		case SALTWATER: ret=SALTWATER_GFX;
-				break;
-		case WATER: ret=WATER_GFX;
-				break;
-		case SAND: ret=SAND_GFX;
-				break;
-		case DIRT: ret=DIRT_GFX;
-				break;
-		case GRASS: ret=GRASS_GFX;
-				break;
-		case STONE: ret=STONE_GFX;
-			break;
-		default:
-			ret=""+land;
+			default:
+				ret=""+land;
 		}
 		return ret;
 	}

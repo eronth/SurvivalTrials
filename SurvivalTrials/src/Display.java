@@ -25,7 +25,7 @@ public class Display extends JFrame {
 		setSize(1100,900);
 		
 		Font monoSpace=new Font("Monospaced", Font.PLAIN, 12);
-		Font cNew=new Font("Courier New", 0, 12);
+		//Font cNew=new Font("Courier New", 0, 12);
 		// Set display background and font
 		MapDisplay.setBackground(Color.black); // Set background color. Black seems to work well
 		MapDisplay.setFont(monoSpace); // Set the font for grid display. Must be monospaced
@@ -155,7 +155,7 @@ public class Display extends JFrame {
 		}
 	}
 
-	// Function to draw item. Will pull and compare with data class
+	// Function to draw first item on land from item array. Will pull and compare with data class
 	public void drawItem(StyledDocument workingCanvas, String str, int type) throws BadLocationException {
 		Style blank = MapDisplay.addStyle("blank", null);
 		StyleConstants.setForeground(blank, Color.white);
