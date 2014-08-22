@@ -10,7 +10,7 @@ public class Display extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private JTextPane MapDisplay;
-	private StyledDocument altDisplay=new DefaultStyledDocument();
+	private StyledDocument landMap=new DefaultStyledDocument();
 	private StyledDocument current=new DefaultStyledDocument();
 	private StyledDocument buffered=new DefaultStyledDocument();  //New for triple buffered
     
@@ -94,8 +94,8 @@ public class Display extends JFrame {
     	workingCanvas=MapDisplay.getStyledDocument();
 		
 		// Clear the current document in preparation of update
-    	workingCanvas.remove(0, workingCanvas.getLength()); //setText("");
-		MapDisplay.setDocument(altCanvas); // MapDisplay.setDocument(altDisplay);
+    	workingCanvas.remove(0, workingCanvas.getLength());
+		MapDisplay.setDocument(altCanvas);
 		
 		// Cycle through and world array and first display land
 		for (int i = 0; i < canvas.world.length; i++) {
@@ -120,20 +120,20 @@ public class Display extends JFrame {
     }
     
     // Set up the 'blank' document that we will be stitching behind the real one
-    public void makeAlt(World canvas) throws BadLocationException{
+    public void makeLandMap(World canvas) throws BadLocationException{
     	for (int i = 0; i < canvas.world.length; i++) {
 			for (int j = 0; j < canvas.world[0].length; j++) {
-				addSpace(altDisplay, " ");
-				drawLand(altDisplay, canvas, D.stringifyLand(canvas.world[j][i].landType), canvas.world[j][i].landType);
-				addSpace(altDisplay, " ");
+				addSpace(landMap, " ");
+				drawLand(landMap, canvas, D.stringifyLand(canvas.world[j][i].landType), canvas.world[j][i].landType);
+				addSpace(landMap, " ");
 			}
-			addSpace(altDisplay, "\n");
+			addSpace(landMap, "\n");
 		}
     }
     
  // Called to display an image.  Takes in a World class.
     public void initWorld(World canvas) throws BadLocationException {
-    	makeAlt(canvas);
+    	makeLandMap(canvas);
     	StyledDocument something=new DefaultStyledDocument();
 		
 		// Clear the current document in preparation of update

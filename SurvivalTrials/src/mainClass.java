@@ -39,10 +39,10 @@ public class mainClass {
 		 island.placeCreature(person[1], island.worldDimension/2+2, island.worldDimension/2);
 		 Item it=new Item(1);
 		 island.placeItem(it, island.worldDimension/2+2, island.worldDimension/2+1);
-		 Graphics g = new Graphics("One", island);
+		 Graphics g = new Graphics();
 		 g.start();
 		 // ==================================================================================================
-		 // Rudamentary game loop starts here. int n is used to iterate the number of turns you'd like to run.
+		 // Rudimentary game loop starts here. int n is used to iterate the number of turns you'd like to run.
 		 // This loop will eventually be infinite until user selects to end game.
 		 int n=50;
 		 int maxn=n;

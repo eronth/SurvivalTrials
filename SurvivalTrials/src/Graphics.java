@@ -5,11 +5,10 @@ public class Graphics extends Thread{
 
 	Display window;
    
-	Graphics( String name, World island) throws BadLocationException{
+	Graphics() throws BadLocationException{
 		window=new Display();
 		window.setVisible(true);
 		window.initWorld(mainClass.island);
-		//window.display(mainClass.island);
 	}
 	public void run() {
 		while (true) {
@@ -20,7 +19,7 @@ public class Graphics extends Thread{
 				e.printStackTrace();
 			}
 			try {
-				Graphics.sleep(500);
+				Graphics.sleep(900);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
