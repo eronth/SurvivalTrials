@@ -25,14 +25,9 @@ public class mainClass {
 	 public static void main(String arg[]) throws BadLocationException{
 		 D.seedRand();
 		 System.out.print("Main begins here\n======================\n\nWaterworld\n");
-		 window=new Display();
-		 window.setVisible(true);
 		 island=new World(50);
-		 window.initWorld(island);
-		 window.display(island);
 		 //System.out.println("\nFinal World Generation using :"+D.seed);
-		 island.printWorld();
-		 
+		 //island.printWorld();
 		 
 		 // Code in place for crappy initialization purposes.
 		 for(int i=0;i<person.length;i++){
@@ -44,22 +39,21 @@ public class mainClass {
 		 island.placeCreature(person[1], island.worldDimension/2+2, island.worldDimension/2);
 		 Item it=new Item(1);
 		 island.placeItem(it, island.worldDimension/2+2, island.worldDimension/2+1);
-			
+		 Graphics g = new Graphics("One", island);
+		 g.start();
 		 // ==================================================================================================
 		 // Rudamentary game loop starts here. int n is used to iterate the number of turns you'd like to run.
 		 // This loop will eventually be infinite until user selects to end game.
 		 int n=50;
 		 int maxn=n;
-		 long mspt=(long) (.4*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
+		 long mspt=(long) (.3*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
 		 long startTime,endTime,elapsedTime;
 		 while(n!=0){
 			 startTime=System.currentTimeMillis();
 			 for(int i=0;i<person.length;i++){
 				 person[i].action(island);
 			 }
-			 
 			 //island.printWorld();
-			 window.display(island);
 			 endTime=System.currentTimeMillis();
 			 elapsedTime=endTime-startTime;
 			 System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);

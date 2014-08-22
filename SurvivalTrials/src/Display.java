@@ -37,16 +37,15 @@ public class Display extends JFrame {
 	//TODO REWRITE TO MAKE EVEN FASTER
     
     
-    // Testing
+	// Testing
     public void display (World canvas) throws BadLocationException {
     	boolean switchDisplay = false;
     	if( switchDisplay ) {
-    		displayT( canvas,current , buffered );
-    		switchDisplay = false;
+    		displayT( canvas, current, buffered );
     	} else {
-    		displayT( canvas,buffered , current );
-    		switchDisplay = true;
+    		displayT( canvas, buffered, current );
     	}
+    	switchDisplay = !switchDisplay;
     }
     
     
@@ -90,7 +89,7 @@ public class Display extends JFrame {
     */
     
  // Called to display an image.  Takes in a World class.
-    public void displayT(World canvas, StyledDocument workingCanvas, StyledDocument altCanvas) throws BadLocationException {    	
+    public void displayT(World canvas, StyledDocument workingCanvas, StyledDocument altCanvas) throws BadLocationException {
     	// Create a document for editing
     	workingCanvas=MapDisplay.getStyledDocument();
 		

@@ -98,7 +98,7 @@ public class D {
 	public static final int ITM_RES_FRUIT=3;
 	public static final int ITM_RES_CACTIPODE=4;
 	
-	// Land type display characters
+	// Item type display characters
 	public static final String ITM_GFX="ǂ";
 	public static final String ITM_RES_WOOD_GFX="ɯ";
 	public static final String ITM_RES_STONE_GFX="Ƨ";
