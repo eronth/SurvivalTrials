@@ -12,6 +12,7 @@ public class Display extends JFrame {
 	private JTextPane MapDisplay;
 	private StyledDocument altDisplay=new DefaultStyledDocument();
 	private StyledDocument current=new DefaultStyledDocument();
+	private StyledDocument buffered=new DefaultStyledDocument();  //New for triple buffered
     
     public Display() {
     	// Set up main display window
@@ -35,14 +36,32 @@ public class Display extends JFrame {
     
 	//TODO REWRITE TO MAKE EVEN FASTER
     
+    
+    // Testing
+    public void display (World canvas) throws BadLocationException {
+    	boolean switchDisplay = false;
+    	if( switchDisplay ) {
+    		displayT( canvas,current , buffered );
+    		switchDisplay = false;
+    	} else {
+    		displayT( canvas,buffered , current );
+    		switchDisplay = true;
+    	}
+    }
+    
+    
+    /*
+    
+    ***//*** Keep for reference 
+    
     // Called to display an image.  Takes in a World class.
-    public void display(World canvas) throws BadLocationException {    	
+    public void display1(World canvas) throws BadLocationException {    	
     	// Create a document for editing
     	current=MapDisplay.getStyledDocument();
 		
 		// Clear the current document in preparation of update
     	current.remove(0, current.getLength()); //setText("");
-		MapDisplay.setDocument(altDisplay);
+		MapDisplay.setDocument(altDisplay); // MapDisplay.setDocument(altDisplay);
 		
 		// Cycle through and world array and first display land
 		for (int i = 0; i < canvas.world.length; i++) {
@@ -66,6 +85,41 @@ public class Display extends JFrame {
 		MapDisplay.setDocument(current);
     }
     
+     ***//*** Keep for reference 
+    
+    */
+    
+ // Called to display an image.  Takes in a World class.
+    public void displayT(World canvas, StyledDocument workingCanvas, StyledDocument altCanvas) throws BadLocationException {    	
+    	// Create a document for editing
+    	workingCanvas=MapDisplay.getStyledDocument();
+		
+		// Clear the current document in preparation of update
+    	workingCanvas.remove(0, workingCanvas.getLength()); //setText("");
+		MapDisplay.setDocument(altCanvas); // MapDisplay.setDocument(altDisplay);
+		
+		// Cycle through and world array and first display land
+		for (int i = 0; i < canvas.world.length; i++) {
+			for (int j = 0; j < canvas.world[0].length; j++) {
+				addSpace(workingCanvas, " ");
+				// if there is a creature,structure, or item, they take precedence over land.
+				if (canvas.world[j][i].creature != null && canvas.world[j][i].creature.creatureType != 0) {
+					drawCreature(workingCanvas, D.stringifyCreature(canvas.world[j][i].creature), canvas.world[j][i].creature.creatureType);
+				} else if (canvas.world[j][i].structure != null && canvas.world[j][i].structure.structureType != 0) {
+					drawStructure(workingCanvas, D.stringifyStructure(canvas.world[j][i].structure), 0);
+				} else if (canvas.world[j][i].item[0] != 0) {
+					drawItem(workingCanvas, D.stringifyItem(canvas.world[j][i].item[0]), 0);
+				} else {
+					drawLand(workingCanvas, canvas, D.stringifyLand(canvas.world[j][i].landType), canvas.world[j][i].landType);
+				}
+				addSpace(workingCanvas, " ");
+			}
+			addSpace(workingCanvas, "\n");
+		}
+		// Once update is complete, set display to updated document
+		MapDisplay.setDocument(workingCanvas);
+    }
+    
     // Set up the 'blank' document that we will be stitching behind the real one
     public void makeAlt(World canvas) throws BadLocationException{
     	for (int i = 0; i < canvas.world.length; i++) {
@@ -76,6 +130,36 @@ public class Display extends JFrame {
 			}
 			addSpace(altDisplay, "\n");
 		}
+    }
+    
+ // Called to display an image.  Takes in a World class.
+    public void initWorld(World canvas) throws BadLocationException {
+    	makeAlt(canvas);
+    	StyledDocument something=new DefaultStyledDocument();
+		
+		// Clear the current document in preparation of update
+    	something.remove(0, something.getLength()); //setText("");
+		
+		// Cycle through and world array and first display land
+		for (int i = 0; i < canvas.world.length; i++) {
+			for (int j = 0; j < canvas.world[0].length; j++) {
+				addSpace(something, " ");
+				// if there is a creature,structure, or item, they take precedence over land.
+				if (canvas.world[j][i].creature != null && canvas.world[j][i].creature.creatureType != 0) {
+					drawCreature(something, D.stringifyCreature(canvas.world[j][i].creature), canvas.world[j][i].creature.creatureType);
+				} else if (canvas.world[j][i].structure != null && canvas.world[j][i].structure.structureType != 0) {
+					drawStructure(something, D.stringifyStructure(canvas.world[j][i].structure), 0);
+				} else if (canvas.world[j][i].item[0] != 0) {
+					drawItem(something, D.stringifyItem(canvas.world[j][i].item[0]), 0);
+				} else {
+					drawLand(something, canvas, D.stringifyLand(canvas.world[j][i].landType), canvas.world[j][i].landType);
+				}
+				addSpace(something, " ");
+			}
+			addSpace(something, "\n");
+		}
+		buffered = something;
+		current = something;
     }
 
     //TODO Use highlight to paint land and water in background.
