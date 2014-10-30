@@ -1,5 +1,4 @@
 import java.awt.*;
-
 import javax.swing.*;
 import javax.swing.text.*;
 
@@ -90,12 +89,15 @@ public class Display extends JFrame {
     
  // Called to display an image.  Takes in a World class.
     public void displayT(World canvas, StyledDocument workingCanvas, StyledDocument altCanvas) throws BadLocationException {
-    	// Create a document for editing
-    	workingCanvas=MapDisplay.getStyledDocument();
+		// Create a document for editing
+    	//workingCanvas=MapDisplay.getStyledDocument();
 		
 		// Clear the current document in preparation of update
-    	workingCanvas.remove(0, workingCanvas.getLength());
+    	//workingCanvas.remove(0, workingCanvas.getLength());
+    	altCanvas = MapDisplay.getStyledDocument();
+    	workingCanvas = new DefaultStyledDocument();
 		MapDisplay.setDocument(altCanvas);
+		//MapDisplay.setDocument(altCanvas);
 		
 		// Cycle through and world array and first display land
 		for (int i = 0; i < canvas.world.length; i++) {
@@ -115,6 +117,7 @@ public class Display extends JFrame {
 			}
 			addSpace(workingCanvas, "\n");
 		}
+		
 		// Once update is complete, set display to updated document
 		MapDisplay.setDocument(workingCanvas);
     }

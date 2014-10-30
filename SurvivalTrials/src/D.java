@@ -58,8 +58,8 @@ public class D {
 	public static final String REDUCED_TREE_GFX="t";
 	public static final String FULL_FRUITTREE_GFX="F";
 	public static final String REDUCED_FRUITTREE_GFX="f";
-	public static final String FULL_CACTUS_GFX="╬";
-	public static final String REDUCED_CACTUS_GFX="╥";
+	public static final String FULL_CACTUS_GFX="╬";  //NOT MONOSPACED - need to update
+	public static final String REDUCED_CACTUS_GFX="╥";  //POSSIBLY NOT MONOSPACED - may need to update
 	public static final String FULL_BOULDER_GFX="O";
 	public static final String REDUCED_BOULDER_GFX="o";
 	public static final String DOOR_GFX="∩";

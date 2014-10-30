@@ -1,6 +1,4 @@
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -8,11 +6,10 @@ import java.awt.Color;
 import javax.swing.BoxLayout;
 import java.awt.GridLayout;
 import java.awt.Component;
-import javax.swing.Box;
-import javax.swing.JTable;
 import java.awt.TextArea;
 
 
+@SuppressWarnings("serial")
 public class MainDisplay extends JFrame {
 
 	private JPanel contentPane;
@@ -20,6 +17,7 @@ public class MainDisplay extends JFrame {
 	/**
 	 * Launch the application.
 	 */
+	//TODO: Determine if still useful
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
