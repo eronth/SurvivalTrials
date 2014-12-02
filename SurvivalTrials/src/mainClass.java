@@ -20,8 +20,6 @@ import javax.swing.text.BadLocationException;
 * TO DO: BLACKMAIL KENDRICK/GET HIM FIRED
 **/
 
-// Suck my dick, @Austin Davis
-
 // NOTICE: All general notices for this project will be kept here.
 // 1.	All pushes should be both compilable and have any added data-structures tested for reliability.
 // 2.	Use the D class for common data types. Any instances that require data change will be made much easier this way.
@@ -38,14 +36,12 @@ public class mainClass {
 	public static void main(String arg[]) throws BadLocationException{
 		D.seedRand();
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
-		window=new Display();
-		window.setVisible(true);
 		island=new World(50);
-		//XXX window.makeAlt(island);
-		window.display(island);
 		System.out.println("\nFinal World Generation using :"+D.seed);
 		island.printWorld();
-		 
+		
+		Graphics g = new Graphics();
+		g.start();
 		 
 		// Code in place for crappy initialization purposes.
 		person.add(new Creature(island,"Jack","MeHoff",1,70.0,50,2,50,100,100,100));
@@ -55,6 +51,9 @@ public class mainClass {
 		island.placeCreature(person.get(0),c);
 		c=new Coordinates(island.worldDimension/2+2, island.worldDimension/2);
 		island.placeCreature(person.get(1),c);
+		
+		
+		
 		 
 		 /*person[0].pathfind.generatePath(person[0].position,person[0].target);
 		 person[0].pathSet=0;
