@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.text.BadLocationException;
 
 /*
@@ -5,7 +8,18 @@ import javax.swing.text.BadLocationException;
  * Nic Pereira
  * Tim Kinealy
  * Austin Davis
- */
+ **/
+
+/*
+*    F*CK KENDRICK     F*CK KENDRICK     F*CK KENDRICK     F*CK KENDRICK     
+*    F*CK KENDRICK     F*CK KENDRICK     F*CK KENDRICK     F*CK KENDRICK     
+*    F*CK KENDRICK     F*CK KENDRICK     F*CK KENDRICK     F*CK KENDRICK     
+*    F*CK KENDRICK     F*CK KENDRICK     F*CK KENDRICK     F*CK KENDRICK     
+*    F*CK KENDRICK     F*CK KENDRICK     F*CK KENDRICK     F*CK KENDRICK     
+*    F*CK KENDRICK     F*CK KENDRICK     F*CK KENDRICK     F*CK KENDRICK     
+*
+* TO DO: BLACKMAIL KENDRICK/GET HIM FIRED
+**/
 
 // NOTICE: All general notices for this project will be kept here.
 // 1.	All pushes should be both compilable and have any added data-structures tested for reliability.
@@ -17,66 +31,134 @@ import javax.swing.text.BadLocationException;
 public class mainClass {
 	static World island;
 	static Display window;
-	static Creature[] person=new Creature[2];
+	static LinkedList<Creature> person=new LinkedList<Creature>();
 	
 	
-	 public static void main(String arg[]) throws BadLocationException{
-		 D.seedRand();
-		 System.out.print("Main begins here\n======================\n\nWaterworld\n");
-		 window=new Display();
-		 window.setVisible(true);
-		 island=new World(50);
-		 window.makeAlt(island);
-		 window.display(island);
-		 System.out.println("\nFinal World Generation using :"+D.seed);
-		 island.printWorld();
+	public static void main(String arg[]) throws BadLocationException{
+		D.seedRand();
+		System.out.print("Main begins here\n======================\n\nWaterworld\n");
+		window=new Display();
+		window.setVisible(true);
+		island=new World(50);
+		window.makeAlt(island);
+		window.display(island);
+		System.out.println("\nFinal World Generation using :"+D.seed);
+		island.printWorld();
 		 
 		 
-		 // Code in place for crappy initialization purposes.
-		 for(int i=0;i<person.length;i++){
-			 person[i]=new Creature("Jack","MeHoff",1,70,50,50,50,100,100,100);
-			 person[i].actionChoice=i;
+		// Code in place for crappy initialization purposes.
+		person.add(new Creature(island,"Jack","MeHoff",1,70.0,50,2,50,100,100,100));
+		person.add(new Creature(island,"Jill","MeHoff",1,70,50,2,50,100,100,100));
+		 
+		Coordinates c=new Coordinates(30,30);
+		island.placeCreature(person.get(0),c);
+		c=new Coordinates(island.worldDimension/2+2, island.worldDimension/2);
+		island.placeCreature(person.get(1),c);
+		 
+		 /*person[0].pathfind.generatePath(person[0].position,person[0].target);
+		 person[0].pathSet=0;
+		 String ass="";
+		 for(int i=0;i<person[0].pathfind.path.length;i++){
+			 ass=" "+person[0].pathfind.path[i];
 		 }
-		 person[1].firstName="Jill";
-		 island.placeCreature(person[0], island.worldDimension/2+1, island.worldDimension/2);
-		 island.placeCreature(person[1], island.worldDimension/2+2, island.worldDimension/2);
-			
-		 // ==================================================================================================
-		 // Rudamentary game loop starts here. int n is used to iterate the number of turns you'd like to run.
-		 // This loop will eventually be infinite until user selects to end game.
-		 int n=200;
-		 int maxn=n;
-		 long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
-		 long startTime,endTime,elapsedTime;
-		 while(n!=0){
-			 startTime=System.currentTimeMillis();
-			 for(int i=0;i<person.length;i++){
-				 person[i].action(island);
-			 }
+		 System.out.println("Path! "+ass);*/
+		 
+		
+		
+		// TODO: Pathfinding experimentation. Please remove before merge.
+		
+		
+		// Adding structures to the system.
+		List<Structure> sl = new LinkedList<Structure>();//new Structure(D.TREE, D.RES_WOOD);
+		List<Coordinates> cl = new LinkedList<Coordinates>();//Coordinates(10, 9);
+		sl.add(new Structure(D.TREE, D.RES_WOOD));
+		cl.add(new Coordinates(30,29));
+		
+		sl.add(new Structure(D.TREE, D.RES_WOOD));
+		cl.add(new Coordinates(29,29));
+		
+		
+		sl.add(new Structure(D.TREE, D.RES_WOOD));
+		cl.add(new Coordinates(31,29));
+		
+		sl.add(new Structure(D.TREE, D.RES_WOOD));
+		cl.add(new Coordinates(32,29));
+		
+		sl.add(new Structure(D.TREE, D.RES_WOOD));
+		cl.add(new Coordinates(28,28));
+		
+		for (int i=0; i<sl.size(); i++) {
+			island.placeStructure(sl.get(i),cl.get(i));
+		}
+		
+		// Generating the path.
+		Coordinates testTarget=new Coordinates(27,24);
+		
+		person.get(0).pathfind=new PathFindingWorld(island);
+		
+		person.get(0).pathfind.setTargetCoords(testTarget);
+		System.out.println("Findme"+person.get(0).getPosition().toString());
+		person.get(0).pathfind.generatePath(person.get(0).getPosition(), 0);
+		
+		person.get(0).pathfind.printMovementWorld();
+		person.get(0).pathfind.printHeuristicWorld();
+		person.get(0).pathfind.printDirectionWorld();
+		person.get(0).pathfind.printListWorld();
+		
+		window.display(island);
+		
+		person.get(0).actionChoice = 0;
+		person.get(1).actionChoice = 0;
+		System.out.println("Start: "+person.get(0).getPosition().toString()+" End: "+testTarget.toString());
+		System.out.println("Start: "+person.get(0).pathfind.startCoords.toString()+" End: "+person.get(0).pathfind.targetCoords.toString());
+		System.out.println(person.get(0).pathfind.path.toString());
+		
+		// TODO: Pathfinding experimentation. Please remove before merge.
+		 
+		/*System.out.println("Total Cost");
+		test.printWorldTotalCost();
+		System.out.println("Heuristic");
+		test.printWorldHeuristic();
+		System.out.println("Direction");
+		test.printWorldDirection();*/
+		 
+		 
+		// ==================================================================================================
+		// Rudamentary game loop starts here. int n is used to iterate the number of turns you'd like to run.
+		// This loop will eventually be infinite until user selects to end game.
+		/*int n=200;
+		int maxn=n;
+		long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
+		long startTime,endTime,elapsedTime;
+		while(n!=0){
+			startTime=System.currentTimeMillis();
+			for(int i=0;i<person.size();i++){
+				// XXX: ACTION GOES HERE.
+				person.get(i).action(island);// TODO: revert this to cycling everyone.
+			}
 			 
-			 //island.printWorld();
-			 window.display(island);
-			 endTime=System.currentTimeMillis();
-			 elapsedTime=endTime-startTime;
-			 System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
-			 if(mspt>elapsedTime){
-				 try {
-					 Thread.sleep(mspt-elapsedTime);
-				 }catch(InterruptedException ex){
-					 Thread.currentThread().interrupt();
-				 }
-			 }
-			 n--;
-		 }
-			
-			
-			// TODO: remove all of the following code
-			// testing facility follows. I'm looking at all possible chars with this, just to see what symbols can be used.
-			/*for(char tst=0;tst<=35100+1;tst++){
-				System.out.print("\t"+(int)tst+":"+tst);
-				if(tst%15 == 0){
-					System.out.print("\n");
+			window.display(island);
+			endTime=System.currentTimeMillis();
+			elapsedTime=endTime-startTime;
+			System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
+			if(mspt>elapsedTime){
+				try {
+					Thread.sleep(mspt-elapsedTime);
+				} catch(InterruptedException ex){
+					Thread.currentThread().interrupt();
 				}
-			}/**/
+			}
+			n--;
+		}/**/
+			
+			
+		// TODO: remove all of the following code
+		// testing facility follows. I'm looking at all possible chars with this, just to see what symbols can be used.
+		/*for(char tst=0;tst<=35100+1;tst++){
+			System.out.print("\t"+(int)tst+":"+tst);
+			if(tst%15 == 0){
+				System.out.print("\n");
+			}
+		}/**/
 	 }
 }

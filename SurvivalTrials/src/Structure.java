@@ -1,5 +1,6 @@
 
 public class Structure {
+	public Coordinates position = new Coordinates();
 	int structureType = 0; // Type of structure (e.g. Wall, Door, Fire pit, tree, etc)
 	int resourceType = 0; // Resources given by structure. In cases of walls and doors, Resources are typically the material used to build it.
 	int materialType = 0; // Material the structure is made of. Used to determine what class of weapons is strong or weak against it.

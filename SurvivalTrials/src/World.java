@@ -7,8 +7,7 @@ public class World {
 	World(int size){
 		worldDimension=size;
 		world = new Land[worldDimension][worldDimension]; 
-		initializeWorldsLand();
-		initializeSea();
+		initializeWorldLand();
 		int center=(world[0].length-1)/2;
 		initializeIslandLand(center,center,center,center);
 		smallWaterCleanup(); // Last touches to the water system.
@@ -16,18 +15,11 @@ public class World {
 		enlargeLakes(); // Add much needed size to lakes. They tend to form pitifully small.
 		initializeBiomes();
 	}
-	void initializeWorldsLand(){
+	void initializeWorldLand(){
 		//start by initializing the Land variable.
 		for(int i=0;i<world.length;i++){
 			for(int j=0;j<world[0].length;j++){
-				world[i][j]=new Land();
-			}
-		}
-	}
-	void initializeSea(){
-		for(int i=0; i<world.length;i++){
-			for(int j=0;j<world[0].length;j++){
-				world[i][j].landType=D.WATER;
+				world[i][j]=new Land(D.WATER);
 			}
 		}
 	}
@@ -65,7 +57,7 @@ public class World {
 			for(int j=1;j<world[0].length-1;j++){
 				if(world[i][j].landType==D.WATER && 
 						world[i-1][j].landType==0 && world[i][j-1].landType==0 && world[i+1][j].landType==0 && world[i][j+1].landType==0){
-					world[i][j].landType=0;
+					world[i][j]=new Land(0);
 				}
 			}
 		}
@@ -74,7 +66,7 @@ public class World {
 		for (int i=0;i<world.length;i++){
 			for (int j=0;j<world[0].length;j++){
 				if(world[i][j].landType==D.WATER){
-					world[i][j].landType=D.STONE;	// Stone is acting as a temporary placeholder here.
+					world[i][j] = new Land(D.STONE);	// Stone is acting as a temporary placeholder here.
 				}
 			}
 		}
@@ -89,7 +81,7 @@ public class World {
 	void fillLake(int x,int y){
 		// fillLake spreads water outwards from the first viable source it finds... then moves 1 space further out to help enlarge the lake.
 		int oldType=world[x][y].landType;
-		world[x][y].landType=D.WATER;
+		world[x][y] = new Land(D.WATER);
 		if(oldType!=0 && oldType!=D.SALTWATER){
 			if((world[x+1][y].landType==0 || world[x][y].landType==D.STONE) && !touchingSaltWater(x+1,y)){
 				fillLake(x+1,y);
@@ -112,7 +104,7 @@ public class World {
 	}
 	// == Takes in the x and y positions for a block of water. Turns the entire body of water including the initial square from WATER to SALTWATER. 
 	private void addSalt(int i,int j){
-		world[i][j].landType=D.SALTWATER;
+		world[i][j] = new Land(D.SALTWATER);
 		if(i>0 && world[i-1][j].landType==D.WATER){
 			addSalt(i-1,j);
 		}
@@ -154,16 +146,18 @@ public class World {
 	
 	
 	
-	void placeStructure(Structure s, int x, int y){
-		world[x][y].structure=s;
+	void placeStructure(Structure s, Coordinates newpos){
+		world[newpos.x][newpos.y].structure=s;
+		s.position.x=newpos.x;
+		s.position.y=newpos.y;
 	}
-	void placeCreature(Creature p, int x, int y){
-		if(p.xPos!=-1){
-			world[p.xPos][p.yPos].creature=null;
+	void placeCreature(Creature c, Coordinates newpos){
+		if(c.position.x!=-1){
+			world[c.position.x][c.position.y].creature=null;
 		}
-		world[x][y].creature=p;
-		p.xPos=x;
-		p.yPos=y;
+		world[newpos.x][newpos.y].creature=c;
+		c.position.x=newpos.x;
+		c.position.y=newpos.y;
 	}
 	
 }

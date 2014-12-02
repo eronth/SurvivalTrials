@@ -22,6 +22,9 @@ public class D {
 	public static final int DIRT=4;
 	public static final int GRASS=5;
 	public static final int STONE=6;
+	public static final int SNOW=7;
+	public static final int ICE=8;
+	public static final int DESERT=9;
 	
 	// Land type display characters
 	public static final String LAND_GFX="l";
@@ -97,6 +100,10 @@ public class D {
 	public static final int EAST=2;
 	public static final int WEST=3;
 	public static final int SOUTH=4;
+	public static final int NORTHEAST=5;
+	public static final int NORTHWEST=6;
+	public static final int SOUTHEAST=7;
+	public static final int SOUTHWEST=8;
 	
 	public static String stringifyCreature(Creature creature){
 		return "Y";//✝ deceased
@@ -158,8 +165,136 @@ public class D {
 		}
 		return ret;
 	}
+	
 	public static void seedRand(){
 		seed=System.currentTimeMillis();
 		RAND.setSeed(seed);
+	}
+	
+	
+	static boolean isCardinalDirection(int _direction) {
+		return ((_direction==NORTH) ||
+				(_direction==EAST)  ||
+				(_direction==WEST)  ||
+				(_direction==SOUTH));
+	}
+	// XMOD and YMOD are used to modify positions. 
+	//  Example usage would be if you have a character placing something to the NORTHEAST of himself. 
+	//  :XMOD will return +1 since EAST is located +1 along the x axis.
+	//  :YMOD will return -1 since NORTH is located -1 along the y axis.
+	// XMOD and YMOD assume you're looking for 1 space away in the given direction.
+	public static int XMOD(int direction){
+		int xmod=0;
+		switch(direction){
+		case EAST:
+		case NORTHEAST:
+		case SOUTHEAST:
+			xmod=+1;
+			break;
+		case WEST:
+		case NORTHWEST:
+		case SOUTHWEST:
+			xmod=-1;
+			break;
+		case 0:
+			break;
+		}
+		return xmod;
+	}
+	public static int YMOD(int direction){
+		int ymod=0;
+		switch(direction){
+		case NORTH:
+		case NORTHEAST:
+		case NORTHWEST:
+			ymod=-1;
+			break;
+		case SOUTH:
+		case SOUTHEAST:
+		case SOUTHWEST:
+			ymod=+1;
+			break;
+		case 0:
+			break;
+		}
+		return ymod;
+	}
+	public static int invertDirection(int _direction){
+		int ret=0;
+		switch(_direction){
+		case NORTH:
+			ret=SOUTH;
+			break;
+		case SOUTH:
+			ret=NORTH;
+			break;
+		case EAST:
+			ret=WEST;
+			break;
+		case WEST:
+			ret=EAST;
+			break;
+		case NORTHEAST:
+			ret=SOUTHWEST;
+			break;
+		case NORTHWEST:
+			ret=SOUTHEAST;
+			break;
+		case SOUTHEAST:
+			ret=NORTHWEST;
+			break;
+		case SOUTHWEST:
+			ret=NORTHEAST;
+			break;
+		}
+		return ret;
+	}
+	public static boolean isWalkable(World w, Coordinates c){
+		return (
+				// Returns walkable if no creatures is in the way.
+				(w.world[c.x][c.y].creature==null||w.world[c.x][c.y].creature.creatureType==0) && 
+				// Returns walkable if no structures obstruct movement.
+				(w.world[c.x][c.y].structure==null||w.world[c.x][c.y].structure.structureType==0) 
+				);
+	}
+	public static boolean isWalkable(World w, int x, int y) {
+		Coordinates c = new Coordinates(x,y);
+		return isWalkable(w, c);
+	}
+	public static String directionToArrow(int d) {
+		String ret="";
+		switch (d){
+		case NORTH:
+			ret="^ ";//"↑       ";
+			break;
+		case SOUTH:
+			ret="v ";//"↓       ";
+			break;
+		case EAST:
+			ret="> ";//"→ ";
+			break;
+		case WEST:
+			ret="< ";//"← ";
+			break;
+		case NORTHEAST:
+			ret="/*";//"↗      ";
+			break;
+		case NORTHWEST:
+			ret="*\\";//"↖      ";
+			break;
+		case SOUTHEAST:
+			ret="\\.";//"↘     ";
+			break;
+		case SOUTHWEST:
+			ret="/.";//"↙     ";
+			break;
+		case NONE:
+			ret="o ";
+			break;
+		default:
+			ret="X";
+			break;
+		}
+		return ret;
 	}
 }
