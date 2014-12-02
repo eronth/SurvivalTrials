@@ -21,6 +21,8 @@ import javax.swing.text.BadLocationException;
 * TO DO: BLACKMAIL KENDRICK/GET HIM FIRED
 **/
 
+// Suck my dick, @Austin Davis
+
 // NOTICE: All general notices for this project will be kept here.
 // 1.	All pushes should be both compilable and have any added data-structures tested for reliability.
 // 2.	Use the D class for common data types. Any instances that require data change will be made much easier this way.
@@ -63,64 +65,13 @@ public class mainClass {
 		 }
 		 System.out.println("Path! "+ass);*/
 		 
-		
-		
-		// TODO: Pathfinding experimentation. Please remove before merge.
-		
-		
-		// Adding structures to the system.
-		List<Structure> sl = new LinkedList<Structure>();//new Structure(D.TREE, D.RES_WOOD);
-		List<Coordinates> cl = new LinkedList<Coordinates>();//Coordinates(10, 9);
-		sl.add(new Structure(D.TREE, D.RES_WOOD));
-		cl.add(new Coordinates(30,29));
-		
-		sl.add(new Structure(D.TREE, D.RES_WOOD));
-		cl.add(new Coordinates(29,29));
-		
-		
-		sl.add(new Structure(D.TREE, D.RES_WOOD));
-		cl.add(new Coordinates(31,29));
-		
-		sl.add(new Structure(D.TREE, D.RES_WOOD));
-		cl.add(new Coordinates(32,29));
-		
-		sl.add(new Structure(D.TREE, D.RES_WOOD));
-		cl.add(new Coordinates(28,28));
-		
-		for (int i=0; i<sl.size(); i++) {
-			island.placeStructure(sl.get(i),cl.get(i));
-		}
-		
-		// Generating the path.
-		Coordinates testTarget=new Coordinates(27,24);
-		
-		person.get(0).pathfind=new PathFindingWorld(island);
-		
-		person.get(0).pathfind.setTargetCoords(testTarget);
-		System.out.println("Findme"+person.get(0).getPosition().toString());
-		person.get(0).pathfind.generatePath(person.get(0).getPosition(), 0);
-		
-		person.get(0).pathfind.printMovementWorld();
-		person.get(0).pathfind.printHeuristicWorld();
-		person.get(0).pathfind.printDirectionWorld();
-		person.get(0).pathfind.printListWorld();
-		
-		window.display(island);
-		
-		person.get(0).actionChoice = 0;
-		person.get(1).actionChoice = 0;
-		System.out.println("Start: "+person.get(0).getPosition().toString()+" End: "+testTarget.toString());
-		System.out.println("Start: "+person.get(0).pathfind.startCoords.toString()+" End: "+person.get(0).pathfind.targetCoords.toString());
-		System.out.println(person.get(0).pathfind.path.toString());
-		
-		// TODO: Pathfinding experimentation. Please remove before merge.
 		 
-		/*System.out.println("Total Cost");
+		System.out.println("Total Cost");
 		test.printWorldTotalCost();
 		System.out.println("Heuristic");
 		test.printWorldHeuristic();
 		System.out.println("Direction");
-		test.printWorldDirection();*/
+		test.printWorldDirection();
 		 
 		 
 		// ==================================================================================================

@@ -62,7 +62,8 @@ public class Creature {
 		actionCountdown=10;
 		walk(w,_direction);
 	}
-	// Walk function. Moves creature in a direction given by xDirection and yDirection 
+	// Walk function. Moves creature in a direction given by xDirection and yDirection
+	// TODO rewrite code.
 	boolean walk(World w, int direction){
 		boolean retval = false;
 		if(actionCountdown<=0){

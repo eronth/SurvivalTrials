@@ -139,11 +139,136 @@ public class World {
 		System.out.print(ret);
 		return ret;
 	}
+	//Inits biomes for the world
 	void initializeBiomes(){
-		//TODO: initialize biomes. Probably create 1-2 biome functions that take in a biome type variable and seed location.
+		int[] chances = {20,20,0,20,20,20};
+		//biomes: forest, mountain, plain, beach, desert
+		addBiome("Beach",findBiomeX("Beach"),findBiomeY("Beach"));
+		addBiome("Mountain",findBiomeX("Mountain"),findBiomeY("Mountain"));
+		addBiome("Forest",findBiomeX("Forest"),findBiomeY("Forest"));
+		addBiome("Desert",findBiomeX("Desert"),findBiomeY("Desert"));
+		
+		
+		for(int i = 0;i < world.length;i++){
+			for(int j = 0; j < world.length;j++){
+				if(world[i][j].landType == D.NONE){
+					lookAroundYou(chances);
+					int rand = D.RAND.nextInt(6)+1;
+					while(rand == D.SALTWATER || rand == D.WATER){
+						rand = D.DIRT;
+					}
+					world[i][j].landType = rand;
+				}
+			}
+		}
 	}
 	
+	private void lookAroundYou(int[] chances) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	//Finds the Y portion for Biome C according to Austin's strategy at the time.
+		//Beach goes straight down from center
+	//current biomes: Beach, Mountain
+	//Input: String matching a current biome type.
+	//Output: 
+	private int findBiomeY(String c) {
+		int retVal = 0;
+		int center=(world[0].length-1)/2;
+		
+		switch(c){
+		
+		case("Beach"):
+			//from center of land, go down until we find saltwater
+			retVal = center;
+			while(world[center][retVal].landType != D.SALTWATER)
+				retVal++;
+			//make the spot we're on land(go north 1)
+			retVal--;
+			break;
+			
+		case("Mountain"):
+			retVal = center - 2;
+			break;
+		case("Forest"):
+			retVal = center - 10;
+			break;
+		case("Desert"):
+			retVal = center - 10;
+			break;
+		}
+		
+		return retVal;
+	}
+	private int findBiomeX(String c) {
+		int retVal = 0;
+		int center=(world[0].length-1)/2;
+		
+		switch(c){
+		case("Beach"):
+			retVal = center;
+			break;
+		case("Mountain"):
+			retVal = center - 2;
+			break;
+		case("Forest"):
+			retVal = center + 10;
+			break;
+		case("Desert"):
+			retVal = center - 10;
+			break;
+		}
+		
+		return retVal;
+	}
 	
+	void addBiome(String c, int x, int y){
+		switch(c){
+		
+		//Strategy: find south shores for +-(4-6) and each puts sand up for 3-5 squares
+		case("Beach")://current strat, circle around center, replacing land
+			int beachSize = D.RAND.nextInt(4)+5;
+			int beachLength = D.RAND.nextInt(4)+3;
+			for(int i = x-(beachSize/2);i< x+(beachSize/2);i++){
+				int southShore = y-5;
+				while(world[i][southShore].landType != D.SALTWATER)
+					southShore++;
+				southShore--;
+				for(int j = 0; j < beachLength;j++){
+					world[i][southShore-j].landType = D.SAND;
+				}
+			}
+		break;
+		case("Mountain"):
+			for(int i = y; i < y+5;i++){
+				for(int j = x; j< x+5; j++){
+					world[i][j].landType = D.STONE;
+				}
+			}
+			break;
+		case("Forest"):
+			for(int i = y; i < y+5;i++){
+				for(int j = x; j< x+5; j++){
+					world[i][j].landType = D.GRASS;
+					if(D.RAND.nextFloat() > 0.75)
+						placeStructure(new Structure(D.TREE,D.MAT_WOOD), i, j);
+				}
+			}
+			break;
+		case("Desert"):
+			for(int i = y; i < y+5;i++){
+				for(int j = x; j< x+5; j++){
+					world[i][j].landType = D.SAND;
+					if(D.RAND.nextFloat() > 0.75)
+						placeStructure(new Structure(D.CACTUS,D.MAT_CACTIPODE), i, j);
+				}
+			}
+			break;
+		}
+		
+	
+	}
 	
 	
 	void placeStructure(Structure s, Coordinates newpos){
@@ -158,6 +283,17 @@ public class World {
 		world[newpos.x][newpos.y].creature=c;
 		c.position.x=newpos.x;
 		c.position.y=newpos.y;
+	}
+	void placeItem(Item i, int x, int y){
+		int j;
+		for(j=0; j<world[x][y].items.length; j++){ // Cycle through items that can be on each land and look for open spot
+			if(world[x][y].item[j]==0){
+				world[x][y].items[j]=i;
+				world[x][y].item[j]=i.itemType;
+				i.xPos=x;
+				i.yPos=y;
+			}
+		}
 	}
 	
 }
