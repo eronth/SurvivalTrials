@@ -1,7 +1,8 @@
 
 public class Item {
 	public int itemType=0; // starts typeless
-	public int xPos=-1,yPos=-1;
+	Coordinates position = new Coordinates();
+	//public int xPos=-1,yPos=-1;
 
 	int capacity=0; // Total room for other items.
 	Item contents[] = new Item[0]; // Used for bags, chests, or items with capacity.
@@ -50,7 +51,14 @@ public class Item {
 		capacity=_capacity;
 		contents=new Item[capacity];
 	}
-	
+	Item(int type, String _name, String _description, int _capacity, Coordinates c){ // Constructor for bag, chest, or other item with capacity.
+		itemType=type;
+		name=_name;
+		description=_description;
+		capacity=_capacity;
+		contents=new Item[capacity];
+		this.position.set(c);
+	}
 	// Working on initialization similar to structure.
 	private void initUnique(){
 		initGeneric(0,"","",0,0,0);

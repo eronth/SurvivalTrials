@@ -15,10 +15,7 @@ public class Coordinates {
 	}
 	
 
-	void setCoord(int _x,int _y) {
-		x=_x;
-		y=_y;
-	}
+	
 	public boolean equals(Coordinates c){
 		return (this.x==c.x && this.y==c.y);
 	}
@@ -54,8 +51,12 @@ public class Coordinates {
 	public Coordinates south() {
 		return directionalCoord(D.SOUTH);
 	}
-	public void setCoord(Coordinates coord) {
-		setCoord(coord.x, coord.y);
+	public void set(Coordinates coord) {
+		set(coord.x, coord.y);
+	}
+	void set(int _x,int _y) {
+		x=_x;
+		y=_y;
 	}
 	
 	@Override

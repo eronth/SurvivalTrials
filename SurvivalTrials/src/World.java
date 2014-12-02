@@ -252,7 +252,7 @@ public class World {
 				for(int j = x; j< x+5; j++){
 					world[i][j].landType = D.GRASS;
 					if(D.RAND.nextFloat() > 0.75)
-						placeStructure(new Structure(D.TREE,D.MAT_WOOD), i, j);
+						placeStructure(new Structure(D.TREE,D.MAT_WOOD), new Coordinates(i,j));
 				}
 			}
 			break;
@@ -261,7 +261,7 @@ public class World {
 				for(int j = x; j< x+5; j++){
 					world[i][j].landType = D.SAND;
 					if(D.RAND.nextFloat() > 0.75)
-						placeStructure(new Structure(D.CACTUS,D.MAT_CACTIPODE), i, j);
+						placeStructure(new Structure(D.CACTUS,D.MAT_CACTIPODE), new Coordinates(i,j));
 				}
 			}
 			break;
@@ -271,27 +271,24 @@ public class World {
 	}
 	
 	
-	void placeStructure(Structure s, Coordinates newpos){
-		world[newpos.x][newpos.y].structure=s;
-		s.position.x=newpos.x;
-		s.position.y=newpos.y;
+	void placeStructure(Structure structure, Coordinates c){
+		world[c.x][c.y].structure=structure;
+		structure.position.set(c);
 	}
-	void placeCreature(Creature c, Coordinates newpos){
-		if(c.position.x!=-1){
-			world[c.position.x][c.position.y].creature=null;
+	void placeCreature(Creature creature, Coordinates c){
+		if(creature.position.x!=-1){
+			world[creature.position.x][creature.position.y].creature=null;
 		}
-		world[newpos.x][newpos.y].creature=c;
-		c.position.x=newpos.x;
-		c.position.y=newpos.y;
+		world[c.x][c.y].creature=creature;
+		creature.position.set(c); 
 	}
-	void placeItem(Item i, int x, int y){
+	void placeItem(Item item, Coordinates c){
 		int j;
-		for(j=0; j<world[x][y].items.length; j++){ // Cycle through items that can be on each land and look for open spot
-			if(world[x][y].item[j]==0){
-				world[x][y].items[j]=i;
-				world[x][y].item[j]=i.itemType;
-				i.xPos=x;
-				i.yPos=y;
+		for(j=0; j<world[c.x][c.y].item.length; j++){ // creatureycreaturele through itemstructure that creaturean be on eacreatureh land and look for open structurepot
+			if(world[c.x][c.y].item[j]==0){
+				world[c.x][c.y].items[j]=item;
+				world[c.x][c.y].item[j]=item.itemType;
+				item.position.set(c);
 			}
 		}
 	}

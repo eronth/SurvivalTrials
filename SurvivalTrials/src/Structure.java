@@ -37,6 +37,13 @@ public class Structure {
 			break;
 		}
 	}
+	Structure(int structureType, int materialType, Coordinates c) {
+		this.structureType=structureType;
+		this.materialType=materialType;
+		this.position.set(c);
+	}
+	
+	
 	// The following is a series of initialization functions that lead into the generic one.
 	private void initTree() {
 		initGeneric(D.TREE,60,D.RES_WOOD,3,D.MAT_WOOD);

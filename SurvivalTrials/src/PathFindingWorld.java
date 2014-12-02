@@ -75,7 +75,7 @@ public class PathFindingWorld {
 						&& (area[i][j].getIsOpenList() && !area[i][j].getIsClosedList()) 
 						&& area[i][j].getIsWalkable()
 						&& area[i][j].totalCost < area[next.x][next.y].totalCost) {
-					next.setCoord(i, j);
+					next.set(i, j);
 					if (costSoFar==0)System.out.println("CHECKME: next: " + next.toString() + " direction: "+area[i][j].getDirection());
 				}
 				
@@ -188,6 +188,6 @@ public class PathFindingWorld {
 		return targetCoords;
 	}
 	public void setTargetCoords(Coordinates coord) {
-		targetCoords.setCoord(coord);
+		targetCoords.set(coord);
 	}	
 }
