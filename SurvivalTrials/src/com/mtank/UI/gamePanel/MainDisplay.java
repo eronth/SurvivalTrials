@@ -1,4 +1,4 @@
-package com.mtank.GraphicsEngine;
+package com.mtank.UI.gamePanel;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;

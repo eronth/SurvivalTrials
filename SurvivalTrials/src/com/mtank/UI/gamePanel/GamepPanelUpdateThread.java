@@ -1,15 +1,15 @@
-package com.mtank.GraphicsEngine;
+package com.mtank.UI.gamePanel;
 import javax.swing.text.BadLocationException;
 
 import com.mtank.game.mainClass;
 
 
-public class Graphics extends Thread{
+public class GamepPanelUpdateThread extends Thread{
 
-	Display window;
+	GamePanel window;
    
-	public Graphics() throws BadLocationException{
-		window=new Display();
+	public GamepPanelUpdateThread() throws BadLocationException{
+		window=new GamePanel();
 		window.setVisible(true);
 		window.initWorld(mainClass.island);
 	}
@@ -22,7 +22,7 @@ public class Graphics extends Thread{
 				e.printStackTrace();
 			}
 			try {
-				Graphics.sleep(900);
+				GamepPanelUpdateThread.sleep(900);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
