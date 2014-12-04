@@ -1,3 +1,11 @@
+package com.mtank.world;
+
+import com.mtank.constants.TypeValue;
+import com.mtank.creature.Creature;
+import com.mtank.game.Coordinates;
+import com.mtank.item.Item;
+import com.mtank.structure.Structure;
+
 
 public class Land {
 	// a lot of these ints will likely be changed to something else, such as Structure or Item data types
@@ -14,41 +22,50 @@ public class Land {
 		case 0:
 			initLand(_landType,1);
 			break;
-		case D.WATER:
+		case TypeValue.Land.WATER:
 			initLand(_landType,1);
 			break;
-		case D.SAND:
+		case TypeValue.Land.SAND:
 			initLand(_landType,1);
 			break;
-		case D.SALTWATER:
+		case TypeValue.Land.SALTWATER:
 			initLand(_landType,.6);
 			break;
-		case D.DIRT:
+		case TypeValue.Land.DIRT:
 			initLand(_landType,1);
 			break;
-		case D.GRASS:
+		case TypeValue.Land.GRASS:
 			initLand(_landType,1);
 			break;
-		case D.STONE:
+		case TypeValue.Land.STONE:
 			initLand(_landType,1);
 			break;
-		case D.SNOW:
+		case TypeValue.Land.SNOW:
 			initLand(_landType,.7);
 			break;
-		case D.ICE:
+		case TypeValue.Land.ICE:
 			initLand(_landType,.5);
 			break;
-		case D.DESERT:
+		case TypeValue.Land.DESERT:
 			initLand(_landType,.8);
 			break;
 		default:
-			initLand(D.SALTWATER,.5);
+			initLand(TypeValue.Land.SALTWATER,.5);
 			break;
 		}
 	}
 	// =Initializes land with the type and how it affects walking/running speed. Movement mod is 1 if movement is not effected.
-	void initLand(int _landType, double _movementMod){
+	void initLand(int _landType, double _movementMod) {
 		landType=_landType;
 		movementMod=_movementMod;
+	}
+	
+
+	public boolean isWalkable() {
+		return (// Returns walkable if no creatures is in the way.
+				(this.creature==null||this.creature.creatureType==0) && 
+				// Returns walkable if no structures obstruct movement.
+				(this.structure==null||this.structure.structureType==0) 
+				);
 	}
 }

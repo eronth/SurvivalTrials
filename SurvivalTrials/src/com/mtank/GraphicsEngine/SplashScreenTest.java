@@ -1,3 +1,4 @@
+package com.mtank.GraphicsEngine;
 import java.awt.*;
  
 /** Splash Screen Demo (with a Progress Bar)

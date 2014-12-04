@@ -1,4 +1,9 @@
+package com.mtank.ai;
+
 import java.util.ArrayList;
+import com.mtank.constants.Direction;
+import com.mtank.game.Coordinates;
+import com.mtank.world.World;
 
 public class PathFindingWorld {
 	// A complete explanation of path-finding is as follows:
@@ -17,12 +22,12 @@ public class PathFindingWorld {
 	public Coordinates startCoords = new Coordinates();
 
 	// wd is the world dimension, used to ensure the pathfinding world is of appropriate size.
-	PathFindingWorld(World w) {
+	public PathFindingWorld(World w) {
 		area=new PathFindingLand[w.world.length][w.world[0].length];
 		for (int i = 0; i<w.world.length; i++) {
 			for (int j = 0; j<w.world[0].length; j++) {
 				area[i][j] = new PathFindingLand();
-				area[i][j].setIsWalkable(D.isWalkable(w, i, j));
+				area[i][j].setIsWalkable(w.world[i][j].isWalkable());
 			}
 		}
 		area[9][6].movementCost=1000;
@@ -51,7 +56,7 @@ public class PathFindingWorld {
 			area[tmp.x][tmp.y].setHeuristic(tmp, targetCoords);
 			// calculate total move distance.
 			// costSoFar increases by 10 if in a cardinal direction and 14 if a diagonal.
-			total = calculateTotalF(tmp, costSoFar+10+(D.isCardinalDirection(i)?0:4));
+			total = calculateTotalF(tmp, costSoFar+10+(Direction.isCardinalDirection(i)?0:4));
 			if(!area[tmp.x][tmp.y].getIsClosedList() && (!area[tmp.x][tmp.y].getIsOpenList() || total < area[tmp.x][tmp.y].totalCost) ) {
 				area[tmp.x][tmp.y].totalCost = total;
 				area[tmp.x][tmp.y].setIsOpenList(true);
@@ -97,7 +102,7 @@ public class PathFindingWorld {
 		while (!c.equals(startCoords)) {
 			direction = area[c.x][c.y].getDirection();
 			tempPath.add(direction);
-			c.setDirection(D.invertDirection(direction));// = c.directionalCoord(direction);
+			c.setDirection(Direction.invertDirection(direction));// = c.directionalCoord(direction);
 			//System.out.println(tempPath);
 			//System.out.println("direction: " + direction + " coordinates: " + c.toString());
 			//TODO complete the addition system.

@@ -1,6 +1,20 @@
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.text.*;
+package com.mtank.GraphicsEngine;
+
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+
+import javax.swing.JFrame;
+import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
+import com.mtank.constants.TypeValue;
+import com.mtank.game.Stringify;
+import com.mtank.world.World;
 
 
 public class Display extends JFrame {
@@ -105,13 +119,13 @@ public class Display extends JFrame {
 				addSpace(workingCanvas, " ");
 				// if there is a creature,structure, or item, they take precedence over land.
 				if (canvas.world[j][i].creature != null && canvas.world[j][i].creature.creatureType != 0) {
-					drawCreature(workingCanvas, D.stringifyCreature(canvas.world[j][i].creature), canvas.world[j][i].creature.creatureType);
+					drawCreature(workingCanvas, Stringify.creature(canvas.world[j][i].creature), canvas.world[j][i].creature.creatureType);
 				} else if (canvas.world[j][i].structure != null && canvas.world[j][i].structure.structureType != 0) {
-					drawStructure(workingCanvas, D.stringifyStructure(canvas.world[j][i].structure), 0);
+					drawStructure(workingCanvas, Stringify.structure(canvas.world[j][i].structure), 0);
 				} else if (canvas.world[j][i].item[0] != 0) {
-					drawItem(workingCanvas, D.stringifyItem(canvas.world[j][i].item[0]), 0);
+					drawItem(workingCanvas, Stringify.item(canvas.world[j][i].item[0]), 0);
 				} else {
-					drawLand(workingCanvas, canvas, D.stringifyLand(canvas.world[j][i].landType), canvas.world[j][i].landType);
+					drawLand(workingCanvas, canvas, Stringify.land(canvas.world[j][i].landType), canvas.world[j][i].landType);
 				}
 				addSpace(workingCanvas, " ");
 			}
@@ -127,7 +141,7 @@ public class Display extends JFrame {
     	for (int i = 0; i < canvas.world.length; i++) {
 			for (int j = 0; j < canvas.world[0].length; j++) {
 				addSpace(landMap, " ");
-				drawLand(landMap, canvas, D.stringifyLand(canvas.world[j][i].landType), canvas.world[j][i].landType);
+				drawLand(landMap, canvas, Stringify.land(canvas.world[j][i].landType), canvas.world[j][i].landType);
 				addSpace(landMap, " ");
 			}
 			addSpace(landMap, "\n");
@@ -148,13 +162,13 @@ public class Display extends JFrame {
 				addSpace(something, " ");
 				// if there is a creature,structure, or item, they take precedence over land.
 				if (canvas.world[j][i].creature != null && canvas.world[j][i].creature.creatureType != 0) {
-					drawCreature(something, D.stringifyCreature(canvas.world[j][i].creature), canvas.world[j][i].creature.creatureType);
+					drawCreature(something, Stringify.creature(canvas.world[j][i].creature), canvas.world[j][i].creature.creatureType);
 				} else if (canvas.world[j][i].structure != null && canvas.world[j][i].structure.structureType != 0) {
-					drawStructure(something, D.stringifyStructure(canvas.world[j][i].structure), 0);
+					drawStructure(something, Stringify.structure(canvas.world[j][i].structure), 0);
 				} else if (canvas.world[j][i].item[0] != 0) {
-					drawItem(something, D.stringifyItem(canvas.world[j][i].item[0]), 0);
+					drawItem(something, Stringify.item(canvas.world[j][i].item[0]), 0);
 				} else {
-					drawLand(something, canvas, D.stringifyLand(canvas.world[j][i].landType), canvas.world[j][i].landType);
+					drawLand(something, canvas, Stringify.land(canvas.world[j][i].landType), canvas.world[j][i].landType);
 				}
 				addSpace(something, " ");
 			}
@@ -196,31 +210,31 @@ public class Display extends JFrame {
 		// Get the current index of the cursor for inputing next character
 		int index=workingCanvas.getLength();
 		switch (type) {
-			case D.SALTWATER:
+			case TypeValue.Land.SALTWATER:
 				workingCanvas.insertString(index, str, saltwater);
 				//workingCanvas.insertString(index, " ", saltwater); // Used for highlighting 
 				//MapDisplay.getHighlighter().addHighlight(index, index+1, saltwaterH); // Used for highlighting 
 				break;
-			case D.NONE:
+			case TypeValue.NONE:
 				workingCanvas.insertString(index, str, land);
 				//workingCanvas.insertString(index, "  ", land); // Used for highlighting 
 			    //MapDisplay.getHighlighter().addHighlight(index, index+1, landH); // Used for highlighting 
 				break;
-			case D.WATER:
+			case TypeValue.Land.WATER:
 				workingCanvas.insertString(index, str, water);
 				//workingCanvas.insertString(index, " ", water); // Used for highlighting 
 			    //MapDisplay.getHighlighter().addHighlight(index, index+1, waterH); // Used for highlighting 
 				break;
-			case D.DIRT:
+			case TypeValue.Land.DIRT:
 				workingCanvas.insertString(index, str, dirt);
 				break;
-			case D.SAND:
+			case TypeValue.Land.SAND:
 				workingCanvas.insertString(index, str, sand);
 				break;
-			case D.GRASS:
+			case TypeValue.Land.GRASS:
 				workingCanvas.insertString(index, str, grass);
 				break;
-			case D.STONE:
+			case TypeValue.Land.STONE:
 				workingCanvas.insertString(index, str, stone);
 				break;
 			default:
@@ -270,7 +284,7 @@ public class Display extends JFrame {
 		
 		// Switch will be based off of data class once implemented to determine color
 		switch (type) {
-			case D.NONE:
+			case TypeValue.NONE:
 				workingCanvas.insertString(workingCanvas.getLength(), str, blank);
 				break;
 		    default:

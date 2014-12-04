@@ -1,7 +1,12 @@
+package com.mtank.item;
+
+import com.mtank.constants.TypeValue;
+import com.mtank.game.Coordinates;
+
 
 public class Item {
 	public int itemType=0; // starts typeless
-	Coordinates position = new Coordinates();
+	public Coordinates position = new Coordinates();
 	//public int xPos=-1,yPos=-1;
 
 	int capacity=0; // Total room for other items.
@@ -31,13 +36,13 @@ public class Item {
 	// Generate default items
 	Item(int _itemType){
 		switch(_itemType){
-			case D.ITM_RES_WOOD:
-			case D.ITM_RES_STONE:
-			case D.ITM_RES_FRUIT:
-			case D.ITM_RES_CACTIPODE:
+			case TypeValue.Item.WOOD:
+			case TypeValue.Item.STONE:
+			case TypeValue.Item.FRUIT:
+			case TypeValue.Item.CACTIPODE:
 				initResource(_itemType);
 				break;
-			case D.NONE:
+			case TypeValue.NONE:
 				initUnique();
 				break;
 		}

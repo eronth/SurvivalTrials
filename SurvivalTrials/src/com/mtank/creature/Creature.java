@@ -1,3 +1,11 @@
+package com.mtank.creature;
+
+import com.mtank.ai.PathFindingWorld;
+import com.mtank.constants.Direction;
+import com.mtank.constants.TypeValue;
+import com.mtank.game.Coordinates;
+import com.mtank.world.World;
+
 
 public class Creature {
 	String firstName="Phillip";
@@ -34,7 +42,7 @@ public class Creature {
 	Creature(World w,String fn,String ln,int type, double weight, int enduranceStart, int strengthStart, int intelligenceStart) {
 		
 	}
-	Creature(World w,String fn,String ln,int type, double weight, int enduranceStart, int strengthStart, int intelligenceStart, int sanityStart, int humanityStart, int galvanyStart) {
+	public Creature(World w,String fn,String ln,int type, double weight, int enduranceStart, int strengthStart, int intelligenceStart, int sanityStart, int humanityStart, int galvanyStart) {
 		firstName=fn;
 		lastName=ln;
 		creatureType=type;
@@ -47,7 +55,7 @@ public class Creature {
 		pathfind=new PathFindingWorld(w);
 	}
 	// This is the switch case for which action the creature will be performing this turn.
-	void action(World w){
+	public void action(World w){
 		switch (actionChoice) {
 			case 0:
 				break;
@@ -68,9 +76,9 @@ public class Creature {
 		boolean retval = false;
 		if(actionCountdown<=0){
 			Coordinates coord=new Coordinates();
-			coord.x=position.x+D.XMOD(direction);
-			coord.y=position.y+D.YMOD(direction);
-			if ((w.world[coord.x][coord.y].creature==null||w.world[coord.x][coord.y].creature.creatureType==0) && w.world[coord.x][coord.y].landType!=D.SALTWATER && w.world[coord.x][coord.y].landType!=D.WATER){
+			
+			coord.set(Direction.modify(position, direction));
+			if ((w.world[coord.x][coord.y].creature==null||w.world[coord.x][coord.y].creature.creatureType==0) && w.world[coord.x][coord.y].landType!=TypeValue.Land.SALTWATER && w.world[coord.x][coord.y].landType!=TypeValue.Land.WATER){
 				w.placeCreature(this,coord);
 			}
 			actionCountdown=10;

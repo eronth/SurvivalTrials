@@ -1,11 +1,14 @@
+package com.mtank.GraphicsEngine;
 import javax.swing.text.BadLocationException;
+
+import com.mtank.game.mainClass;
 
 
 public class Graphics extends Thread{
 
 	Display window;
    
-	Graphics() throws BadLocationException{
+	public Graphics() throws BadLocationException{
 		window=new Display();
 		window.setVisible(true);
 		window.initWorld(mainClass.island);

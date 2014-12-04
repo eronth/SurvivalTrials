@@ -1,3 +1,6 @@
+package com.mtank.ai;
+import com.mtank.game.Coordinates;
+
 
 public class PathFindingLand {
 	int totalCost = 100000;	// F, the combination of values.

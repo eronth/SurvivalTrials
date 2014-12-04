@@ -1,6 +1,11 @@
-import java.util.LinkedList;
+package com.mtank.game;
 
+import java.util.LinkedList;
 import javax.swing.text.BadLocationException;
+import com.mtank.GraphicsEngine.Display;
+import com.mtank.GraphicsEngine.Graphics;
+import com.mtank.creature.Creature;
+import com.mtank.world.World;
 
 /*
  * @Authors
@@ -28,16 +33,16 @@ import javax.swing.text.BadLocationException;
 // 5.	Character attributes are being desiged such that an average human will start with one stat at 50 and two stats at 30, dependant on his skillset.
 
 public class mainClass {
-	static World island;
+	public static World island;
 	static Display window;
 	static LinkedList<Creature> person=new LinkedList<Creature>();
 	
 	
 	public static void main(String arg[]) throws BadLocationException{
-		D.seedRand();
+		Game.seedRand();
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
 		island=new World(50);
-		System.out.println("\nFinal World Generation using :"+D.seed);
+		System.out.println("\nFinal World Generation using :"+Game.getSeed());
 		island.printWorld();
 		
 		Graphics g = new Graphics();
@@ -77,8 +82,7 @@ public class mainClass {
 				// TODO: ACTION GOES HERE.
 				person.get(i).action(island);// TODO: revert this to cycling everyone.
 			}
-			 
-			window.display(island);
+			
 			endTime=System.currentTimeMillis();
 			elapsedTime=endTime-startTime;
 			System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
