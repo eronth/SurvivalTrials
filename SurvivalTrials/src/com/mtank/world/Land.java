@@ -2,7 +2,6 @@ package com.mtank.world;
 
 import com.mtank.constants.TypeValue;
 import com.mtank.creature.Creature;
-import com.mtank.game.Coordinates;
 import com.mtank.item.Item;
 import com.mtank.structure.Structure;
 

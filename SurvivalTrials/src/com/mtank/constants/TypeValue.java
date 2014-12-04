@@ -1,6 +1,5 @@
 package com.mtank.constants;
 
-import java.sql.Struct;
 
 public class TypeValue {
 	public static final int NONE=0;
