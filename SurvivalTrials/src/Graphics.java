@@ -1,14 +1,17 @@
+
 import javax.swing.text.BadLocationException;
 
 
 public class Graphics extends Thread{
 
 	Display window;
+	int threadUpdateDelay;
    
 	Graphics() throws BadLocationException{
 		window=new Display();
 		window.setVisible(true);
 		window.initWorld(mainClass.island);
+		threadUpdateDelay = 300;
 	}
 	public void run() {
 		while (true) {
@@ -19,7 +22,7 @@ public class Graphics extends Thread{
 				e.printStackTrace();
 			}
 			try {
-				Graphics.sleep(900);
+				Graphics.sleep(threadUpdateDelay);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

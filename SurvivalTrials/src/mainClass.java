@@ -31,8 +31,8 @@ public class mainClass {
 	static World island;
 	static Display window;
 	static LinkedList<Creature> person=new LinkedList<Creature>();
-	
-	
+		
+		
 	public static void main(String arg[]) throws BadLocationException{
 		D.seedRand();
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
