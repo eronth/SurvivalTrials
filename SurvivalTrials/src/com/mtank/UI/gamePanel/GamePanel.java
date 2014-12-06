@@ -25,18 +25,30 @@ public class GamePanel extends JPanel {
 	private StyledDocument landMap=new DefaultStyledDocument();
 	private StyledDocument current=new DefaultStyledDocument();
 	private StyledDocument buffered=new DefaultStyledDocument();  //New for triple buffered
+	
+	private int fontSize = 12;
     
     public GamePanel() {
     	// Set up main display window
 		WorldDisplay = new JTextPane();
 		
-		Font monoSpace=new Font("Monospaced", Font.PLAIN, 12);
-		//Font cNew=new Font("Courier New", 0, 12);
+		Font monoSpace=new Font("Monospaced", Font.PLAIN, fontSize);
+		//Font cNew=new Font("Courier New", 0, fontSize);
 		// Set display background and font
 		WorldDisplay.setBackground(Color.black); // Set background color. Black seems to work well
 		WorldDisplay.setFont(monoSpace); // Set the font for grid display. Must be monospaced
 		
 		add(WorldDisplay);
+    }
+    
+    /**
+     * Updates the font size for the display.
+     */
+    public void setFontSize(int _size){
+    	if(_size >= 1){
+    		fontSize = _size;
+    		WorldDisplay.setFont(new Font("Monospaced", Font.PLAIN, fontSize));
+    	}
     }
     
 	//TODO REWRITE TO MAKE EVEN FASTER

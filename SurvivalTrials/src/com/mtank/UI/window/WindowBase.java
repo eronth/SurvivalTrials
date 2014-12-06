@@ -86,14 +86,17 @@ public class WindowBase {
 		
 		JPanel rightPanel = new JPanel();
 		horizontalSplitPane.setRightComponent(rightPanel);
-		bottomLeftPanel.setLayout(new BorderLayout(0, 0));
+		//bottomLeftPanel.setLayout(new BorderLayout(0, 0));
 		
 		tConsole = new Console();
-		bottomLeftPanel.add(tConsole, BorderLayout.CENTER);
-		topLeftPanel.setBounds(0,0,700,900);
+		//bottomLeftPanel.add(tConsole, BorderLayout.CENTER);
+		bottomLeftPanel.add(tConsole);
 		gameWorldDisplay = new GamePanel();
 		topLeftPanel.add(gameWorldDisplay);
 		
+		//Properly Align the splitpanes
+		verticalSplitPane.setResizeWeight(.95);
+		horizontalSplitPane.setResizeWeight(.85);
 	}
 
 	/**
@@ -101,7 +104,7 @@ public class WindowBase {
 	 * Set the mainGUI to be visible.
 	 * TEMPRORARY
 	 */
-	public void initiate() {
+	public void makeVisible() {
 		this.frame.setVisible(true);
 	}
 
@@ -135,6 +138,15 @@ public class WindowBase {
 	 */
 	public void printError(String msg) {
 		tConsole.writeln("Errors", msg);
+	}
+
+	/**
+	 * TEMPRORARY
+	 * Temporary pass through to panel to update the font size.
+	 * TEMPRORARY
+	 */
+	public void setFontSize(int _size) {
+		gameWorldDisplay.setFontSize(_size);
 	}
 
 }

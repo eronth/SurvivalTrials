@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
 
-import com.mtank.UI.gamePanel.GamepPanelUpdateThread;
 import com.mtank.UI.window.WindowBase;
 import com.mtank.creature.Creature;
 import com.mtank.world.World;
@@ -45,12 +44,13 @@ public class mainClass {
 	public static void main(String arg[]) throws BadLocationException{
 		Game.seedRand();
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
-		island=new World(50);
+		island=new World(120);
 		System.out.println("\nFinal World Generation using :"+Game.getSeed());
 		island.printWorld();
 		
 		final WindowBase gameWindow = new WindowBase();
 		
+		//Depreciated Code to run update on game world display
 		//GamepPanelUpdateThread g = new GamepPanelUpdateThread();
 		//g.start();
 		 
@@ -82,7 +82,8 @@ public class mainClass {
 		int maxn=n;
 		long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
 		long startTime,endTime,elapsedTime;
-		gameWindow.initiate();
+		gameWindow.makeVisible();
+		gameWindow.setFontSize(5);
 		Timer windowUpdate = new Timer(300, new ActionListener() {
 		    public void actionPerformed(ActionEvent evt) {    
 		        gameWindow.updateWorldDisplay();
@@ -107,6 +108,29 @@ public class mainClass {
 					Thread.currentThread().interrupt();
 				}
 			}
+			/*
+			 * Testing a timer for the main game loop. As of now, does not work.
+			 * 
+			 * Timer GameLoop = new Timer(300, new ActionListener() {int n=200;
+			int maxn=n;
+			long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
+			long startTime,endTime,elapsedTime;
+			    public void actionPerformed(ActionEvent evt) {    
+			    	startTime=System.currentTimeMillis();
+					for(int i=0;i<person.size();i++){
+						// TODO: ACTION GOES HERE.
+						person.get(i).action(island);// TODO: revert this to cycling everyone.
+					}
+					
+					endTime=System.currentTimeMillis();
+					elapsedTime=endTime-startTime;
+					System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
+					//gameWindow.print("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
+			    }
+			});
+			GameLoop.start();
+			*End of Timer Test
+			*/
 			n--;
 		}/**/
 			

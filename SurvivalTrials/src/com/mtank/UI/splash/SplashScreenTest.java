@@ -1,5 +1,8 @@
 package com.mtank.UI.splash;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.SplashScreen;
  
 /** Splash Screen Demo (with a Progress Bar)
     Run with VM command-line option -splash:splashImageFilename */
