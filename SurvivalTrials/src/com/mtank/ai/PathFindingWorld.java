@@ -1,6 +1,7 @@
 package com.mtank.ai;
 
 import java.util.ArrayList;
+
 import com.mtank.constants.Direction;
 import com.mtank.game.Coordinates;
 import com.mtank.world.World;

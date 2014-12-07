@@ -1,13 +1,14 @@
-package com.mtank.GraphicsEngine;
+package com.mtank.UI.gamePanel;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.GridLayout;
+import java.awt.TextArea;
+
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import java.awt.Color;
-import javax.swing.BoxLayout;
-import java.awt.GridLayout;
-import java.awt.Component;
-import java.awt.TextArea;
 
 
 @SuppressWarnings("serial")

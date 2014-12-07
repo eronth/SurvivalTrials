@@ -1,10 +1,9 @@
-package com.mtank.GraphicsEngine;
+package com.mtank.UI.gamePanel;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Font;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -17,34 +16,39 @@ import com.mtank.game.Stringify;
 import com.mtank.world.World;
 
 
-public class Display extends JFrame {
+public class GamePanel extends JPanel {
 
 	//Added to make Eclipse Happy
 	private static final long serialVersionUID = 1L;
 	
-	private JTextPane MapDisplay;
+	private JTextPane WorldDisplay;
 	private StyledDocument landMap=new DefaultStyledDocument();
 	private StyledDocument current=new DefaultStyledDocument();
 	private StyledDocument buffered=new DefaultStyledDocument();  //New for triple buffered
+	
+	private int fontSize = 12;
     
-    public Display() {
+    public GamePanel() {
     	// Set up main display window
-		MapDisplay = new JTextPane();
+		WorldDisplay = new JTextPane();
 		
-		// Set up frame to house display
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setAlwaysOnTop(true);
-		setBackground(Color.white);
-		setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); // Unsure if needed
-		setSize(1100,900);
-		
-		Font monoSpace=new Font("Monospaced", Font.PLAIN, 12);
-		//Font cNew=new Font("Courier New", 0, 12);
+		Font monoSpace=new Font("Monospaced", Font.PLAIN, fontSize);
+		//Font cNew=new Font("Courier New", 0, fontSize);
 		// Set display background and font
-		MapDisplay.setBackground(Color.black); // Set background color. Black seems to work well
-		MapDisplay.setFont(monoSpace); // Set the font for grid display. Must be monospaced
+		WorldDisplay.setBackground(Color.black); // Set background color. Black seems to work well
+		WorldDisplay.setFont(monoSpace); // Set the font for grid display. Must be monospaced
 		
-		add(MapDisplay);
+		add(WorldDisplay);
+    }
+    
+    /**
+     * Updates the font size for the display.
+     */
+    public void setFontSize(int _size){
+    	if(_size >= 1){
+    		fontSize = _size;
+    		WorldDisplay.setFont(new Font("Monospaced", Font.PLAIN, fontSize));
+    	}
     }
     
 	//TODO REWRITE TO MAKE EVEN FASTER
@@ -108,9 +112,9 @@ public class Display extends JFrame {
 		
 		// Clear the current document in preparation of update
     	//workingCanvas.remove(0, workingCanvas.getLength());
-    	altCanvas = MapDisplay.getStyledDocument();
+    	altCanvas = WorldDisplay.getStyledDocument();
     	workingCanvas = new DefaultStyledDocument();
-		MapDisplay.setDocument(altCanvas);
+		WorldDisplay.setDocument(altCanvas);
 		//MapDisplay.setDocument(altCanvas);
 		
 		// Cycle through and world array and first display land
@@ -133,7 +137,7 @@ public class Display extends JFrame {
 		}
 		
 		// Once update is complete, set display to updated document
-		MapDisplay.setDocument(workingCanvas);
+		WorldDisplay.setDocument(workingCanvas);
     }
     
     // Set up the 'blank' document that we will be stitching behind the real one
@@ -182,28 +186,28 @@ public class Display extends JFrame {
 	public void drawLand(StyledDocument workingCanvas,World canvas, String str, int type) throws BadLocationException {
 		
 		// Set up text styles for landtypes.  Also set up highlights for possible use later
-		Style blank = MapDisplay.addStyle("blank", null);
+		Style blank = WorldDisplay.addStyle("blank", null);
 		StyleConstants.setForeground(blank, Color.white);
 		//DefaultHighlighter.DefaultHighlightPainter blankH=new DefaultHighlighter.DefaultHighlightPainter(Color.white);
-		Style saltwater = MapDisplay.addStyle("saltwater", null);
+		Style saltwater = WorldDisplay.addStyle("saltwater", null);
 		StyleConstants.setForeground(saltwater, Color.blue);
 		//-------------------------------------------------------------
-		Style dirt = MapDisplay.addStyle("dirt", null);
+		Style dirt = WorldDisplay.addStyle("dirt", null);
 		StyleConstants.setForeground(dirt, Color.decode("#964B00"));
-		Style grass = MapDisplay.addStyle("grass", null);
+		Style grass = WorldDisplay.addStyle("grass", null);
 		StyleConstants.setForeground(grass, Color.green);
-		Style stone = MapDisplay.addStyle("stone", null);
+		Style stone = WorldDisplay.addStyle("stone", null);
 		StyleConstants.setForeground(stone, Color.gray);
-		Style sand = MapDisplay.addStyle("sand", null);
+		Style sand = WorldDisplay.addStyle("sand", null);
 		StyleConstants.setForeground(sand, Color.yellow);
 		//-------------------------------------------------------------
 		//DefaultHighlighter.DefaultHighlightPainter saltwaterH=new DefaultHighlighter.DefaultHighlightPainter(Color.blue);
 		Color waterC = new Color(156, 245, 245);
-		Style water = MapDisplay.addStyle("water", null);
+		Style water = WorldDisplay.addStyle("water", null);
 		StyleConstants.setForeground(water, waterC);
 		//DefaultHighlightPainter waterH=new DefaultHighlighter.DefaultHighlightPainter(waterC);
 		Color landC = Color.green.darker();	
-		Style land = MapDisplay.addStyle("land", null);
+		Style land = WorldDisplay.addStyle("land", null);
 		StyleConstants.setForeground(land, landC);
 		//DefaultHighlighter.DefaultHighlightPainter landH=new DefaultHighlighter.DefaultHighlightPainter(landC);
 		
@@ -247,7 +251,7 @@ public class Display extends JFrame {
 
 	// Function to draw creature. Will pull and compare with data class
 	public void drawCreature(StyledDocument workingCanvas, String str, int type) throws BadLocationException {
-		Style blank = MapDisplay.addStyle("blank", null);
+		Style blank = WorldDisplay.addStyle("blank", null);
 		StyleConstants.setForeground(blank, Color.WHITE);
 		
 		// Switch will be based off of data class once implemented to determine color
@@ -263,7 +267,7 @@ public class Display extends JFrame {
 
 	// Function to draw structure. Will pull and compare with data class
 	public void drawStructure(StyledDocument workingCanvas, String str, int type) throws BadLocationException {
-		Style blank = MapDisplay.addStyle("blank", null);
+		Style blank = WorldDisplay.addStyle("blank", null);
 		StyleConstants.setForeground(blank, Color.white);
 		
 		// Switch will be based off of data class once implemented to determine color
@@ -279,7 +283,7 @@ public class Display extends JFrame {
 
 	// Function to draw first item on land from item array. Will pull and compare with data class
 	public void drawItem(StyledDocument workingCanvas, String str, int type) throws BadLocationException {
-		Style blank = MapDisplay.addStyle("blank", null);
+		Style blank = WorldDisplay.addStyle("blank", null);
 		StyleConstants.setForeground(blank, Color.white);
 		
 		// Switch will be based off of data class once implemented to determine color
