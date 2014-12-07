@@ -49,8 +49,8 @@ public class mainClass {
 		g.start();
 		 
 		// Code in place for crappy initialization purposes.
-		person.add(new Creature(island,"Jack","MeHoff",1,70.0,50,2,50,100,100,100));
-		person.add(new Creature(island,"Jill","MeHoff",1,70,50,2,50,100,100,100));
+		person.add(new Creature("Jack","MeHoff",1,70.0,50,2,50,100,100,100));
+		person.add(new Creature("Jill","MeHoff",1,70,50,2,50,100,100,100));
 		 
 		Coordinates c=new Coordinates(30,30);
 		island.placeCreature(person.get(0),c);

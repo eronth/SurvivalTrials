@@ -28,12 +28,15 @@ public class PathFindingWorld {
 			for (int j = 0; j<w.world[0].length; j++) {
 				area[i][j] = new PathFindingLand();
 				area[i][j].setIsWalkable(w.world[i][j].isWalkable());
+				area[i][j].setMovemetnCostModifier(w.world[i][j].getMovementModifier());
 			}
 		}
-		area[9][6].movementCost=1000;
+		//area[9][6].movementCost=1000;
 		//initializeLandMovementCost(w);
 	}
-	void generatePath(Coordinates cur, int costSoFar) {
+	
+	
+	public void generatePath(Coordinates cur, int costSoFar) {
 		
 		//TODO clean up? The following only occurs on the first execution.
 		if (costSoFar == 0) {
@@ -122,7 +125,7 @@ public class PathFindingWorld {
 		//TODO actually calculate final F
 		//TODO use the formula F = G + H;
 		//TODO Sorely incomplete
-		return costSoFar*area[c.x][c.y].movementCost + area[c.x][c.y].heuristicCost;
+		return (int) (costSoFar*area[c.x][c.y].movementCostModifier + area[c.x][c.y].heuristicCost);
 	}
 	
 	public String printTotalCostWorld() {
@@ -142,7 +145,7 @@ public class PathFindingWorld {
 		s.append("Movement Cost World\n");
 		for (int j = 0; j<area.length; j++) {
 			for (int i = 0; i<area[0].length; i++) {
-				s.append(area[i][j].movementCost + " ");
+				s.append(area[i][j].movementCostModifier + " ");
 			}
 			s.append("\n");
 		}

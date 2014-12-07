@@ -4,7 +4,7 @@ import com.mtank.game.Coordinates;
 
 public class PathFindingLand {
 	int totalCost = 100000;	// F, the combination of values.
-	int movementCost = 1;	// The modifier for this land (slower on sand or faster on road).
+	double movementCostModifier = 1;	// The modifier for this land (slower on sand or faster on road).
 	int heuristicCost = 0;	// H, an estimated cost to reach B from here.
 	
 	private int direction = 0; 		// Direction of cheapest movement.
@@ -47,5 +47,12 @@ public class PathFindingLand {
 	}
 	public void setDirection(int direction) {
 		this.direction = direction;
+	}
+	
+	public double getMovemetnCostModifier() {
+		return movementCostModifier;
+	}
+	public void setMovemetnCostModifier(double movementCost) {
+		this.movementCostModifier = movementCost;
 	}
 }
