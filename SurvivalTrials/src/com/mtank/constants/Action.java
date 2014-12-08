@@ -9,6 +9,6 @@ public class Action {
 	public static final int DESTROY=5; 
 	public static final int BUILD=6;
 	public static final int SLEEP=7;
-	//public static final int =8;
-	
+	public static final int ATTACK=8;
+	public static final int DEFEND=9;
 }
