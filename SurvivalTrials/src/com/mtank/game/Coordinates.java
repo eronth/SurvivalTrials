@@ -26,37 +26,43 @@ public class Coordinates {
 		return (this.x==c.x && this.y==c.y);
 	}
 	public Coordinates directionalCoord(int direction) {
-		return new Coordinates
-				();
+		//TODO figure out why this was just "return new Coordinates();".
+		return new Coordinates(this.x+Direction.modifyX(direction),this.y+Direction.modifyY(direction));
 	}
 	public void setDirection(int direction) {
 		this.set(Direction.modify(this,direction));
 		//this.x+=Direction.modifyX(direction);
 		//this.y+=Direction.modifyY(direction);
 	}
-	
 
 	public Coordinates north() {
 		return directionalCoord(Direction.NORTH);
 	}
+	
 	public Coordinates northwest() {
 		return directionalCoord(Direction.NORTHWEST);
 	}
+	
 	public Coordinates northeast() {
 		return directionalCoord(Direction.NORTHEAST);
 	}
+	
 	public Coordinates west() {
 		return directionalCoord(Direction.WEST);
 	}
+	
 	public Coordinates east() {
 		return directionalCoord(Direction.EAST);
 	}
+	
 	public Coordinates southeast() {
 		return directionalCoord(Direction.SOUTHEAST);
 	}
+	
 	public Coordinates southwest() {
 		return directionalCoord(Direction.SOUTHWEST);
 	}
+	
 	public Coordinates south() {
 		return directionalCoord(Direction.SOUTH);
 	}
