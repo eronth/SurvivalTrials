@@ -1,9 +1,9 @@
 package com.mtank.creature;
 
 import com.mtank.ai.PathFindingWorld;
-import com.mtank.constants.Direction;
-import com.mtank.constants.TypeValue;
+import com.mtank.constants.Action;
 import com.mtank.game.Coordinates;
+import com.mtank.game.Game;
 import com.mtank.game.mainClass;
 import com.mtank.world.World;
 
@@ -13,8 +13,9 @@ public class Creature {
 	String lastName="Fry";
 	public int creatureType=0;
 	public Coordinates position = new Coordinates();
+	private int facingDirection = 1;
 	private int actionChoice=0;
-	private int actionCountdown=0;
+	private int actionCountdownTimer=0;
 	// Base Attributes
 	private int baseEndurance;		// How much abuse you can take.
 	private int baseStrength;		// How much abuse you can deal.
@@ -43,7 +44,7 @@ public class Creature {
 	}
 	
 	/**
-	 * Initialize a creature with a first name of <fn>, last name of <ln> and type of <type>. All other stats are also initialized here.
+	 * Initialize a creature with a first name of <code>fn</code>, last name of <code>ln</code> and type of <code>type</code>. All other stats are also initialized here.
 	 */
 	public Creature(String fn,String ln,int type, double weight, int enduranceStart, int strengthStart, int intelligenceStart, int sanityStart, int humanityStart, int galvanyStart) {
 		firstName=fn;
@@ -59,7 +60,7 @@ public class Creature {
 	}
 	
 	/**
-	 * Finds the ideal path between creatures current location and <target>.
+	 * Finds the ideal path between creatures current location and <code>target</code>.
 	 */
 	public void generatePath(Coordinates target) {
 		pathfind.targetCoords = new Coordinates(target);
@@ -69,21 +70,59 @@ public class Creature {
 	// This is the switch case for which action the creature will be performing this turn.
 	public void action(World w){
 		switch (actionChoice) {
-			case 0:
+			case Action.IDLE:
 				break;
-			case 1:
-				initWalk(w,0);
+			case Action.WANDER:
+				
+				break;
+			//case 1:
+			//	initWalk(w,0);
+			//	break;
+			default:
 				break;
 		}
 	}
 	
+	
+	// XXX ================================================
+	/**
+	 * Allows a creature to wander without direction.
+	 */
+	public void wander() {
+		/*if (actionCountdownTimer == 0) {
+			actionCountdownTimer = 10;
+		} else {
+			actionCountdownTimer--;
+			if(actionCountdownTimer == 0) {
+				//TODO perform action
+			}
+		}*/
+		// TODO STEPS:
+		// TODO Determine direction (based on current direction?)
+		int random = Game.RAND.nextInt()%100;
+		if (random>50) {
+			//same direction
+		} else if (random>25) {
+			//slightly angled direction
+		} else if (random>5) {
+			//90 degree difference
+		} else {
+			//nearly backwards
+		}
+		// TODO Set countdown timer. Should be based on speed/diagonal?/terrain difficulty.
+		// TODO if countdown is set, count down
+		// TODO if countdown hits 0, act!
+	}
+	
+	// XXX ================================================
+	
+	
 	// Walking prep function. Sets the countdown to 10
 	void initWalk(World w, int _direction){
 		actionChoice=actionChoice+1;
-		actionCountdown=10;
+		actionCountdownTimer=10;
 		walk(w,_direction);
 	}
-	
 	// Walk function. Moves creature in a direction given by xDirection and yDirection
 	// TODO rewrite code.
 	boolean walk(World w, int direction){
@@ -91,11 +130,15 @@ public class Creature {
 		return true;
 	}
 	
-
+	
+	
+	
+	/**
+	 * Returns the speed of the creature based on many factors, including their strength, weight, energy.
+	 * @return
+	 */
 	int getSpeed(){
-		int ret=0;
-		//ret = (int)( ((getStrength()-(getWeight()-70))*(getEnergy_lt())/100) ); // Move at a speed based on weight and energy
-		return ret;
+		return (int)( ((getStrength()-(getWeight()-70))*(getLongTermEnergy())/100) ); // Move at a speed based on weight and energy
 	}
 	
 	/**
