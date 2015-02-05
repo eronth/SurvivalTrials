@@ -1,5 +1,7 @@
 package com.mtank.creature;
 
+import java.util.LinkedList;
+
 import com.mtank.ai.PathFindingWorld;
 import com.mtank.constants.Action;
 import com.mtank.game.Coordinates;
@@ -14,7 +16,7 @@ public class Creature {
 	public int creatureType=0;
 	public Coordinates position = new Coordinates();
 	private int facingDirection = 1;
-	private int actionChoice=0;
+	private LinkedList <Integer> actionChoice=new LinkedList<Integer>();
 	private int actionCountdownTimer=0;
 	// Base Attributes
 	private int baseEndurance;		// How much abuse you can take.
@@ -69,7 +71,7 @@ public class Creature {
 	
 	// This is the switch case for which action the creature will be performing this turn.
 	public void action(World w){
-		switch (actionChoice) {
+		switch (actionChoice.get(0)) {
 			case Action.IDLE:
 				break;
 			case Action.WANDER:
@@ -83,6 +85,53 @@ public class Creature {
 		}
 	}
 	
+	/**
+	 * Prepare the next action in the list. Sets action to IDLE or WANDER if list is expended.
+	 */
+	public void prepareNextAction() {
+		if (actionChoice.size() == 1 || actionChoice.size()==0) {
+			if (actionChoice.size() == 1) {
+				actionChoice.remove();
+			}
+			actionChoice.add((Game.RAND.nextInt()%2==1)?Action.IDLE:Action.WANDER);
+		}
+		switch (actionChoice.get(1)) {
+		case Action.IDLE:
+			//TODO function
+			break;
+		case Action.WANDER:
+			//TODO function
+			break;
+		case Action.WALK:
+			//TODO function
+			break;
+		case Action.GRAB:
+			//TODO function
+			break;
+		case Action.GATHER:
+			//TODO function
+			break;
+		case Action.DESTROY:
+			//TODO function
+			break;
+		case Action.BUILD:
+			//TODO function
+			break;
+		case Action.SLEEP:
+			//TODO function
+			break;
+		case Action.ATTACK:
+			//TODO function
+			break;
+		case Action.DEFEND:
+			//TODO function
+			break;
+			
+		default:
+			System.out.println("[ERROR] You dun failed to make an action for the value: "+actionChoice.get(1));
+			break;
+		}
+	}
 	
 	// XXX ================================================
 	/**
@@ -118,11 +167,11 @@ public class Creature {
 	
 	
 	// Walking prep function. Sets the countdown to 10
-	void initWalk(World w, int _direction){
+	/*void initWalk(World w, int _direction){
 		actionChoice=actionChoice+1;
 		actionCountdownTimer=10;
 		walk(w,_direction);
-	}
+	}*/
 	// Walk function. Moves creature in a direction given by xDirection and yDirection
 	// TODO rewrite code.
 	boolean walk(World w, int direction){
