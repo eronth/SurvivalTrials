@@ -1,5 +1,6 @@
 package com.mtank.game;
 
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
@@ -39,16 +40,33 @@ import com.mtank.world.World;
 public class mainClass {
 	public static World island;
 	static LinkedList<Creature> person=new LinkedList<Creature>();
+	static WindowBase gameWindow;
+	//Testing
+	static int n=10;
+	static int maxn=n;
+	long mspt=(long) (.2*1000);
+	long startTime,endTime,elapsedTime;
 	
 	
 	public static void main(String arg[]) throws BadLocationException{
 		Game.seedRand();
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
+		//120 is max advisable size.
 		island=new World(120);
 		System.out.println("\nFinal World Generation using :"+Game.getSeed());
 		island.printWorld();
-		
-		final WindowBase gameWindow = new WindowBase();
+		// WindowBase gameWindow;
+
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					gameWindow = new WindowBase();
+					gameWindow.setFontSize(5);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		
 		//Depreciated Code to run update on game world display
 		//GamepPanelUpdateThread g = new GamepPanelUpdateThread();
@@ -58,7 +76,7 @@ public class mainClass {
 		person.add(new Creature(island,"Jack","MeHoff",1,70.0,50,2,50,100,100,100));
 		person.add(new Creature(island,"Jill","MeHoff",1,70,50,2,50,100,100,100));
 		 
-		Coordinates c=new Coordinates(30,30);
+		Coordinates c=new Coordinates(island.worldDimension/2,island.worldDimension/2);
 		island.placeCreature(person.get(0),c);
 		c=new Coordinates(island.worldDimension/2+2, island.worldDimension/2);
 		island.placeCreature(person.get(1),c);
@@ -78,15 +96,17 @@ public class mainClass {
 		// ==================================================================================================
 		// Rudamentary game loop starts here. int n is used to iterate the number of turns you'd like to run.
 		// This loop will eventually be infinite until user selects to end game.
-		int n=200;
+		/*int n=10;
 		int maxn=n;
 		long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
 		long startTime,endTime,elapsedTime;
-		gameWindow.makeVisible();
-		gameWindow.setFontSize(5);
-		Timer windowUpdate = new Timer(300, new ActionListener() {
-		    public void actionPerformed(ActionEvent evt) {    
-		        gameWindow.updateWorldDisplay();
+		//Using a temporary function until Window creation is moved to separate thread.
+		//gameWindow.makeVisible();
+		//Using a temporary function to manually adjust map panel size until window dynamically resizes.
+		//gameWindow.setFontSize(5);
+		Timer windowUpdate = new Timer(900, new ActionListener() {
+		    public void actionPerformed(ActionEvent evt) {
+		    	//gameWindow.updateWorldDisplay();
 		    }
 		});
 		windowUpdate.start();
@@ -100,7 +120,8 @@ public class mainClass {
 			endTime=System.currentTimeMillis();
 			elapsedTime=endTime-startTime;
 			System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
-			gameWindow.print("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
+			//gameWindow.print("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
+			
 			if(mspt>elapsedTime){
 				try {
 					Thread.sleep(mspt-elapsedTime);
@@ -108,31 +129,61 @@ public class mainClass {
 					Thread.currentThread().interrupt();
 				}
 			}
-			/*
-			 * Testing a timer for the main game loop. As of now, does not work.
-			 * 
-			 * Timer GameLoop = new Timer(300, new ActionListener() {int n=200;
-			int maxn=n;
-			long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
-			long startTime,endTime,elapsedTime;
-			    public void actionPerformed(ActionEvent evt) {    
-			    	startTime=System.currentTimeMillis();
-					for(int i=0;i<person.size();i++){
-						// TODO: ACTION GOES HERE.
-						person.get(i).action(island);// TODO: revert this to cycling everyone.
-					}
-					
-					endTime=System.currentTimeMillis();
-					elapsedTime=endTime-startTime;
-					System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
-					//gameWindow.print("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
-			    }
-			});
-			GameLoop.start();
-			*End of Timer Test
-			*/
 			n--;
 		}/**/
+		/*
+		 * Testing a timer for the main game loop. As of now, does not work.
+		 * 
+		 */ /*Timer GameLoop = new Timer(300, new ActionListener() {int n=200;
+		long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
+		long startTime,endTime,elapsedTime;
+		    public void actionPerformed(ActionEvent evt) {    
+		    	startTime=System.currentTimeMillis();
+				for(int i=0;i<person.size();i++){
+					// TODO: ACTION GOES HERE.
+					person.get(i).action(island);// TODO: revert this to cycling everyone.
+				}
+				
+				endTime=System.currentTimeMillis();
+				elapsedTime=endTime-startTime;
+				System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
+				//gameWindow.print("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
+		    	gameWindow.updateWorldDisplay();
+				n--;
+		    }
+		});
+		GameLoop.start();
+		//End of Timer Test*/
+
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Timer GameLoop = new Timer(300, new ActionListener() {
+					long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
+					long startTime,endTime,elapsedTime;
+					    public void actionPerformed(ActionEvent evt) {
+					    	if(n > 0) {
+						    	startTime=System.currentTimeMillis();
+								for(int i=0;i<person.size();i++){
+									// TODO: ACTION GOES HERE.
+									person.get(i).action(island);// TODO: revert this to cycling everyone.
+								}
+								
+								endTime=System.currentTimeMillis();
+								elapsedTime=endTime-startTime;
+								System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
+								//gameWindow.print("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
+						    	gameWindow.updateWorldDisplay();
+								n--;
+					    	}
+					    }
+					});
+					GameLoop.start();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 			
 			
 		// TODO: remove all of the following code

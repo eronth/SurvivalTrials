@@ -4,12 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.text.BadLocationException;
 
 import com.mtank.UI.console.Console;
+import com.mtank.UI.gamePanel.GameBoard;
 import com.mtank.UI.gamePanel.GamePanel;
+import com.mtank.UI.gamePanel.LandBoard;
 import com.mtank.game.mainClass;
 
 public class WindowBase {
@@ -17,6 +20,8 @@ public class WindowBase {
 	private JFrame frame;
 	private Console tConsole;
 	static GamePanel gameWorldDisplay;
+	static LandBoard gameLandBoard;
+	static GameBoard gameBoard;
 
 	/**
 	 * Launch the application.
@@ -28,26 +33,22 @@ public class WindowBase {
 			public void run() {
 				try {
 					WindowBase window = new WindowBase();
-					window.frame.setVisible(true);
+					window.makeVisible();
+					//window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		EventQueue.invokeLater(new Runnable() {
+		/*EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					gameWorldDisplay.display(mainClass.island);
+					updateWorldDisplay();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-		});
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				// Game loop?
-			}
-		});
+		});*/
 	}
 
 	/**
@@ -91,12 +92,35 @@ public class WindowBase {
 		tConsole = new Console();
 		//bottomLeftPanel.add(tConsole, BorderLayout.CENTER);
 		bottomLeftPanel.add(tConsole);
+		
 		gameWorldDisplay = new GamePanel();
-		topLeftPanel.add(gameWorldDisplay);
+		gameLandBoard = new LandBoard();
+		gameBoard = new GameBoard();
+		
+		JLayeredPane testLayers = new JLayeredPane();
+		testLayers.add(gameLandBoard, new Integer(0),0);
+		testLayers.add(gameBoard, new Integer(1), 0);
+		
+		
+		//topLeftPanel.add(gameWorldDisplay);
+		//topLeftPanel.add(gameLandBoard);
+		//topLeftPanel.add(gameBoard);
+		//topLeftPanel.add(testLayers);
 		
 		//Properly Align the splitpanes
 		verticalSplitPane.setResizeWeight(.95);
 		horizontalSplitPane.setResizeWeight(.85);
+		frame.pack();
+		makeVisible();
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					updateWorldDisplay();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	/**
@@ -116,6 +140,8 @@ public class WindowBase {
 	public void updateWorldDisplay() {
 		try {
 			gameWorldDisplay.display(mainClass.island);
+			gameLandBoard.updateLandMap(mainClass.island);
+			gameBoard.updateGameMap(mainClass.island);
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,6 +152,7 @@ public class WindowBase {
 	 * TEMPRORARY
 	 * Print a simple message to the debug screen.
 	 * TEMPRORARY
+	 * @param msg - The String message you want displayed to the error console in the WindowBase.
 	 */
 	public void print(String msg) {
 		tConsole.writeln("Debug", msg);
@@ -135,6 +162,7 @@ public class WindowBase {
 	 * TEMPRORARY
 	 * Print a simple message to the debug screen.
 	 * TEMPRORARY
+	 * @param msg - The String message you want displayed to the error console in the WindowBase.
 	 */
 	public void printError(String msg) {
 		tConsole.writeln("Errors", msg);
@@ -147,6 +175,7 @@ public class WindowBase {
 	 */
 	public void setFontSize(int _size) {
 		gameWorldDisplay.setFontSize(_size);
+		gameLandBoard.setFontSize(_size);
 	}
 
 }
