@@ -2,11 +2,14 @@ package com.mtank.UI.window;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
 
 import com.mtank.UI.console.Console;
@@ -15,42 +18,34 @@ import com.mtank.UI.gamePanel.GamePanel;
 import com.mtank.UI.gamePanel.LandBoard;
 import com.mtank.game.mainClass;
 
-public class WindowBase {
+public class WindowBase extends Thread {
 
 	private JFrame frame;
 	private Console tConsole;
 	static GamePanel gameWorldDisplay;
 	static LandBoard gameLandBoard;
 	static GameBoard gameBoard;
+	public int delay;
+	public String message = "";
 
 	/**
-	 * Launch the application.
-	 * This will become the new main game launcher
-	 * Each task becomes a new runnable.
+	 * Runner
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
+	public void run() {
+		Timer displayLoop = new Timer(0, new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
 				try {
-					WindowBase window = new WindowBase();
-					window.makeVisible();
-					//window.frame.setVisible(true);
+					Thread.sleep(100);
+					//updateWorldDisplay();
+					System.out.println("Display! "+message+System.currentTimeMillis());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		/*EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					updateWorldDisplay();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});*/
+		displayLoop.start();
 	}
-
+	
 	/**
 	 * Create the application.
 	 */
