@@ -9,6 +9,7 @@ import javax.swing.text.BadLocationException;
 
 import com.mtank.UI.window.WindowBase;
 import com.mtank.creature.Creature;
+import com.mtank.structure.Structure;
 import com.mtank.world.World;
 
 /*
@@ -63,7 +64,8 @@ public class mainClass {
 		c=new Coordinates(island.worldDimension/2+2, island.worldDimension/2);
 		island.placeCreature(person.get(1),c);
 		
-		
+		person.get(0).addSleepAction(new Structure(1), new Coordinates(1,1));
+		person.get(0).addBuildAction(new Structure(2), new Coordinates(2,2));
 		
 		 
 		 /*person[0].pathfind.generatePath(person[0].position,person[0].target);
@@ -94,7 +96,7 @@ public class mainClass {
 			startTime=System.currentTimeMillis();
 			for(int i=0;i<person.size();i++){
 				// TODO: ACTION GOES HERE.
-				person.get(i).action(island);// TODO: revert this to cycling everyone.
+				person.get(i).action();// TODO: revert this to cycling everyone.
 			}
 			
 			endTime=System.currentTimeMillis();
@@ -108,29 +110,6 @@ public class mainClass {
 					Thread.currentThread().interrupt();
 				}
 			}
-			/*
-			 * Testing a timer for the main game loop. As of now, does not work.
-			 * 
-			 * Timer GameLoop = new Timer(300, new ActionListener() {int n=200;
-			int maxn=n;
-			long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
-			long startTime,endTime,elapsedTime;
-			    public void actionPerformed(ActionEvent evt) {    
-			    	startTime=System.currentTimeMillis();
-					for(int i=0;i<person.size();i++){
-						// TODO: ACTION GOES HERE.
-						person.get(i).action(island);// TODO: revert this to cycling everyone.
-					}
-					
-					endTime=System.currentTimeMillis();
-					elapsedTime=endTime-startTime;
-					System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
-					//gameWindow.print("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
-			    }
-			});
-			GameLoop.start();
-			*End of Timer Test
-			*/
 			n--;
 		}/**/
 			

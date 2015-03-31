@@ -42,19 +42,19 @@ public class World {
 		
 		
 		// Values for inequalities were chosen to ensure the borders are always SALTWATER		
-		if(x>1 && world[x-1][y].landType!=0/**/ && (Game.RAND.nextInt(2*worldDimension/3)-dist)>=-0) 
+		if(x>1 && world[x-1][y].landType!=0/**/ && (Game.RANDY.nextInt(2*worldDimension/3)-dist)>=-0) 
 		{
 			initializeIslandLand(x-1,y,xc,yc); 
 		}
-		if(y>1 && world[x][y-1].landType!=0/**/ && (Game.RAND.nextInt(2*worldDimension/3)-dist)>=-0)
+		if(y>1 && world[x][y-1].landType!=0/**/ && (Game.RANDY.nextInt(2*worldDimension/3)-dist)>=-0)
 		{ 
 			initializeIslandLand(x,y-1,xc,yc); 
 		}
-		if(y<world.length-2 && world[x][y+1].landType!=0/**/ && (Game.RAND.nextInt(2*worldDimension/3)-dist)>=-0) 
+		if(y<world.length-2 && world[x][y+1].landType!=0/**/ && (Game.RANDY.nextInt(2*worldDimension/3)-dist)>=-0) 
 		{ 
 			initializeIslandLand(x,y+1,xc,yc); 
 		}
-		if(x<world.length-2 && world[x+1][y].landType!=0/**/ && (Game.RAND.nextInt(2*worldDimension/3)-dist)>=-0)
+		if(x<world.length-2 && world[x+1][y].landType!=0/**/ && (Game.RANDY.nextInt(2*worldDimension/3)-dist)>=-0)
 		{ 
 			initializeIslandLand(x+1,y,xc,yc); 
 		}
@@ -162,7 +162,7 @@ public class World {
 			for(int j = 0; j < world.length;j++){
 				if(world[i][j].landType == TypeValue.NONE){
 					lookAroundYou(chances);
-					int rand = Game.RAND.nextInt(6)+1;
+					int rand = Game.RANDY.nextInt(6)+1;
 					while(rand == TypeValue.Land.SALTWATER || rand == TypeValue.Land.WATER){
 						rand = TypeValue.Land.DIRT;
 					}
@@ -237,8 +237,8 @@ public class World {
 		
 		//Strategy: find south shores for +-(4-6) and each puts sand up for 3-5 squares
 		case("Beach")://current strat, circle around center, replacing land
-			int beachSize = Game.RAND.nextInt(4)+5;
-			int beachLength = Game.RAND.nextInt(4)+3;
+			int beachSize = Game.RANDY.nextInt(4)+5;
+			int beachLength = Game.RANDY.nextInt(4)+3;
 			for(int i = x-(beachSize/2);i< x+(beachSize/2);i++){
 				int southShore = y-5;
 				while(world[i][southShore].landType != TypeValue.Land.SALTWATER)
@@ -260,8 +260,8 @@ public class World {
 			for(int i = y; i < y+5;i++){
 				for(int j = x; j< x+5; j++){
 					world[i][j].landType = TypeValue.Land.GRASS;
-					if(Game.RAND.nextFloat() > 0.75)
-						placeStructure(new Structure(TypeValue.Structure.TREE,TypeValue.Material.WOOD), new Coordinates(i,j));
+					if(Game.RANDY.nextFloat() > 0.75)
+						placeStructure(new Structure(TypeValue.Structure.TREE), new Coordinates(i,j));
 				}
 			}
 			break;
@@ -269,8 +269,8 @@ public class World {
 			for(int i = y; i < y+5;i++){
 				for(int j = x; j< x+5; j++){
 					world[i][j].landType = TypeValue.Land.SAND;
-					if(Game.RAND.nextFloat() > 0.75)
-						placeStructure(new Structure(TypeValue.Structure.CACTUS,TypeValue.Material.CACTIPODE), new Coordinates(i,j));
+					if(Game.RANDY.nextFloat() > 0.75)
+						placeStructure(new Structure(TypeValue.Structure.CACTUS), new Coordinates(i,j));
 				}
 			}
 			break;
