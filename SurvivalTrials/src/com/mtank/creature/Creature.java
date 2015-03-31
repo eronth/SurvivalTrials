@@ -1,23 +1,34 @@
+//test add
+
 package com.mtank.creature;
 
 import java.util.LinkedList;
 
 import com.mtank.ai.PathFindingWorld;
 import com.mtank.constants.Action;
+import com.mtank.constants.Direction;
+import com.mtank.constants.Role;
 import com.mtank.game.Coordinates;
 import com.mtank.game.Game;
 import com.mtank.game.mainClass;
-import com.mtank.world.World;
+import com.mtank.item.Item;
+import com.mtank.structure.Structure;
+
 
 
 public class Creature {
+	// Basic creature info.
 	String firstName="Phillip";
 	String lastName="Fry";
 	public int creatureType=0;
-	public Coordinates position = new Coordinates();
-	private int facingDirection = 1;
-	private LinkedList <Integer> actionChoice=new LinkedList<Integer>();
-	private int actionCountdownTimer=0;
+	private int role = Role.NONE;
+	// Action values and info.
+	private LinkedList<Integer> 	queuedAction = new LinkedList<Integer>();
+	private LinkedList<Coordinates> queuedTarget = new LinkedList<Coordinates>();
+	private LinkedList<Structure> 	queuedStructure = new LinkedList<Structure>();
+	private LinkedList<Item>		queuedItem = new LinkedList<Item>();
+	private int acdt = 0;			// acdt stands for the Action Count Down Timer. It counts down until an action is to be executed.
+	private boolean isActing = false;
 	// Base Attributes
 	private int baseEndurance;		// How much abuse you can take.
 	private int baseStrength;		// How much abuse you can deal.
@@ -29,14 +40,27 @@ public class Creature {
 	private int energy_st=100;		// This is short-term energy, used for short sprints and moving over max encumberance. It is burned and recharged much faster. 
 	private int health=100;
 	private int maxHealth=100;
-	private double weight=70;		// Weight is done in kg
+	private double weight=70;		// Weight is done in kg. Max is 140 min is 40
 	// Base Mind Status
 	private int sanity=100;			// How much gruesome and horrid things you've seen. Affects your ability to make decisions.
 	private int humanity=100;		// How opposed to murder you are.
 	private int galvany=100;		// How happy and optimistic you are.
-	private PathFindingWorld pathfind;
-	private boolean pathSet=false;
 	// Useful pathfinding data structures
+	private PathFindingWorld pathfind;
+	private boolean pathSet = false;
+	// Spacial related info.
+	public Coordinates position = new Coordinates();
+	private int facingDirection = 0;
+	// Equipment
+	private LinkedList<Item> inventory = new LinkedList<Item>();
+	Item head = null;
+	Item chest = null;
+	Item legs = null;
+	Item feet = null;
+	Item leftHand = null;
+	Item rightHand = null;
+	
+
 	
 	
 	/**
@@ -69,132 +93,375 @@ public class Creature {
 		pathfind.generatePath(position, 0);
 	}
 	
-	// This is the switch case for which action the creature will be performing this turn.
-	public void action(World w){
-		switch (actionChoice.get(0)) {
-			case Action.IDLE:
-				break;
-			case Action.WANDER:
-				
-				break;
-			//case 1:
-			//	initWalk(w,0);
-			//	break;
-			default:
-				break;
-		}
-	}
-	
 	/**
-	 * Prepare the next action in the list. Sets action to IDLE or WANDER if list is expended.
+	 *  This is the switch case for which action the creature will be performing this turn.
 	 */
-	public void prepareNextAction() {
-		if (actionChoice.size() == 1 || actionChoice.size()==0) {
-			if (actionChoice.size() == 1) {
-				actionChoice.remove();
-			}
-			actionChoice.add((Game.RAND.nextInt()%2==1)?Action.IDLE:Action.WANDER);
-		}
-		switch (actionChoice.get(1)) {
-		case Action.IDLE:
-			//TODO function
-			break;
-		case Action.WANDER:
-			//TODO function
-			break;
-		case Action.WALK:
-			//TODO function
-			break;
-		case Action.GRAB:
-			//TODO function
-			break;
-		case Action.GATHER:
-			//TODO function
-			break;
-		case Action.DESTROY:
-			//TODO function
+	public void action(){
+		switch (queuedAction.get(0)) {
+		case Action.ATTACK:
+			// XXX
 			break;
 		case Action.BUILD:
-			//TODO function
+			// First we need to gather all the needed materials?
+			// XXX
 			break;
-		case Action.SLEEP:
-			//TODO function
-			break;
-		case Action.ATTACK:
-			//TODO function
+		case Action.GRAB:
+			inventory.add(queuedItem.get(0));
+			queuedItem.remove();
+			queuedAction.remove();
 			break;
 		case Action.DEFEND:
-			//TODO function
+			// XXX
 			break;
-			
-		default:
-			System.out.println("[ERROR] You dun failed to make an action for the value: "+actionChoice.get(1));
-			break;
-		}
-	}
-	
-	// XXX ================================================
-	/**
-	 * Allows a creature to wander without direction.
-	 */
-	public void wander() {
-		/*if (actionCountdownTimer == 0) {
-			actionCountdownTimer = 10;
-		} else {
-			actionCountdownTimer--;
-			if(actionCountdownTimer == 0) {
-				//TODO perform action
+		case Action.DESTROY:
+			if (acdt>0) {
+				acdt--;
+			} else if(isActing) {
+				boolean usingProperWeapon = false;
+				for (Integer tool : queuedStructure.getFirst().weakAgainst) {
+					if ((rightHand!=null && rightHand.itemType == tool)
+							|| (leftHand!=null && leftHand.itemType == tool) ) {
+						usingProperWeapon=true;
+					}
+				}
+				int damage = (int) ((usingProperWeapon)?1.2*getDamage():getDamage());
+				queuedStructure.getFirst().damaged(damage);
 			}
-		}*/
-		// TODO STEPS:
-		// TODO Determine direction (based on current direction?)
-		int random = Game.RAND.nextInt()%100;
-		if (random>50) {
-			//same direction
-		} else if (random>25) {
-			//slightly angled direction
-		} else if (random>5) {
-			//90 degree difference
-		} else {
-			//nearly backwards
+			if ( !(isActing && acdt>0) ) {
+				isActing = true;
+				acdt = 15 - getSpeed()/20;
+			}
+			if (queuedStructure.getFirst().getHealth()==0) {
+				queuedStructure.removeFirst();
+				queuedAction.removeFirst();
+			}
+			break;
+		case Action.DISMANTLE:
+			if ( !queuedStructure.getFirst().resource.isEmpty() ) {
+				// If there are still resources left to gather, gather them first then dismantle.
+				queuedAction.add(0, Action.GATHER);
+				queuedStructure.add(0, queuedStructure.getFirst());
+			} else/**/ if (!isActing) {
+				isActing=true;
+				acdt = 0;
+			} else if (acdt > 0) {
+				acdt--;
+			} else {
+				if ( !queuedStructure.getFirst().structureParts.isEmpty() ) {
+					inventory.add(queuedStructure.getFirst().structureParts.getFirst());
+					queuedStructure.getFirst().structureParts.removeFirst();
+				} 
+				if (queuedStructure.getFirst().structureParts.isEmpty() && queuedStructure.getFirst().resource.isEmpty()) {
+					queuedStructure.removeFirst();
+					queuedAction.removeFirst();
+					isActing = false;
+				}
+			}
+			if ( !(isActing && acdt>0) ) {
+				boolean usingProperTool = false;
+				for (Integer tool : queuedStructure.getFirst().dismantledBy) {
+					if ((rightHand!=null && rightHand.itemType == tool)
+							|| (leftHand!=null && leftHand.itemType == tool) ) {
+						usingProperTool=true;
+					}
+				}
+				acdt = ((usingProperTool)?80:100)*queuedStructure.getFirst().getMaxHealth()/getStrength();
+			}
+			break;
+		case Action.GATHER:
+			if (!isActing) {
+				acdt = 0;
+				isActing = true;
+			} else if (acdt > 0) {
+				acdt--;
+			} else {
+				if ( !queuedStructure.getFirst().resource.isEmpty() ) {
+					inventory.add(queuedStructure.getFirst().resource.getFirst());
+					queuedStructure.getFirst().resource.removeFirst();
+				}
+				if ( queuedStructure.getFirst().resource.isEmpty() ) {
+					queuedStructure.removeFirst();
+					queuedAction.removeFirst();
+					isActing = false;
+				}
+			}
+			if ( !(isActing && acdt>0) ) {
+				acdt = role==Role.PILGRIM?2:3;				
+			}
+			break;
+		case Action.IDLE:
+			if (isActing) {
+				acdt = 0;
+				isActing = false;
+			}
+			if (queuedAction.size() > 1 && queuedAction.get(1) != null) {
+				queuedAction.removeFirst();
+			}
+			break;
+		case Action.SLEEP:
+			if ( !queuedStructure.getFirst().inUse ) {
+				queuedStructure.getFirst().inUse = true;
+				isActing = true;
+				acdt=10;
+			}
+			if (isActing && (energy_lt<100 || energy_st<100)) {
+				if (energy_lt<100) {
+					if (acdt>0) {
+						acdt--;
+					} else {
+						acdt = 10;
+						energy_lt++;
+					}
+				}
+				if (energy_st<100) {
+					energy_st++;
+				}
+			} else {
+				queuedAction.removeFirst();
+				queuedStructure.removeFirst();
+				isActing = false;
+				acdt=0;
+			}
+			break;
+		case Action.WANDER:
+			Coordinates target = null;
+			// We'll only try this loop <tries> times before assuming it's impossible to avoid stalling forever..
+			int tries = 15;
+			do {
+				// Returns a value between 0 and 99.
+				int directionPercent = Game.RANDY.nextInt(100);
+				if (directionPercent<1) {
+					// turn around and walk backwards
+					target = position.directionalCoord(Direction.invert(facingDirection));
+				} else if (directionPercent<11) {
+					// face nearly backwards
+					boolean left = (0==Game.RANDY.nextInt(2));
+					if (left) {
+						target = position.directionalCoord(Direction.invert(Direction.slightLeft(facingDirection)));
+					} else {
+						target = position.directionalCoord(Direction.invert(Direction.slightRight(facingDirection)));
+					}
+				} else if (directionPercent<31) {
+					// turn 90 degrees
+					boolean left = (0==Game.RANDY.nextInt(2));
+					if (left) {
+						target = position.directionalCoord(Direction.slightLeft(Direction.slightLeft(facingDirection)));
+					} else {
+						target = position.directionalCoord(Direction.slightRight(Direction.slightRight(facingDirection)));
+					}
+				} else if (directionPercent<61) {
+					//  turn slightly
+					boolean left = (0==Game.RANDY.nextInt(2));
+					if (left) {
+						target = position.directionalCoord(Direction.slightLeft(facingDirection));
+					} else {
+						target = position.directionalCoord(Direction.slightRight(facingDirection));
+					}
+				} else { // This should be, in theory, the 61-100 range or 39% of the time.
+					// take a step foward
+					target = position.directionalCoord(facingDirection);
+				}
+				tries--;
+			} while (tries>0 
+					|| target.x<queuedTarget.get(0).x 
+					|| target.y<queuedTarget.get(0).y
+					|| target.x>queuedTarget.get(1).x 
+					|| target.y>queuedTarget.get(1).y);
+			addImmediateWalkAction(target);
+			break;
+		case Action.WALK:
+			if (pathSet) {
+				// TODO all actual walking related stuff here.				
+				// Initialize timer, and countdown.
+				if (acdt <= 0) {
+					// Upon countdown completion, take a step, then check if we made it to target location.
+					// If at location end walk.
+					// If not at location, generate new path, start again.
+					// if at target location, isActing is false, acdt is 0 and we exit.
+					acdt = 200/getSpeed();
+				} else {
+					acdt--;
+				}
+			} else {
+				pathfind.generatePath(position, 0);
+				pathSet = true;
+				isActing = true;
+				acdt = 200/getSpeed(); // Initialize timer.
+			}
+			// XXX
+			break;
+		default:
+			break;
 		}
-		// TODO Set countdown timer. Should be based on speed/diagonal?/terrain difficulty.
-		// TODO if countdown is set, count down
-		// TODO if countdown hits 0, act!
 	}
 	
-	// XXX ================================================
 	
-	
-	// Walking prep function. Sets the countdown to 10
-	/*void initWalk(World w, int _direction){
-		actionChoice=actionChoice+1;
-		actionCountdownTimer=10;
-		walk(w,_direction);
-	}*/
-	// Walk function. Moves creature in a direction given by xDirection and yDirection
-	// TODO rewrite code.
-	boolean walk(World w, int direction){
-		// TODO write an actual walk function.
-		return true;
+	/**
+	 * THIS IS THE LIST OF ALL AddAction()s. 
+	 * CHECK BELOW THIS LINE TO ADD, REMOVE, OR MODIFY.
+	 * |			|			|			|
+	 * ATTACK		BUILD		GRAB		DEFEND
+	 * DESTROY		DISMANTLE	GATHER		IDLE
+	 * SLEEP		WALK		WANDER
+	 */
+	/**
+	 * Adds the attack action to list of actions.
+	 */
+	public void addAttack() {
+		// TODO no clue how to build this yet.
 	}
+	/**
+	 * Adds build structure to the list of actions.
+	 */
+	public void addBuildAction(Structure s, Coordinates c) {
+		// Add all the necessary actions in order.
+		// First, we must walk to the required location.
+		queuedAction.add(Action.WALK);
+		queuedTarget.add(c);
+		// Second, add the structure building requirement.
+		queuedAction.add(Action.BUILD);
+		queuedStructure.add(s);
+		queuedTarget.add(c);
+	}
+	/**
+	 * Adds the grab item action to the list of actions.
+	 */
+	public void addGrabAction(Item i, Coordinates c) {
+		// Add all necessary actions in order.
+		// First, we must walk to the item.
+		queuedAction.add(Action.WALK);
+		queuedTarget.add(c);
+		// Second, add the actual item obtainment.
+		queuedAction.add(Action.GRAB);
+		queuedItem.add(i);
+	}
+	/**
+	 * Adds the defend action to the list of actions.
+	 */
+	public void addDefendAction() {
+		// TODO figure out combat rules before writing this.
+	}
+	/**
+	 * Adds an action to destroy a structure. 
+	 * Destroy removes a structure without leaving materials behind. If you wish to harvest materials, use "dismantle".
+	 * @param s
+	 * @param c
+	 */
+	public void addDestroyAction(Structure s, Coordinates c) {
+		// Add all necessary actions in order.
+		// First we walk to the structure.
+		queuedAction.add(Action.WALK);
+		queuedTarget.add(c);
+		// Second, add the actual structure destruction.
+		queuedAction.add(Action.DESTROY);
+		queuedStructure.add(s);
+	}
+	/**
+	 * Adds an action to dismantle a structure.
+	 * Dismantle takes a structure apart, leaving behind some of the original material. If you wish to simply remove the structure, use "destroy".
+	 */
+	public void addDismantleAction(Structure s, Coordinates c) {
+		// Add all necessary actions in order.
+		// First we walk to the structure.
+		queuedAction.add(Action.WALK);
+		queuedTarget.add(c);
+		// Second, add the actual structure dismantle.
+		queuedAction.add(Action.DISMANTLE);
+		queuedStructure.add(s);
+	}
+	/**
+	 * Adds an action to gather resources.
+	 */
+	public void addGatherAction(Structure s, Coordinates c) {
+		// Add all necessary actions in order.
+		// First we walk to the structure.
+		queuedAction.add(Action.WALK);
+		queuedTarget.add(c);
+		// Next, gather.
+		queuedAction.add(Action.GATHER);
+		queuedStructure.add(s);
+	}
+	/**
+	 * Adds an Idle action. Action will repeat itself until worn out or a new action is selected.
+	 * Creature should wander in a square area marked by diagonal corners c0 and c1.
+	 */
+	public void addIdleAction() {
+		queuedAction.add(Action.IDLE);
+	}
+	/**
+	 * Add a sleep action.
+	 */
+	public void addSleepAction(Structure s, Coordinates c) {
+		// Add all necessary actions in order.
+		// First, move to location (hopefully bed);
+		queuedAction.add(Action.WALK);
+		queuedTarget.add(c);
+		// Next, mark bed as used if it exists.
+		queuedAction.add(Action.SLEEP);
+		queuedStructure.add(s);
+	}
+	/**
+	 * Adds a walk to location c action.
+	 */
+	public void addWalkAction(Coordinates c) {
+		queuedAction.add(Action.WALK);
+		queuedTarget.add(c);
+	}
+	/**
+	 * Adds the walk action to the immediate queue to happen next.
+	 * @param c
+	 */
+	public void addImmediateWalkAction(Coordinates c) {
+		queuedAction.add(0, Action.WALK);
+		queuedTarget.add(0, c);
+	}
+	/**
+	 * Adds an action to wander around.
+	 * @param c0
+	 * @param c1
+	 */
+	public void addWanderAction(Coordinates c0, Coordinates c1) {
+		// Ensure c0 is upper left corner and c1 is lower right.
+		if (c0.x>c1.x) {
+			int tmp = c0.x;
+			c0.x=c1.x;
+			c1.x=tmp;
+		}
+		if (c0.y>c1.y) {
+			int tmp = c0.y;
+			c0.y=c1.y;
+			c1.y=tmp;
+		}
+		// Adds two corners for the area within which they should wander.
+		queuedTarget.add(c0);
+		queuedTarget.add(c1);
+	}
+
 	
 	
 	
 	
 	/**
 	 * Returns the speed of the creature based on many factors, including their strength, weight, energy.
+	 * Returns a value between 0 and 100.
 	 * @return
 	 */
-	int getSpeed(){
-		return (int)( ((getStrength()-(getWeight()-70))*(getLongTermEnergy())/100) ); // Move at a speed based on weight and energy
+	int getSpeed() {
+		return (int)(70+((getStrength()-(getWeight()-70))*(getLongTermEnergy())/200) ); // Move at a speed based on weight and energy
+	}
+	/**
+	 * Returns the base damage a creature deals, 
+	 * before taking into account the appropriate tools or opponents armor.
+	 */
+	int getDamage() {
+		return (int)(getStrength()+getWeight()-40)/10;
 	}
 	
 	/**
 	 * Return creature's endurance.
 	 */
 	int getEndourance() {
-		return getBaseEndurance();//*modifier + increase
+		return getBaseEndurance();//TODO*modifier + increase
 	}
 	/**
 	 * Returns creature's base endurance value.
@@ -213,7 +480,7 @@ public class Creature {
 	 * Return creature's strength.
 	 */
 	int getStrength() {
-		return getStrength();//*modifier +bonus
+		return getStrength();//TODO*modifier +bonus
 	}
 	/**
 	 * Returns creature's base strength value.
@@ -232,7 +499,7 @@ public class Creature {
 	 * Return creature's intelligence.
 	 */
 	int getIntelligence() {
-		return getBaseIntelligence();//*modifier +bonus
+		return getBaseIntelligence();//TODO*modifier +bonus
 	}
 	/**
 	 * Returns creature's base intelligence value.

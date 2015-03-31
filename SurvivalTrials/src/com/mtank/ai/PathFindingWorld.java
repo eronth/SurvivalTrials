@@ -51,8 +51,6 @@ public class PathFindingWorld {
 		Coordinates tmp = new Coordinates();
 		Integer total = 0;
 		//Calculate the total cost F for each of the surrounding regions.
-		// north
-		
 		// Iterate through every direction from north (1) to southwest (8)
 		for (int i = 1; i < 9; i++) {
 			tmp=cur.directionalCoord(i);
@@ -106,7 +104,7 @@ public class PathFindingWorld {
 		while (!c.equals(startCoords)) {
 			direction = area[c.x][c.y].getDirection();
 			tempPath.add(direction);
-			c.setDirection(Direction.invertDirection(direction));// = c.directionalCoord(direction);
+			c.setDirection(Direction.invert(direction));// = c.directionalCoord(direction);
 			//System.out.println(tempPath);
 			//System.out.println("direction: " + direction + " coordinates: " + c.toString());
 			//TODO complete the addition system.
