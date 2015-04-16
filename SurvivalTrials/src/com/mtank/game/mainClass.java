@@ -45,7 +45,7 @@ public class mainClass {
 	public static void main(String arg[]) throws BadLocationException{
 		Game.seedRand();
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
-		island=new World(120);
+		island=new World(70);
 		System.out.println("\nFinal World Generation using :"+Game.getSeed());
 		island.printWorld();
 		
@@ -56,16 +56,17 @@ public class mainClass {
 		//g.start();
 		 
 		// Code in place for crappy initialization purposes.
-		person.add(new Creature("Jack","MeHoff",1,70.0,50,2,50,100,100,100));
-		person.add(new Creature("Jill","MeHoff",1,70,50,2,50,100,100,100));
+		person.add(new Creature("Jack","MeHoff",1,70.0,50,2,50));
+		person.add(new Creature("Jill","MeHoff",1,70,50,2,50));
 		 
 		Coordinates c=new Coordinates(30,30);
 		island.placeCreature(person.get(0),c);
 		c=new Coordinates(island.worldDimension/2+2, island.worldDimension/2);
 		island.placeCreature(person.get(1),c);
 		
-		person.get(0).addSleepAction(new Structure(1), new Coordinates(1,1));
-		person.get(0).addBuildAction(new Structure(2), new Coordinates(2,2));
+		person.get(0).addWalkAction(new Coordinates(20,20));
+		//person.get(0).addSleepAction(new Structure(1), new Coordinates(1,1));
+		//person.get(0).addBuildAction(new Structure(2), new Coordinates(2,2));
 		
 		 
 		 /*person[0].pathfind.generatePath(person[0].position,person[0].target);
@@ -80,7 +81,7 @@ public class mainClass {
 		// ==================================================================================================
 		// Rudamentary game loop starts here. int n is used to iterate the number of turns you'd like to run.
 		// This loop will eventually be infinite until user selects to end game.
-		int n=200;
+		int n=2;
 		int maxn=n;
 		long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
 		long startTime,endTime,elapsedTime;

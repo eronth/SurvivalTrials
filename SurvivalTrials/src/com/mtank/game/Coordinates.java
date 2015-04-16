@@ -73,8 +73,7 @@ public class Coordinates {
 	 */
 	public void set(Coordinates coord) {
 		set(coord.x, coord.y);
-	}
-	
+	}	
 	/**
 	 * Sets the x and y values of the current Coordinate to x and y.
 	 */

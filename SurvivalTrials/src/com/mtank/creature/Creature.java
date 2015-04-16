@@ -40,11 +40,8 @@ public class Creature {
 	private int energy_st=100;		// This is short-term energy, used for short sprints and moving over max encumberance. It is burned and recharged much faster. 
 	private int health=100;
 	private int maxHealth=100;
-	private double weight=70;		// Weight is done in kg. Max is 140 min is 40
-	// Base Mind Status
-	private int sanity=100;			// How much gruesome and horrid things you've seen. Affects your ability to make decisions.
-	private int humanity=100;		// How opposed to murder you are.
-	private int galvany=100;		// How happy and optimistic you are.
+	private double weight=70;		// Weight is done in kg. Max is 140 min is 40 for humans.
+	
 	// Useful pathfinding data structures
 	private PathFindingWorld pathfind;
 	private boolean pathSet = false;
@@ -70,23 +67,21 @@ public class Creature {
 	}
 	
 	/**
-	 * Initialize a creature with a first name of <code>fn</code>, last name of <code>ln</code> and type of <code>type</code>. All other stats are also initialized here.
+	 * Initialize a creature with a first name of <b>fn</b>, last name of <b>ln</b> and type of <b>type</b>. All other stats are also initialized here.
 	 */
-	public Creature(String fn,String ln,int type, double weight, int enduranceStart, int strengthStart, int intelligenceStart, int sanityStart, int humanityStart, int galvanyStart) {
+	public Creature(String fn,String ln,int type, double weight, int enduranceStart, int strengthStart, int intelligenceStart) {
 		firstName=fn;
 		lastName=ln;
 		creatureType=type;
 		baseEndurance=enduranceStart;
 		baseStrength=strengthStart;
 		baseIntelligence = intelligenceStart;
-		sanity=sanityStart;
-		humanity=humanityStart;
-		galvany=galvanyStart;
 		pathfind=new PathFindingWorld(mainClass.island);
+		queuedAction.add(0);
 	}
 	
 	/**
-	 * Finds the ideal path between creatures current location and <code>target</code>.
+	 * Finds the ideal path between creatures current location and <b>target</b>.
 	 */
 	public void generatePath(Coordinates target) {
 		pathfind.targetCoords = new Coordinates(target);
@@ -99,196 +94,37 @@ public class Creature {
 	public void action(){
 		switch (queuedAction.get(0)) {
 		case Action.ATTACK:
-			// XXX
+			performAttackAction();
 			break;
 		case Action.BUILD:
-			// First we need to gather all the needed materials?
-			// XXX
+			performBuildAction();
 			break;
 		case Action.GRAB:
-			inventory.add(queuedItem.get(0));
-			queuedItem.remove();
-			queuedAction.remove();
+			performGrabAction();
 			break;
 		case Action.DEFEND:
-			// XXX
+			performDefendAction();
 			break;
 		case Action.DESTROY:
-			if (acdt>0) {
-				acdt--;
-			} else if(isActing) {
-				boolean usingProperWeapon = false;
-				for (Integer tool : queuedStructure.getFirst().weakAgainst) {
-					if ((rightHand!=null && rightHand.itemType == tool)
-							|| (leftHand!=null && leftHand.itemType == tool) ) {
-						usingProperWeapon=true;
-					}
-				}
-				int damage = (int) ((usingProperWeapon)?1.2*getDamage():getDamage());
-				queuedStructure.getFirst().damaged(damage);
-			}
-			if ( !(isActing && acdt>0) ) {
-				isActing = true;
-				acdt = 15 - getSpeed()/20;
-			}
-			if (queuedStructure.getFirst().getHealth()==0) {
-				queuedStructure.removeFirst();
-				queuedAction.removeFirst();
-			}
+			performDestroyAction();
 			break;
 		case Action.DISMANTLE:
-			if ( !queuedStructure.getFirst().resource.isEmpty() ) {
-				// If there are still resources left to gather, gather them first then dismantle.
-				queuedAction.add(0, Action.GATHER);
-				queuedStructure.add(0, queuedStructure.getFirst());
-			} else/**/ if (!isActing) {
-				isActing=true;
-				acdt = 0;
-			} else if (acdt > 0) {
-				acdt--;
-			} else {
-				if ( !queuedStructure.getFirst().structureParts.isEmpty() ) {
-					inventory.add(queuedStructure.getFirst().structureParts.getFirst());
-					queuedStructure.getFirst().structureParts.removeFirst();
-				} 
-				if (queuedStructure.getFirst().structureParts.isEmpty() && queuedStructure.getFirst().resource.isEmpty()) {
-					queuedStructure.removeFirst();
-					queuedAction.removeFirst();
-					isActing = false;
-				}
-			}
-			if ( !(isActing && acdt>0) ) {
-				boolean usingProperTool = false;
-				for (Integer tool : queuedStructure.getFirst().dismantledBy) {
-					if ((rightHand!=null && rightHand.itemType == tool)
-							|| (leftHand!=null && leftHand.itemType == tool) ) {
-						usingProperTool=true;
-					}
-				}
-				acdt = ((usingProperTool)?80:100)*queuedStructure.getFirst().getMaxHealth()/getStrength();
-			}
+			performDismantleAction();
 			break;
 		case Action.GATHER:
-			if (!isActing) {
-				acdt = 0;
-				isActing = true;
-			} else if (acdt > 0) {
-				acdt--;
-			} else {
-				if ( !queuedStructure.getFirst().resource.isEmpty() ) {
-					inventory.add(queuedStructure.getFirst().resource.getFirst());
-					queuedStructure.getFirst().resource.removeFirst();
-				}
-				if ( queuedStructure.getFirst().resource.isEmpty() ) {
-					queuedStructure.removeFirst();
-					queuedAction.removeFirst();
-					isActing = false;
-				}
-			}
-			if ( !(isActing && acdt>0) ) {
-				acdt = role==Role.PILGRIM?2:3;				
-			}
+			performGatherAction();
 			break;
 		case Action.IDLE:
-			if (isActing) {
-				acdt = 0;
-				isActing = false;
-			}
-			if (queuedAction.size() > 1 && queuedAction.get(1) != null) {
-				queuedAction.removeFirst();
-			}
+			performIdleAction();
 			break;
 		case Action.SLEEP:
-			if ( !queuedStructure.getFirst().inUse ) {
-				queuedStructure.getFirst().inUse = true;
-				isActing = true;
-				acdt=10;
-			}
-			if (isActing && (energy_lt<100 || energy_st<100)) {
-				if (energy_lt<100) {
-					if (acdt>0) {
-						acdt--;
-					} else {
-						acdt = 10;
-						energy_lt++;
-					}
-				}
-				if (energy_st<100) {
-					energy_st++;
-				}
-			} else {
-				queuedAction.removeFirst();
-				queuedStructure.removeFirst();
-				isActing = false;
-				acdt=0;
-			}
+			performSleepAction();
 			break;
 		case Action.WANDER:
-			Coordinates target = null;
-			// We'll only try this loop <tries> times before assuming it's impossible to avoid stalling forever..
-			int tries = 15;
-			do {
-				// Returns a value between 0 and 99.
-				int directionPercent = Game.RANDY.nextInt(100);
-				if (directionPercent<1) {
-					// turn around and walk backwards
-					target = position.directionalCoord(Direction.invert(facingDirection));
-				} else if (directionPercent<11) {
-					// face nearly backwards
-					boolean left = (0==Game.RANDY.nextInt(2));
-					if (left) {
-						target = position.directionalCoord(Direction.invert(Direction.slightLeft(facingDirection)));
-					} else {
-						target = position.directionalCoord(Direction.invert(Direction.slightRight(facingDirection)));
-					}
-				} else if (directionPercent<31) {
-					// turn 90 degrees
-					boolean left = (0==Game.RANDY.nextInt(2));
-					if (left) {
-						target = position.directionalCoord(Direction.slightLeft(Direction.slightLeft(facingDirection)));
-					} else {
-						target = position.directionalCoord(Direction.slightRight(Direction.slightRight(facingDirection)));
-					}
-				} else if (directionPercent<61) {
-					//  turn slightly
-					boolean left = (0==Game.RANDY.nextInt(2));
-					if (left) {
-						target = position.directionalCoord(Direction.slightLeft(facingDirection));
-					} else {
-						target = position.directionalCoord(Direction.slightRight(facingDirection));
-					}
-				} else { // This should be, in theory, the 61-100 range or 39% of the time.
-					// take a step foward
-					target = position.directionalCoord(facingDirection);
-				}
-				tries--;
-			} while (tries>0 
-					|| target.x<queuedTarget.get(0).x 
-					|| target.y<queuedTarget.get(0).y
-					|| target.x>queuedTarget.get(1).x 
-					|| target.y>queuedTarget.get(1).y);
-			addImmediateWalkAction(target);
+			performWanderAction();
 			break;
 		case Action.WALK:
-			if (pathSet) {
-				// TODO all actual walking related stuff here.				
-				// Initialize timer, and countdown.
-				if (acdt <= 0) {
-					// Upon countdown completion, take a step, then check if we made it to target location.
-					// If at location end walk.
-					// If not at location, generate new path, start again.
-					// if at target location, isActing is false, acdt is 0 and we exit.
-					acdt = 200/getSpeed();
-				} else {
-					acdt--;
-				}
-			} else {
-				pathfind.generatePath(position, 0);
-				pathSet = true;
-				isActing = true;
-				acdt = 200/getSpeed(); // Initialize timer.
-			}
-			// XXX
+			performWalkAction();
 			break;
 		default:
 			break;
@@ -307,8 +143,11 @@ public class Creature {
 	/**
 	 * Adds the attack action to list of actions.
 	 */
-	public void addAttack() {
+	public void addAttackAction() {
 		// TODO no clue how to build this yet.
+	}
+	public void performAttackAction() {
+		// XXX
 	}
 	/**
 	 * Adds build structure to the list of actions.
@@ -323,6 +162,9 @@ public class Creature {
 		queuedStructure.add(s);
 		queuedTarget.add(c);
 	}
+	public void performBuildAction() {
+		// XXX
+	}
 	/**
 	 * Adds the grab item action to the list of actions.
 	 */
@@ -335,11 +177,19 @@ public class Creature {
 		queuedAction.add(Action.GRAB);
 		queuedItem.add(i);
 	}
+	public void performGrabAction() {
+		inventory.add(queuedItem.get(0));
+		queuedItem.remove();
+		queuedAction.remove();
+	}
 	/**
 	 * Adds the defend action to the list of actions.
 	 */
 	public void addDefendAction() {
 		// TODO figure out combat rules before writing this.
+	}
+	public void performDefendAction() {
+		// XXX
 	}
 	/**
 	 * Adds an action to destroy a structure. 
@@ -356,6 +206,29 @@ public class Creature {
 		queuedAction.add(Action.DESTROY);
 		queuedStructure.add(s);
 	}
+	public void performDestroyAction() {
+		if (acdt>0) {
+			acdt--;
+		} else if(isActing) {
+			boolean usingProperWeapon = false;
+			for (Integer tool : queuedStructure.getFirst().weakAgainst) {
+				if ((rightHand!=null && rightHand.itemType == tool)
+						|| (leftHand!=null && leftHand.itemType == tool) ) {
+					usingProperWeapon=true;
+				}
+			}
+			int damage = (int) ((usingProperWeapon)?1.2*getDamage():getDamage());
+			queuedStructure.getFirst().damaged(damage);
+		}
+		if ( !(isActing && acdt>0) ) {
+			isActing = true;
+			acdt = 15 - getSpeed()/20;
+		}
+		if (queuedStructure.getFirst().getHealth()==0) {
+			queuedStructure.removeFirst();
+			queuedAction.removeFirst();
+		}
+	}
 	/**
 	 * Adds an action to dismantle a structure.
 	 * Dismantle takes a structure apart, leaving behind some of the original material. If you wish to simply remove the structure, use "destroy".
@@ -369,6 +242,38 @@ public class Creature {
 		queuedAction.add(Action.DISMANTLE);
 		queuedStructure.add(s);
 	}
+	public void performDismantleAction() {
+		if ( !queuedStructure.getFirst().resource.isEmpty() ) {
+			// If there are still resources left to gather, gather them first then dismantle.
+			queuedAction.add(0, Action.GATHER);
+			queuedStructure.add(0, queuedStructure.getFirst());
+		} else/**/ if (!isActing) {
+			isActing=true;
+			acdt = 0;
+		} else if (acdt > 0) {
+			acdt--;
+		} else {
+			if ( !queuedStructure.getFirst().structureParts.isEmpty() ) {
+				inventory.add(queuedStructure.getFirst().structureParts.getFirst());
+				queuedStructure.getFirst().structureParts.removeFirst();
+			} 
+			if (queuedStructure.getFirst().structureParts.isEmpty() && queuedStructure.getFirst().resource.isEmpty()) {
+				queuedStructure.removeFirst();
+				queuedAction.removeFirst();
+				isActing = false;
+			}
+		}
+		if ( !(isActing && acdt>0) ) {
+			boolean usingProperTool = false;
+			for (Integer tool : queuedStructure.getFirst().dismantledBy) {
+				if ((rightHand!=null && rightHand.itemType == tool)
+						|| (leftHand!=null && leftHand.itemType == tool) ) {
+					usingProperTool=true;
+				}
+			}
+			acdt = ((usingProperTool)?80:100)*queuedStructure.getFirst().getMaxHealth()/getStrength();
+		}
+	}
 	/**
 	 * Adds an action to gather resources.
 	 */
@@ -381,12 +286,42 @@ public class Creature {
 		queuedAction.add(Action.GATHER);
 		queuedStructure.add(s);
 	}
+	public void performGatherAction() {
+		if (!isActing) {
+			acdt = 0;
+			isActing = true;
+		} else if (acdt > 0) {
+			acdt--;
+		} else {
+			if ( !queuedStructure.getFirst().resource.isEmpty() ) {
+				inventory.add(queuedStructure.getFirst().resource.getFirst());
+				queuedStructure.getFirst().resource.removeFirst();
+			}
+			if ( queuedStructure.getFirst().resource.isEmpty() ) {
+				queuedStructure.removeFirst();
+				queuedAction.removeFirst();
+				isActing = false;
+			}
+		}
+		if ( !(isActing && acdt>0) ) {
+			acdt = role==Role.PILGRIM?2:3;				
+		}
+	}
 	/**
 	 * Adds an Idle action. Action will repeat itself until worn out or a new action is selected.
 	 * Creature should wander in a square area marked by diagonal corners c0 and c1.
 	 */
 	public void addIdleAction() {
 		queuedAction.add(Action.IDLE);
+	}
+	public void performIdleAction() {
+		if (isActing) {
+			acdt = 0;
+			isActing = false;
+		}
+		if (queuedAction.size() > 1 && queuedAction.get(1) != null) {
+			queuedAction.removeFirst();
+		}
 	}
 	/**
 	 * Add a sleep action.
@@ -400,20 +335,65 @@ public class Creature {
 		queuedAction.add(Action.SLEEP);
 		queuedStructure.add(s);
 	}
+	public void performSleepAction() {
+		if ( !queuedStructure.getFirst().inUse ) {
+			queuedStructure.getFirst().inUse = true;
+			isActing = true;
+			acdt=10;
+		}
+		if (isActing && (energy_lt<100 || energy_st<100)) {
+			if (energy_lt<100) {
+				if (acdt>0) {
+					acdt--;
+				} else {
+					acdt = 10;
+					energy_lt++;
+				}
+			}
+			if (energy_st<100) {
+				energy_st++;
+			}
+		} else {
+			queuedAction.removeFirst();
+			queuedStructure.removeFirst();
+			isActing = false;
+			acdt=0;
+		}
+	}
 	/**
 	 * Adds a walk to location c action.
 	 */
 	public void addWalkAction(Coordinates c) {
 		queuedAction.add(Action.WALK);
-		queuedTarget.add(c);
+		System.out.println("coord check " + c);
+		queuedTarget.add(new Coordinates(c));
 	}
-	/**
-	 * Adds the walk action to the immediate queue to happen next.
-	 * @param c
-	 */
 	public void addImmediateWalkAction(Coordinates c) {
 		queuedAction.add(0, Action.WALK);
 		queuedTarget.add(0, c);
+	}
+	public void performWalkAction() {
+		if (pathSet) {
+			// TODO all actual walking related stuff here.				
+			// Initialize timer, and countdown.
+			if (acdt <= 0) {
+				// Upon countdown completion, take a step, then check if we made it to target location.
+				// If at location end walk.
+				// If not at location, generate new path, start again.
+				// if at target location, isActing is false, acdt is 0 and we exit.
+				acdt = 200/getSpeed();
+			} else {
+				acdt--;
+			}
+		} else {
+			pathfind.setTargetCoords(queuedTarget.get(0));
+			System.out.println("What the fuck is wrong? " +queuedTarget.get(0));
+			pathfind.generatePath(position, 0);
+			pathSet = true;
+			isActing = true;
+			acdt = 200/getSpeed(); // Initialize timer.
+		}
+		// XXX
 	}
 	/**
 	 * Adds an action to wander around.
@@ -436,7 +416,52 @@ public class Creature {
 		queuedTarget.add(c0);
 		queuedTarget.add(c1);
 	}
-
+	public void performWanderAction() {
+		Coordinates target = null;
+		// We'll only try this loop <tries> times before assuming it's impossible to avoid stalling forever..
+		int tries = 15;
+		do {
+			// Returns a value between 0 and 99.
+			int directionPercent = Game.RANDY.nextInt(100);
+			if (directionPercent<1) {
+				// turn around and walk backwards
+				target = position.directionalCoord(Direction.invert(facingDirection));
+			} else if (directionPercent<11) {
+				// face nearly backwards
+				boolean left = (0==Game.RANDY.nextInt(2));
+				if (left) {
+					target = position.directionalCoord(Direction.invert(Direction.slightLeft(facingDirection)));
+				} else {
+					target = position.directionalCoord(Direction.invert(Direction.slightRight(facingDirection)));
+				}
+			} else if (directionPercent<31) {
+				// turn 90 degrees
+				boolean left = (0==Game.RANDY.nextInt(2));
+				if (left) {
+					target = position.directionalCoord(Direction.slightLeft(Direction.slightLeft(facingDirection)));
+				} else {
+					target = position.directionalCoord(Direction.slightRight(Direction.slightRight(facingDirection)));
+				}
+			} else if (directionPercent<61) {
+				//  turn slightly
+				boolean left = (0==Game.RANDY.nextInt(2));
+				if (left) {
+					target = position.directionalCoord(Direction.slightLeft(facingDirection));
+				} else {
+					target = position.directionalCoord(Direction.slightRight(facingDirection));
+				}
+			} else { // This should be, in theory, the 61-100 range or 39% of the time.
+				// take a step foward
+				target = position.directionalCoord(facingDirection);
+			}
+			tries--;
+		} while (tries>0 
+				|| target.x<queuedTarget.get(0).x 
+				|| target.y<queuedTarget.get(0).y
+				|| target.x>queuedTarget.get(1).x 
+				|| target.y>queuedTarget.get(1).y);
+		addImmediateWalkAction(target);
+	}
 	
 	
 	
@@ -480,7 +505,7 @@ public class Creature {
 	 * Return creature's strength.
 	 */
 	int getStrength() {
-		return getStrength();//TODO*modifier +bonus
+		return getBaseStrength();//TODO*modifier +bonus
 	}
 	/**
 	 * Returns creature's base strength value.
@@ -750,85 +775,7 @@ public class Creature {
 		this.weight+=weightChange;
 	}
 	
-	/**
-	 * Return the creatures sanity. Maximum is 100.
-	 * @return
-	 */
-	int getSanity() {
-		return this.sanity;
-	}
-	/**
-	 * Sets the creature's sanity to sanity.
-	 * @param sanity
-	 */
-	void setSanity(int sanity) {
-		this.sanity = (sanity>100)?100:(sanity<0)?0:sanity;
-	}
-	/**
-	 * Modifies the creature sanity by sanityChange. Positives increase and negatives decrease.
-	 * @param sanityChange
-	 */
-	void modifySanity(int sanityChange) {
-		this.sanity+=sanityChange;
-		if (this.sanity>100) {
-			this.sanity=100;
-		} else if (this.sanity<0) {
-			this.sanity=0;
-		}
-	}
 	
-	/**
-	 * Return creature's humanity.
-	 * @return
-	 */
-	int getHumanity() {
-		return this.humanity;
-	}
-	/**
-	 * Sets creature's humanity to humanity
-	 * @param humanity
-	 */
-	void setHumanity(int humanity) {
-		this.humanity = (humanity>100)?100:(humanity<0)?0:humanity;
-	}
-	/**
-	 * Modifies the creature's humanity by humanityChange. Positives increase and negatives decrease.
-	 * @param humanityChange
-	 */
-	void modifyHumanity(int humanityChange) {
-		this.humanity+=humanityChange;
-		if (this.humanity>100) {
-			this.humanity=100;
-		} else if (this.humanity<0) {
-			this.humanity=0;
-		}
-	}
-	
-	/** Return creature's galvany.
-	 * @return
-	 */
-	int getGalvany() {
-		return this.galvany;
-	}
-	/**
-	 * Sets creature's galvany to galvany
-	 * @param humanity
-	 */
-	void setGalvany(int galvany) {
-		this.galvany = (galvany>100)?100:(galvany<0)?0:galvany;
-	}
-	/**
-	 * Modifies the creature's galvany by galvanyChange. Positives increase and negatives decrease. 
-	 * @param humanityChange
-	 */
-	void modifyGalvany(int galvanyChange) {
-		this.galvany+=galvanyChange;
-		if (this.galvany>100) {
-			this.galvany=100;
-		} else if (this.galvany<0) {
-			this.galvany=0;
-		}
-	}
 	
 	
 	Coordinates getPosition() {
