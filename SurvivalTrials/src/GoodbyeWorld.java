@@ -2,7 +2,6 @@ import org.lwjgl.Sys;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import java.nio.ByteBuffer;
-import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -38,6 +37,27 @@ public class GoodbyeWorld {
         window = glfwCreateWindow(WIDTH, HEIGHT, "Game", NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
+        
+        @SuppressWarnings("unused")
+		GLFWKeyCallback escapekeyCallback;
+		// Setup a key callback. It will be called every time a key is pressed, repeated or released.
+        glfwSetKeyCallback(window, escapekeyCallback = new GLFWKeyCallback() {
+            @Override
+            public void invoke(long window, int key, int scancode, int action, int mods) {
+                if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
+                    glfwSetWindowShouldClose(window, GL_TRUE); // We will detect this in our rendering loop
+            }
+        });
+        
+        @SuppressWarnings("unused")
+		GLFWWindowRefreshCallback refreshCallback;
+        glfwSetWindowRefreshCallback(window, refreshCallback = new GLFWWindowRefreshCallback(){
+			@Override
+			public void invoke(long window) {
+				// TODO Auto-generated method stub
+			}
+        });
+ 
   
         ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         glfwSetWindowPos(
@@ -63,7 +83,10 @@ public class GoodbyeWorld {
             float xOffset = 0.15f, yOffset = 0.2f;
             for( int i = 0; i < 10; i++)
             {
-            	drawSolidColoredBlock(xStart, yStart, xOffset, yOffset, 0.1f,0.8f,0.1f);
+            	if(i%2 == 0)
+            		drawSolidColoredBlock(xStart, yStart, xOffset, yOffset, 0.1f,0.8f,0.1f);
+            	else
+            		drawSolidColoredBlock(xStart, yStart, xOffset, yOffset, 0.7f,0.8f,0.1f);
             	xStart+=xOffset+0.005;
             }
              

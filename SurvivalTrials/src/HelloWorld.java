@@ -2,13 +2,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.Sys;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
-
 import java.nio.ByteBuffer;
- 
-
-
-import java.nio.FloatBuffer;
-
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -131,40 +125,14 @@ public class HelloWorld {
             }
             glfwSwapBuffers(window); // swap the color buffers
             
-            //Draw();
-            Square();
+            Draw();
+            //Square();
             
  
             // Poll for window events. The key callback above will only be
             // invoked during this call.
             glfwPollEvents();
         }
-    }
-    void Draw_Tri()
-    {
-        float ratio;
-        int width, height;
-        ByteBuffer a = BufferUtils.createByteBuffer(8),b = BufferUtils.createByteBuffer(8);
-        glfwGetWindowSize(window, a, b);
-        width = a.getInt(0); height = b.getInt(0);
-        ratio = width / (float) height;
-        glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-        
-    	glBegin(GL_TRIANGLES);
-        glColor3f(1.f, 0.f, 0.f);
-        glVertex3f(-0.6f, -0.4f, 0.f);
-        glColor3f(0.f, 1.f, 0.f);
-        glVertex3f(0.6f, -0.4f, 0.f);
-        glColor3f(0.f, 0.f, 1.f);
-        glVertex3f(0.f, 0.6f, 0.f);
-        glEnd();
     }
     void Draw_Square(float red, float green, float blue, int xOff, int yOff)
     {
@@ -193,43 +161,6 @@ public class HelloWorld {
     	  System.out.println("Made square");
         Draw_Square(red, (float).1, blue, xOff, yOff);
       }
-    }
-    
-    void Square()
-    {
-    	int amountOfVertices = 4;
-    	int vertexSize = 2;
-    	int colorSize = 3;
-    	     
-    	// Create buffer with vertex data
-    	FloatBuffer vertexData = BufferUtils.createFloatBuffer(amountOfVertices * vertexSize);
-    	vertexData.put(new float[] { 
-    	        0, 0, 
-    	        0, -1, 
-    	        -1, -1, 
-    	        -1, 0});
-    	vertexData.flip();
-    	     
-    	// Create buffer with color data
-    	FloatBuffer colorData = BufferUtils.createFloatBuffer(amountOfVertices * colorSize);
-    	colorData.put(new float[] {
-    	        1, 0, 0, 
-    	        0, 1, 0, 
-    	        0, 0, 1, 
-    	        1, 1, 0});
-    	colorData.flip();
-    	
-    	//glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
-    	glVertexPointer(vertexSize, GL_FLOAT, 0, 0L);
-    	 
-    	//glBindBuffer(GL_ARRAY_BUFFER, vboColorHandle);
-    	glColorPointer(colorSize, GL_FLOAT, 0, 0L);
-    	 
-    	glEnableClientState(GL_VERTEX_ARRAY);
-    	glEnableClientState(GL_COLOR_ARRAY);
-    	glDrawArrays(GL_QUADS, 0, amountOfVertices);
-    	glDisableClientState(GL_VERTEX_ARRAY);
-    	glDisableClientState(GL_COLOR_ARRAY);
     }
  
     public static void main(String[] args) {
