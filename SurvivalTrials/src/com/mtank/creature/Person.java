@@ -1,16 +1,18 @@
 package com.mtank.creature;
 
-public class Person {
+import com.mtank.constants.TypeValue;
+
+public class Person extends Creature{
 	// Base Mind Status
 	private int sanity=100;			// How much gruesome and horrid things you've seen. Affects your ability to make decisions.
 	private int humanity=100;		// How opposed to murder you are.
 	private int galvany=100;		// How happy and optimistic you are.
 	
-	
-	
-	
-	
-	
+	Person() {
+		setCreatureType(TypeValue.Creature.PERSON);
+		setMaxWeight(140);
+		setMinWeight(40);
+	}
 	
 	
 	/**

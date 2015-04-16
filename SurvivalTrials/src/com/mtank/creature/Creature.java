@@ -41,6 +41,8 @@ public class Creature {
 	private int health=100;
 	private int maxHealth=100;
 	private double weight=70;		// Weight is done in kg. Max is 140 min is 40 for humans.
+	private double maxWeight = 200;
+	private double minWeight = 0;
 	
 	// Useful pathfinding data structures
 	private PathFindingWorld pathfind;
@@ -766,6 +768,11 @@ public class Creature {
 	 */
 	void setWeight(double weight) {
 		this.weight=weight;
+		if (weight>maxWeight) {
+			weight=maxWeight;
+		} else if (weight<minWeight) {
+			weight=minWeight;
+		}
 	}
 	/**
 	 * Modifies the creature weight by weightChange. Positives increase and negatives decrease.
@@ -773,6 +780,40 @@ public class Creature {
 	 */
 	void modifyWeight(double weightChange) {
 		this.weight+=weightChange;
+		if (weight>maxWeight) {
+			weight=maxWeight;
+		} else if (weight<minWeight) {
+			weight=minWeight;
+		}
+	}
+	/**
+	 * Sets the max weight of this type of creature.
+	 * @param weight
+	 */
+	void setMaxWeight(double weight) {
+		this.maxWeight = weight;
+	}
+	/**
+	 * Sets the minimum weight of this type of creature.
+	 * @return
+	 */
+	void setMinWeight(double weight) {
+		this.minWeight = weight;
+	}
+	
+	/**
+	 * Returns the creature's creature type.
+	 * @return
+	 */
+	int getCreatureType() {
+		return creatureType;
+	}
+	/**
+	 * Sets the creature's creature type.
+	 * @return
+	 */
+	void setCreatureType(int type) {
+		this.creatureType = type;
 	}
 	
 	
