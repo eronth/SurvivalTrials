@@ -43,7 +43,10 @@ public class Creature {
 	private double weight=70;		// Weight is done in kg. Max is 140 min is 40 for humans.
 	private double maxWeight = 200;
 	private double minWeight = 0;
-	
+	// Variables for determining interaction with other creatures.
+	int fight;
+	int flee;
+	char disposition = 0; //1 is agressive, 0 is neutral, -1 is timid.
 	// Useful pathfinding data structures
 	private PathFindingWorld pathfind;
 	private boolean pathSet = false;
@@ -816,7 +819,91 @@ public class Creature {
 		this.creatureType = type;
 	}
 	
-	
+	/**
+	 * returns the fight variable value.
+	 */
+	int getFight() {
+		return fight;
+	}
+	/**
+	 * Sets the fight variable. Forces values under 0 to 0 and values over 40 to 40.
+	 * @return
+	 */
+	void setFight(int fight) {
+		if (fight>40) {
+			this.fight = 40;
+		} else if (fight<5) {
+			this.fight = 5;
+		} else {
+			this.fight = fight;			
+		}
+	}
+	/**
+	 * Returns the flee variable value.
+	 * @return
+	 */
+	int getFlee() {
+		return flee;
+	}
+	/**
+	 * Sets the flee variable. Forces values under 0 to 0 and values over 40 to 40.
+	 * @param flee
+	 * @return
+	 */
+	void setFlee(int flee) {
+		if (flee>40) {
+			this.flee= 40;
+		} else if (flee<5) {
+			this.flee = 5;
+		} else {
+			this.flee = flee;			
+		}
+	}
+	/**
+	 * Determines the appropriate interaction with other creatures.
+	 * @return
+	 */
+	void determineDisposition(Creature c) {
+		int primaryRange=0;
+		int secondaryRange=0;
+
+		// TODO improve fight/flee responses involving hunger and strength
+		
+		if (disposition!=0) {
+			if (disposition == 1) {
+				primaryRange = getFight();
+				secondaryRange = getFlee();
+			} else if (disposition == -1) {
+				primaryRange = getFlee();
+				secondaryRange = getFight();
+			}
+			primaryRange += 40;
+			secondaryRange /= 2;
+			secondaryRange = secondaryRange - 100;
+			if(secondaryRange<5) {
+				secondaryRange= 5;
+			}
+			if (secondaryRange - primaryRange< 10) {
+				secondaryRange = primaryRange+10;
+			}
+		}
+		int decision = Game.RANDY.nextInt(100);
+		if (decision < primaryRange) {
+			if (disposition > 1){
+				// TODO make me flee
+			} else {
+				// TODO ATTACK!
+			}
+		} else if (decision < secondaryRange) {
+			// TODO be cool.
+		} else {
+			if (disposition > 1){
+				// TODO ATTACK!
+			} else {
+				// TODO make me flee
+			}
+		}
+	}
 	
 	
 	Coordinates getPosition() {
