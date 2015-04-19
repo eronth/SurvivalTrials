@@ -8,7 +8,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
  
-public class HelloWorld {
+public class LWJGL_Test {
  
     // We need to strongly reference callback instances.
     private GLFWErrorCallback errorCallback;
@@ -164,7 +164,7 @@ public class HelloWorld {
     }
  
     public static void main(String[] args) {
-        new HelloWorld().run();
+        new LWJGL_Test().run();
     }
  
 }

@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
 
+import com.mtank.UI.window.LWJGL_Display;
 import com.mtank.UI.window.WindowBase;
 import com.mtank.creature.Creature;
 import com.mtank.world.World;
@@ -52,11 +53,13 @@ public class mainClass {
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
 		
 		// 120 is max advisable size.
-		island=new World(50);
+		island=new World(100);
 		System.out.println("\nFinal World Generation using :"+Game.getSeed());
 		island.printWorld();
 		// WindowBase gameWindow;
-		WindowBase w1 = new WindowBase();
+		//*** Testing new LWGJL/OGL display
+		LWJGL_Display Display = new LWJGL_Display();
+		/*WindowBase w1 = new WindowBase();
 		WindowBase w2 = new WindowBase();
 		w1.setFontSize(5);
 		w2.setFontSize(5);
@@ -65,7 +68,8 @@ public class mainClass {
 		w1.delay=100;
 		w2.delay=500;
 		w1.start();
-		w2.start();
+		w2.start();*/
+		Display.execute();
 		/*EventQueue.invokeLater(new Runnable() {
 			public void run() {/**/
 				/*try {
