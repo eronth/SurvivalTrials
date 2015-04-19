@@ -1,12 +1,19 @@
+import org.lwjgl.BufferUtils;
 import org.lwjgl.Sys;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
+
 import java.nio.ByteBuffer;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
   
 public class GoodbyeWorld {
+	
+	private float XWindowPadding = 0.95f;
+	private float YWindowPadding = 0.90f;
+	private double WorldSize = 50.0;
   
     private long window;
   
@@ -55,6 +62,9 @@ public class GoodbyeWorld {
 			@Override
 			public void invoke(long window) {
 				// TODO Auto-generated method stub
+				ByteBuffer a = BufferUtils.createByteBuffer(8),b = BufferUtils.createByteBuffer(8);
+	            glfwGetWindowSize(window, a, b);
+	            GL11.glViewport(0, 0, a.getInt(), b.getInt());
 			}
         });
  
@@ -79,15 +89,30 @@ public class GoodbyeWorld {
         while ( glfwWindowShouldClose(window) == GL_FALSE ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
-            float xStart = -0.9f, yStart = 0.75f;
-            float xOffset = 0.15f, yOffset = 0.2f;
-            for( int i = 0; i < 10; i++)
+            float xStart = -XWindowPadding, yStart = YWindowPadding;
+            float blockWidth, blockHeight;
+            blockWidth = (float) (1/WorldSize*1.5);
+            blockHeight = (float) (1/WorldSize*1.5);
+            float xOffset = (float) (blockWidth/0.95), yOffset = (float) (blockHeight/0.95);
+            for( int i = 0; i < WorldSize; i++)
             {
-            	if(i%2 == 0)
-            		drawSolidColoredBlock(xStart, yStart, xOffset, yOffset, 0.1f,0.8f,0.1f);
-            	else
-            		drawSolidColoredBlock(xStart, yStart, xOffset, yOffset, 0.7f,0.8f,0.1f);
-            	xStart+=xOffset+0.005;
+            	for( int j = 0; j < WorldSize; j++)
+                {
+            		int randomNum = 0 + (int)(Math.random()*6);
+                	//if(j%2 == 0)
+            		if(randomNum <= 4)
+                		//drawSolidColoredBlock(xStart, yStart, xOffset, yOffset, 0.1f,0.8f,0.1f);
+                		drawSolidColoredBlock(xStart, yStart, blockWidth, blockHeight, 0.1f,0.2f,0.8f);
+            		else if(randomNum == 5)
+                		//drawSolidColoredBlock(xStart, yStart, xOffset, yOffset, 0.1f,0.8f,0.1f);
+                		drawSolidColoredBlock(xStart, yStart, blockWidth, blockHeight, 0.1f,0.8f,0.1f);
+                	else
+                		//drawSolidColoredBlock(xStart, yStart, xOffset, yOffset, 0.7f,0.8f,0.1f);
+            			drawSolidColoredBlock(xStart, yStart, blockWidth, blockHeight, 0.7f,0.8f,0.1f);
+                	xStart+=xOffset;
+                }
+            	xStart = -XWindowPadding;
+            	yStart-=yOffset;
             }
              
             glfwSwapBuffers(window);
