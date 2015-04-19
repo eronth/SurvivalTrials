@@ -823,6 +823,7 @@ public class Creature {
 	 * returns the fight variable value.
 	 */
 	int getFight() {
+		// TODO improve fight/flee responses involving hunger and strength
 		return fight;
 	}
 	/**
@@ -843,6 +844,7 @@ public class Creature {
 	 * @return
 	 */
 	int getFlee() {
+		// TODO improve fight/flee responses involving hunger and strength
 		return flee;
 	}
 	/**
@@ -864,12 +866,12 @@ public class Creature {
 	 * @return
 	 */
 	void determineDisposition(Creature c) {
-		int primaryRange=0;
-		int secondaryRange=0;
-
-		// TODO improve fight/flee responses involving hunger and strength
-		
-		if (disposition!=0) {
+		int primaryRange = 0;
+		int secondaryRange = 0;
+		if (c.creatureType == this.creatureType) {
+			primaryRange = 5;
+			secondaryRange = 2;
+		} else if (disposition != 0) {
 			if (disposition == 1) {
 				primaryRange = getFight();
 				secondaryRange = getFlee();
