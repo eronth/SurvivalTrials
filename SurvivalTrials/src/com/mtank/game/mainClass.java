@@ -53,12 +53,11 @@ public class mainClass {
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
 		
 		// 120 is max advisable size.
-		island=new World(100);
+		island=new World(30);
 		System.out.println("\nFinal World Generation using :"+Game.getSeed());
 		island.printWorld();
 		// WindowBase gameWindow;
 		//*** Testing new LWGJL/OGL display
-		LWJGL_Display Display = new LWJGL_Display();
 		/*WindowBase w1 = new WindowBase();
 		WindowBase w2 = new WindowBase();
 		w1.setFontSize(5);
@@ -69,7 +68,6 @@ public class mainClass {
 		w2.delay=500;
 		w1.start();
 		w2.start();*/
-		Display.execute();
 		/*EventQueue.invokeLater(new Runnable() {
 			public void run() {/**/
 				/*try {
@@ -83,13 +81,14 @@ public class mainClass {
 		});/**/
 		 
 		// Code in place for crappy initialization purposes.
-		/*people.add(new Creature(island,"Jack","MeHoff",1,70.0,50,2,50,100,100,100));
+		people.add(new Creature(island,"Jack","MeHoff",1,70.0,50,2,50,100,100,100));
 		people.add(new Creature(island,"Jill","MeHoff",1,70,50,2,50,100,100,100));
 		 
 		Coordinates c=new Coordinates(island.worldDimension/2,island.worldDimension/2);
 		island.placeCreature(people.get(0),c);
 		c=new Coordinates(island.worldDimension/2+2, island.worldDimension/2);
 		island.placeCreature(people.get(1),c);
+		//people.get(0).addWalkAction(<target coordinates>);
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -100,7 +99,6 @@ public class mainClass {
 						public void actionPerformed(ActionEvent evt) {
 							if(n > 0) {
 								startTime=System.currentTimeMillis();
-								
 								for(int i=0;i<people.size();i++){
 									// TODO: ACTION GOES HERE.
 									people.get(i).action(island);
@@ -119,7 +117,10 @@ public class mainClass {
 					e.printStackTrace();
 				}
 			}
-		});*/
+		});
+
+		LWJGL_Display Display = new LWJGL_Display();
+		Display.execute();
 	}
 	
 	String availableChars () {

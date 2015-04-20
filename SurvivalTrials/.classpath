@@ -8,5 +8,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SurvivalTrials/native/windows/x64"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="M:/Janig/Documents/Code/Eclipse/SurvivalTrials/SurvivalTrials/jar/slick-util.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

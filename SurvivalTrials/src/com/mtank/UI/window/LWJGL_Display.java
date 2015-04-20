@@ -1,24 +1,55 @@
 package com.mtank.UI.window;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
+import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
+import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
+import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowRefreshCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_FALSE;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.system.MemoryUtil.NULL;
+
+import java.awt.Color;
+import java.nio.ByteBuffer;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Sys;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
+import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWWindowRefreshCallback;
+import org.lwjgl.glfw.GLFWvidmode;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLContext;
 
 import com.mtank.constants.GraphicColor;
 import com.mtank.constants.TypeValue;
 import com.mtank.game.mainClass;
 import com.mtank.world.World;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryUtil.*;
   
 public class LWJGL_Display {
 	
@@ -26,10 +57,6 @@ public class LWJGL_Display {
 	private float YWindowPadding = 0.90f;
 	private double WorldSize = 100.0;
 	private World GameWorld;
-	
-	private File fontFile = new File("fonts/DejaVuSansMono.ttf");
-	private Font monoSpacedFont;
-	private int fontSize = 12;
   
     private long window;
   
@@ -49,7 +76,6 @@ public class LWJGL_Display {
   
     	GameWorld = mainClass.island;
     	WorldSize = GameWorld.worldDimension;
-    	setFontSize(10);
     	
         if ( glfwInit() != GL11.GL_TRUE )
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -108,7 +134,7 @@ public class LWJGL_Display {
     private void loop() {
         GLContext.createFromCurrent();
   
-        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         while ( glfwWindowShouldClose(window) == GL_FALSE ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
@@ -118,7 +144,7 @@ public class LWJGL_Display {
             blockWidth = (float) (1.5/WorldSize);
             //blockHeight = (float) (1/(WorldSize*1.5) );
             blockHeight = (float) (1.5/WorldSize);
-            float xOffset = (float) (blockWidth/0.99), yOffset = (float) (blockHeight/0.99);
+            //float xOffset = (float) (blockWidth/0.99), yOffset = (float) (blockHeight/0.99);
             for( int i = 0; i < WorldSize; i++)
             {
             	for( int j = 0; j < WorldSize; j++)
@@ -174,12 +200,11 @@ public class LWJGL_Display {
     				} else if (GameWorld.world[j][i].item[0] != 0) {
     					//Draw item: Stringify.item(GameWorld.world[j][i].item)
     				}
-                	xStart+=xOffset;
+            		xStart+=blockWidth;
                 }
             	xStart = -XWindowPadding;
-            	yStart-=yOffset;
+            	yStart-=blockHeight;
             }
-             
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
@@ -222,27 +247,5 @@ public class LWJGL_Display {
     	RGB = new float[3];
     	color.getColorComponents(RGB);
     	drawSolidColoredBlock(xStart, yStart, blockWidth, blockHeight, RGB[0], RGB[1], RGB[2]);
-    }
-    
-    /**
-     * Updates the font size for the display.
-     */
-    public void setFontSize(int _size){
-    	if(_size >= 1){
-    		fontSize = _size;
-    		try {
-    			monoSpacedFont = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(Font.BOLD, fontSize);
-    		} catch (FontFormatException e) {
-    			//In the event custom font cannot be created, fall back to Monospaced
-    			monoSpacedFont = new Font("Monospaced", Font.BOLD, fontSize);
-    		} catch (IOException e) {
-    			//In the event custom font cannot be loaded, fall back to Monospaced
-    			monoSpacedFont = new Font("Monospaced", Font.BOLD, fontSize);
-    		}
-    	}
-    }
-  
-    public static void main(String[] args) {
-        new LWJGL_Display().execute();
     }
 }
