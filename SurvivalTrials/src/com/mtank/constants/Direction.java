@@ -30,7 +30,13 @@ public class Direction {
 	//  :modifyX will return +1 since EAST is located +1 along the x axis.
 	//  :modifyY will return -1 since NORTH is located -1 along the y axis.
 	// XMOD and YMOD assume you're looking for 1 space away in the given direction.
-	private static int modifyX(int direction){
+	
+	/**
+	 * Returns an appropriate value to modify the x-coordinate based on the direction.
+	 * @param direction
+	 * @return
+	 */
+	public static int modifyX(int direction) {
 		int xmod=0;
 		switch(direction){
 		case EAST:
@@ -48,7 +54,12 @@ public class Direction {
 		}
 		return xmod;
 	}
-	private static int modifyY(int direction){
+	/**
+	 * Returns an appropriate value to modify the y-coordinate based on the direction.
+	 * @param direction
+	 * @return
+	 */
+	public static int modifyY(int direction) {
 		int ymod=0;
 		switch(direction){
 		case NORTH:
@@ -76,7 +87,7 @@ public class Direction {
 	/**
 	 * Returns the inverted direction of the argument.
 	 */
-	public static int invertDirection(int _direction) {
+	public static int invert(int _direction) {
 		int ret=0;
 		switch(_direction){
 		case NORTH:
@@ -106,7 +117,73 @@ public class Direction {
 		}
 		return ret;
 	}
-
-	
+	/**
+	 * Returns the direction slightly right of the argument direction. 
+	 * Example: Would return NORTHEAST if the argument is NORTH and WEST if the argument is SOUTHWEST.
+	 */
+	public static int slightRight(int direction) {
+	int ret = 0;
+	switch(direction){
+	case NORTH:
+		ret=NORTHEAST;
+		break;
+	case SOUTH:
+		ret=SOUTHWEST;
+		break;
+	case EAST:
+		ret=SOUTHEAST;
+		break;
+	case WEST:
+		ret=NORTHWEST;
+		break;
+	case NORTHEAST:
+		ret=EAST;
+		break;
+	case NORTHWEST:
+		ret=NORTH;
+		break;
+	case SOUTHEAST:
+		ret=SOUTH;
+		break;
+	case SOUTHWEST:
+		ret=WEST;
+		break;
+	}
+	return ret;
+	}
+	/**
+	 * Returns the direction slightly left of the argument direction. 
+	 * Example: Would return NORTHWEST if the argument is NORTH and SOUTH if the argument is SOUTHWEST.
+	 */
+	public static int slightLeft(int direction) {
+		int ret = 0;
+		switch(direction){
+		case NORTH:
+			ret=NORTHWEST;
+			break;
+		case SOUTH:
+			ret=SOUTHEAST;
+			break;
+		case EAST:
+			ret=NORTHEAST;
+			break;
+		case WEST:
+			ret=SOUTHWEST;
+			break;
+		case NORTHEAST:
+			ret=NORTH;
+			break;
+		case NORTHWEST:
+			ret=WEST;
+			break;
+		case SOUTHEAST:
+			ret=EAST;
+			break;
+		case SOUTHWEST:
+			ret=SOUTH;
+			break;
+		}
+		return ret;
+	}
 	
 }

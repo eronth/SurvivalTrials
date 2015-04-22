@@ -15,5 +15,8 @@ public class GraphicColor {
 	public static final Color DIRT=Color.decode("#964B00");
 	public static final Color STONE=Color.gray;
 	public static final Color GRASS=Color.green;
+	
+	// Creatures
+	public static final Color CREATURE=new Color(249, 87, 255);
 
 }

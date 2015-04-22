@@ -136,6 +136,8 @@ public class LWJGL_Display {
   
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         while ( glfwWindowShouldClose(window) == GL_FALSE ) {
+        	//Unnecessary due to java pointer magic.
+        	//GameWorld = mainClass.island;
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
             float xStart = -XWindowPadding, yStart = YWindowPadding;
@@ -157,7 +159,7 @@ public class LWJGL_Display {
 	        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.BLANK);
 	        				break;
 	        			case TypeValue.Land.WATER:
-	        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.DIRT);
+	        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.WATER);
 	        				break;
 	        			case TypeValue.Land.DIRT:
 	        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.DIRT);
@@ -194,7 +196,7 @@ public class LWJGL_Display {
     					//Draw creature: Stringify.creature(GameWorld.world[j][i].creature)
             			//Font.drawString(5,5, Stringify.creature(GameWorld.world[j][i].creature), GraphicColor.BLANK);
             			//*** Draw white square as a test.
-        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.BLANK);
+        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.CREATURE);
     				} else if (GameWorld.world[j][i].structure != null && GameWorld.world[j][i].structure.structureType != 0) {
     					//Draw structure: Stringify.structure(GameWorld.world[j][i].structure)
     				} else if (GameWorld.world[j][i].item[0] != 0) {

@@ -21,6 +21,7 @@ public class PathFindingWorld {
 	public ArrayList<Integer> path = new ArrayList<Integer>();
 	public Coordinates targetCoords = new Coordinates();
 	public Coordinates startCoords = new Coordinates();
+	public Coordinates tmp = new Coordinates();
 
 	// wd is the world dimension, used to ensure the pathfinding world is of appropriate size.
 	public PathFindingWorld(World w) {
@@ -29,41 +30,43 @@ public class PathFindingWorld {
 			for (int j = 0; j<w.world[0].length; j++) {
 				area[i][j] = new PathFindingLand();
 				area[i][j].setIsWalkable(w.world[i][j].isWalkable());
+				area[i][j].setMovemetnCostModifier(w.world[i][j].getMovementModifier());
 			}
 		}
-		area[9][6].movementCost=1000;
+		//area[9][6].movementCost=1000;
 		//initializeLandMovementCost(w);
 	}
-	void generatePath(Coordinates cur, int costSoFar) {
+	
+	
+	public void generatePath(Coordinates cur, int costSoFar) {
 		
 		//TODO clean up? The following only occurs on the first execution.
 		if (costSoFar == 0) {
+			System.out.print("Starter " + targetCoords);
 			startCoords = new Coordinates(cur);
 			area[cur.x][cur.y].setHeuristic(cur, targetCoords);
 			//area[cur.x][cur.y].setIsClosedList(true);
 		}
 		//TODO clean up?
 		
-		
-		Coordinates tmp = new Coordinates();
 		Integer total = 0;
 		//Calculate the total cost F for each of the surrounding regions.
-		// north
-		
 		// Iterate through every direction from north (1) to southwest (8)
 		for (int i = 1; i < 9; i++) {
 			tmp=cur.directionalCoord(i);
-			//System.out.println(tmp.toString());// area: " + area[tmp.x][tmp.y]);
-			area[tmp.x][tmp.y].setHeuristic(tmp, targetCoords);
-			// calculate total move distance.
-			// costSoFar increases by 10 if in a cardinal direction and 14 if a diagonal.
-			total = calculateTotalF(tmp, costSoFar+10+(Direction.isCardinalDirection(i)?0:4));
-			if(!area[tmp.x][tmp.y].getIsClosedList() && (!area[tmp.x][tmp.y].getIsOpenList() || total < area[tmp.x][tmp.y].totalCost) ) {
-				area[tmp.x][tmp.y].totalCost = total;
-				area[tmp.x][tmp.y].setIsOpenList(true);
-				area[tmp.x][tmp.y].setDirection(i);//D.invertDirection(i));
-				if (costSoFar==0){
-					System.out.println("CHECKME: Coordinates: "+tmp.toString() + "Direction: "+i);
+			if (tmp.x>0 && tmp.y>0 && tmp.x<area.length && tmp.y<area.length) {
+				//System.out.println(tmp.toString());// area: " + area[tmp.x][tmp.y]);
+				area[tmp.x][tmp.y].setHeuristic(tmp, targetCoords);
+				// calculate total move distance.
+				// costSoFar increases by 10 if in a cardinal direction and 14 if a diagonal.
+				total = calculateTotalF(tmp, costSoFar+10+(Direction.isCardinalDirection(i)?0:4));
+				if(!area[tmp.x][tmp.y].getIsClosedList() && (!area[tmp.x][tmp.y].getIsOpenList() || total < area[tmp.x][tmp.y].totalCost) ) {
+					area[tmp.x][tmp.y].totalCost = total;
+					area[tmp.x][tmp.y].setIsOpenList(true);
+					area[tmp.x][tmp.y].setDirection(i);//D.invertDirection(i));
+					if (costSoFar==0){
+						System.out.println("CHECKME: Coordinates: "+tmp.toString() + "Direction: "+i);
+					}
 				}
 			}
 		}
@@ -75,7 +78,8 @@ public class PathFindingWorld {
 			for (int i = 0; i<area.length; i++) {
 				//if null
 				
-				if(next == null && area[i][j].getIsOpenList() && !area[i][j].getIsClosedList()) {
+				if( i>0 && j>0 && i<area.length && j<area.length &&
+						next == null && area[i][j].getIsOpenList() && !area[i][j].getIsClosedList()) {
 					next = new Coordinates(i,j);
 				} else if (next != null 
 						&& (area[i][j].getIsOpenList() && !area[i][j].getIsClosedList()) 
@@ -87,7 +91,7 @@ public class PathFindingWorld {
 				
 			}
 		}
-		//System.out.print(next.toString());
+		//System.out.print("newt" + next + " " + targetCoords + " " + area.length + " ");
 		area[next.x][next.y].setIsClosedList(true);
 		
 		// Recursive call of generatePath() to finish making a path.
@@ -103,7 +107,7 @@ public class PathFindingWorld {
 		while (!c.equals(startCoords)) {
 			direction = area[c.x][c.y].getDirection();
 			tempPath.add(direction);
-			c.setDirection(Direction.invertDirection(direction));// = c.directionalCoord(direction);
+			c.setDirection(Direction.invert(direction));// = c.directionalCoord(direction);
 			//System.out.println(tempPath);
 			//System.out.println("direction: " + direction + " coordinates: " + c.toString());
 			//TODO complete the addition system.
@@ -123,7 +127,7 @@ public class PathFindingWorld {
 		//TODO actually calculate final F
 		//TODO use the formula F = G + H;
 		//TODO Sorely incomplete
-		return costSoFar*area[c.x][c.y].movementCost + area[c.x][c.y].heuristicCost;
+		return (int) (costSoFar*area[c.x][c.y].movementCostModifier + area[c.x][c.y].heuristicCost);
 	}
 	
 	public String printTotalCostWorld() {
@@ -143,7 +147,7 @@ public class PathFindingWorld {
 		s.append("Movement Cost World\n");
 		for (int j = 0; j<area.length; j++) {
 			for (int i = 0; i<area[0].length; i++) {
-				s.append(area[i][j].movementCost + " ");
+				s.append(area[i][j].movementCostModifier + " ");
 			}
 			s.append("\n");
 		}
