@@ -3,10 +3,14 @@ package com.mtank.game;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.LinkedList;
 
 import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
+
+import org.lwjgl.LWJGLUtil;
+import org.lwjgl.LWJGLUtil.Platform;
 
 import com.mtank.UI.window.LWJGL_Display;
 import com.mtank.creature.Creature;
@@ -45,6 +49,9 @@ public class mainClass {
 	
 	
 	public static void main(String arg[]) throws BadLocationException{
+		//Determine OS and set up.
+		checkOS();
+		
 		Game.seedRand();
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
 		island=new World(100);
@@ -108,4 +115,17 @@ public class mainClass {
 		LWJGL_Display Display = new LWJGL_Display();
 		Display.execute();
 	 }
+	
+	/***
+	 * This function determines which OS the program is running on and sets the LWJGL dependencies to match.
+	 */
+	static void checkOS() {
+		File JGLLib = null;
+		if(LWJGLUtil.getPlatform() == Platform.WINDOWS) {
+            JGLLib = new File("./native/windows/x64/");
+		} else if(LWJGLUtil.getPlatform() == Platform.MACOSX) {
+            JGLLib = new File("./native/macosx/x64/");
+		}
+	    System.setProperty("org.lwjgl.librarypath", JGLLib.getAbsolutePath());
+	}
 }
