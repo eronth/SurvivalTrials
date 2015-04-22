@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
 
-import com.mtank.UI.window.LWJGL_Display;
 import com.mtank.UI.window.WindowBase;
 import com.mtank.creature.Creature;
 import com.mtank.world.World;
@@ -49,7 +48,7 @@ public class mainClass {
 		System.out.println("\nFinal World Generation using :"+Game.getSeed());
 		island.printWorld();
 		
-		//final WindowBase gameWindow = new WindowBase();
+		final WindowBase gameWindow = new WindowBase();
 		
 		//Depreciated Code to run update on game world display
 		//GamepPanelUpdateThread g = new GamepPanelUpdateThread();
@@ -79,22 +78,18 @@ public class mainClass {
 		// ==================================================================================================
 		// Rudamentary game loop starts here. int n is used to iterate the number of turns you'd like to run.
 		// This loop will eventually be infinite until user selects to end game.
-		int n=5;
+		int n=200;
 		int maxn=n;
 		long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
 		long startTime,endTime,elapsedTime;
-
-		LWJGL_Display Display = new LWJGL_Display();
-		Display.execute();
-		
-		/*gameWindow.makeVisible();
+		gameWindow.makeVisible();
 		gameWindow.setFontSize(5);
 		Timer windowUpdate = new Timer(300, new ActionListener() {
 		    public void actionPerformed(ActionEvent evt) {    
 		        gameWindow.updateWorldDisplay();
 		    }
 		});
-		windowUpdate.start();*/
+		windowUpdate.start();
 		while(n!=0){
 			startTime=System.currentTimeMillis();
 			for(int i=0;i<person.size();i++){
@@ -105,7 +100,7 @@ public class mainClass {
 			endTime=System.currentTimeMillis();
 			elapsedTime=endTime-startTime;
 			System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
-			//gameWindow.print("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
+			gameWindow.print("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
 			if(mspt>elapsedTime){
 				try {
 					Thread.sleep(mspt-elapsedTime);
