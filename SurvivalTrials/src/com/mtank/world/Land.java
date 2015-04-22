@@ -5,7 +5,6 @@ import com.mtank.creature.Creature;
 import com.mtank.game.Coordinates;
 import com.mtank.item.Item;
 import com.mtank.structure.Structure;
-import sun.plugin.dom.core.CoreConstants;
 
 public class Land {
 	// a lot of these ints will likely be changed to something else, such as Structure or Item data types
