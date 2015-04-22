@@ -2,8 +2,10 @@ package com.mtank.world;
 
 import com.mtank.constants.TypeValue;
 import com.mtank.creature.Creature;
+import com.mtank.game.Coordinates;
 import com.mtank.item.Item;
 import com.mtank.structure.Structure;
+import sun.plugin.dom.core.CoreConstants;
 
 public class Land {
 	// a lot of these ints will likely be changed to something else, such as Structure or Item data types
@@ -12,13 +14,15 @@ public class Land {
 	public Item items[] = new Item[4]; // Second array to keep track of special items
 	public Creature creature = null;
 	public int landType=0; // starts typeless
+	public Coordinates coordinates;
 	
 	private double movementMod=1;
 	
 	/**
 	 * Generate a new land initiated with a <landType>.
 	 */
-	Land(int landType) {
+	Land(int landType, int x, int y) {
+		coordinates = new Coordinates(x,y);
 		switch(landType){
 		case 0:
 			initLand(landType,1);
@@ -80,4 +84,17 @@ public class Land {
 	public void setMovementCost(double movementModifier) {
 		this.movementMod = movementModifier;
 	}
+
+    public Coordinates north() {
+        return new Coordinates(coordinates.x, coordinates.y-1);
+    }
+    public Coordinates south() {
+        return new Coordinates(coordinates.x, coordinates.y+1);
+    }
+    public Coordinates east() {
+        return new Coordinates(coordinates.x+1, coordinates.y);
+    }
+    public Coordinates west() {
+        return new Coordinates(coordinates.x-1, coordinates.y);
+    }
 }

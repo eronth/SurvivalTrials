@@ -44,7 +44,7 @@ public class mainClass {
 	public static void main(String arg[]) throws BadLocationException{
 		Game.seedRand();
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
-		island=new World(120);
+		island=new World(70);
 		System.out.println("\nFinal World Generation using :"+Game.getSeed());
 		island.printWorld();
 		

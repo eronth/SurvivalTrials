@@ -1,4 +1,5 @@
 package com.mtank.world;
+
 import com.mtank.constants.TypeValue;
 import com.mtank.creature.Creature;
 import com.mtank.game.Coordinates;
@@ -7,10 +8,13 @@ import com.mtank.game.Stringify;
 import com.mtank.item.Item;
 import com.mtank.structure.Structure;
 
+import java.util.ArrayList;
+
 
 public class World {
 	public int worldDimension=10;
-	public Land[][] world;// = new Land[worldDimension][worldDimension]; 
+	public Land[][] world;// = new Land[worldDimension][worldDimension];
+    public ArrayList<ArrayList<Coordinates>> biomes;
 	
 	
 	public World(int size){
@@ -28,13 +32,13 @@ public class World {
 		//start by initializing the Land variable.
 		for(int i=0;i<world.length;i++){
 			for(int j=0;j<world[0].length;j++){
-				world[i][j]=new Land(TypeValue.Land.WATER);
+				world[i][j]=new Land(TypeValue.Land.WATER, i, j);
 			}
 		}
 	}
 	void initializeIslandLand(int x,int y,int xc,int yc){
 		// Function works by setting the current spot to a non-SEAWATER value. It then possibly calls the function on neighboring squars, with a chance to fail based on an increasing number counter. 
-		world[x][y].landType=0;
+		world[x][y].landType=TypeValue.NONE;
 		int xlen=(xc>x?xc-x:x-xc);
 		int ylen=(yc>y?yc-y:y-yc);
 		double dist = (Math.sqrt( Math.pow(xlen,2) + Math.pow(ylen,2) ));
@@ -66,7 +70,7 @@ public class World {
 			for(int j=1;j<world[0].length-1;j++){
 				if(world[i][j].landType==TypeValue.Land.WATER && 
 						world[i-1][j].landType==0 && world[i][j-1].landType==0 && world[i+1][j].landType==0 && world[i][j+1].landType==0){
-					world[i][j]=new Land(0);
+					world[i][j]=new Land(0,i,j);
 				}
 			}
 		}
@@ -75,7 +79,7 @@ public class World {
 		for (int i=0;i<world.length;i++){
 			for (int j=0;j<world[0].length;j++){
 				if(world[i][j].landType==TypeValue.Land.WATER){
-					world[i][j] = new Land(TypeValue.Land.STONE);	// Stone is acting as a temporary placeholder here.
+					world[i][j] = new Land(TypeValue.Land.STONE,i,j);	// Stone is acting as a temporary placeholder here.
 				}
 			}
 		}
@@ -90,7 +94,7 @@ public class World {
 	void fillLake(int x,int y){
 		// fillLake spreads water outwards from the first viable source it finds... then moves 1 space further out to help enlarge the lake.
 		int oldType=world[x][y].landType;
-		world[x][y] = new Land(TypeValue.Land.WATER);
+		world[x][y] = new Land(TypeValue.Land.WATER,x,y);
 		if(oldType!=0 && oldType!=TypeValue.Land.SALTWATER){
 			if((world[x+1][y].landType==0 || world[x][y].landType==TypeValue.Land.STONE) && !touchingSaltWater(x+1,y)){
 				fillLake(x+1,y);
@@ -113,7 +117,7 @@ public class World {
 	}
 	// == Takes in the x and y positions for a block of water. Turns the entire body of water including the initial square from WATER to SALTWATER. 
 	private void addSalt(int i,int j){
-		world[i][j] = new Land(TypeValue.Land.SALTWATER);
+		world[i][j] = new Land(TypeValue.Land.SALTWATER,i,j);
 		if(i>0 && world[i-1][j].landType==TypeValue.Land.WATER){
 			addSalt(i-1,j);
 		}
@@ -148,93 +152,98 @@ public class World {
 		System.out.print(ret);
 		return ret;
 	}
+
+	//======================================
+	//START AUSTIN WORK
+    //TODO: Figure out why NONE lands are remaining among the generated.
+    //TODO: Add structures to certain biomes.
+    //TODO: Add mountain and a beach.
+	//======================================
+
 	//Inits biomes for the world
 	void initializeBiomes(){
+        //biomes is a list of biomes containing the various biomes coordinates
+        ArrayList<ArrayList<Coordinates>> biomes = new ArrayList();
+        //growlist is a list of biomes and their cells that need to grow.
+        ArrayList<ArrayList<Coordinates>> growList = new ArrayList();
+
+        //"Plains", "Forest", "Desert", "Dessert", "Ice"
+        int[] biome = {TypeValue.Land.DIRT, TypeValue.Land.GRASS, TypeValue.Land.SAND, TypeValue.Land.SNOW, TypeValue.Land.ICE};
 		int[] chances = {20,20,0,20,20,20};
-		//biomes: forest, mountain, plain, beach, desert
-		addBiome("Beach",findBiomeX("Beach"),findBiomeY("Beach"));
-		addBiome("Mountain",findBiomeX("Mountain"),findBiomeY("Mountain"));
-		addBiome("Forest",findBiomeX("Forest"),findBiomeY("Forest"));
-		addBiome("Desert",findBiomeX("Desert"),findBiomeY("Desert"));
-		
-		
-		for(int i = 0;i < world.length;i++){
-			for(int j = 0; j < world.length;j++){
-				if(world[i][j].landType == TypeValue.NONE){
-					lookAroundYou(chances);
-					int rand = Game.RAND.nextInt(6)+1;
-					while(rand == TypeValue.Land.SALTWATER || rand == TypeValue.Land.WATER){
-						rand = TypeValue.Land.DIRT;
-					}
-					world[i][j].landType = rand;
-				}
-			}
-		}
-	}
-	
-	private void lookAroundYou(int[] chances) {
-		// TODO Auto-generated method stub
-		
+        int center=(world.length)/2;
+
+        double angleRads = Math.toRadians(360.0 / (double) chances.length);
+        Coordinates[] endpoints = new Coordinates[chances.length];
+        Coordinates[] startpoints = new Coordinates[chances.length];
+
+        for (int i = 0; i < chances.length; i++) {
+            biomes.add(new ArrayList());
+            double currentAngle = i*angleRads;
+            int yStep = Math.round((float)(8*Math.sin(currentAngle)));
+            int xStep = Math.round((float)(8*Math.cos(currentAngle)));
+            for(int x = center, y = center, steps = 1; ; steps++) {
+
+                if (world[x][y].landType == TypeValue.Land.SALTWATER) {
+                    steps--;
+
+                    endpoints[i] = new Coordinates(x - xStep, y - yStep);
+                    int rand = Game.RAND.nextInt(steps) + 1;
+                    startpoints[i] = new Coordinates(center + xStep * rand, center + yStep * rand);
+                    break;
+                }
+                x+=xStep;
+                y+=yStep;
+
+            }
+        }
+        for(int i = 0; i < startpoints.length; i++) {
+            biomes.get(i).add(startpoints[i]);
+            growList.add(biomes.get(i));
+        }
+
+        int loopCount = 0;
+        for(int i = 0; loopCount < 20 ;i++) {
+            if(growList.get(i).isEmpty()) {
+                loopCount++;
+                continue;
+            }
+            int growSpot = Game.RAND.nextInt(growList.get(i).size());
+            ArrayList<Coordinates> newSpots = grow(biome[i], growList.get(i).get(growSpot));
+            if(newSpots.size() == 0) {
+                growList.get(i).remove(growSpot);
+            }
+            else {
+                growList.get(i).addAll(newSpots);
+            }
+            if(i ==4)
+                i = 0;
+        }
+        //fill un-filled spaces with beach/desert?
 	}
 
-	//Finds the Y portion for Biome C according to Austin's strategy at the time.
-		//Beach goes straight down from center
-	//current biomes: Beach, Mountain
-	//Input: String matching a current biome type.
-	//Output: 
-	private int findBiomeY(String c) {
-		int retVal = 0;
-		int center=(world[0].length-1)/2;
-		
-		switch(c){
-		
-		case("Beach"):
-			//from center of land, go down until we find saltwater
-			retVal = center;
-			while(world[center][retVal].landType != TypeValue.Land.SALTWATER)
-				retVal++;
-			//make the spot we're on land(go north 1)
-			retVal--;
-			break;
-			
-		case("Mountain"):
-			retVal = center - 2;
-			break;
-		case("Forest"):
-			retVal = center - 10;
-			break;
-		case("Desert"):
-			retVal = center - 10;
-			break;
-		}
-		
-		return retVal;
-	}
-	private int findBiomeX(String c) {
-		int retVal = 0;
-		int center=(world[0].length-1)/2;
-		
-		switch(c){
-		case("Beach"):
-			retVal = center;
-			break;
-		case("Mountain"):
-			retVal = center - 2;
-			break;
-		case("Forest"):
-			retVal = center + 10;
-			break;
-		case("Desert"):
-			retVal = center - 10;
-			break;
-		}
-		
-		return retVal;
-	}
-	
+    private ArrayList<Coordinates> grow(int biome, Coordinates c) {
+        ArrayList<Coordinates> newGrowth = new ArrayList();
+        if(world[c.x+1][c.y].landType == TypeValue.NONE)
+            newGrowth.add(new Coordinates(c.x+1,c.y));
+        if(world[c.x-1][c.y].landType == TypeValue.NONE)
+            newGrowth.add(new Coordinates(c.x-1,c.y));
+        if(world[c.x][c.y+1].landType == TypeValue.NONE)
+            newGrowth.add(new Coordinates(c.x,c.y+1));
+        if(world[c.x][c.y-1].landType == TypeValue.NONE)
+            newGrowth.add(new Coordinates(c.x,c.y-1));
+        if(newGrowth.size()==0)
+            return newGrowth;
+        int spot = Game.RAND.nextInt(newGrowth.size());
+        world[newGrowth.get(spot).x][newGrowth.get(spot).y].landType = biome;
+        System.out.println(c.x + " " + c.y + " " + newGrowth.get(spot).x + " " + newGrowth.get(spot).y + " " + biome);
+        newGrowth.remove(spot);
+        return newGrowth;
+    }
+
+    //kept to pull out beach and mountain, overrides whatever is in their position.
 	void addBiome(String c, int x, int y){
 		switch(c){
-		
+
 		//Strategy: find south shores for +-(4-6) and each puts sand up for 3-5 squares
 		case("Beach")://current strat, circle around center, replacing land
 			int beachSize = Game.RAND.nextInt(4)+5;
@@ -255,29 +264,14 @@ public class World {
 					world[i][j].landType = TypeValue.Land.STONE;
 				}
 			}
-			break;
-		case("Forest"):
-			for(int i = y; i < y+5;i++){
-				for(int j = x; j< x+5; j++){
-					world[i][j].landType = TypeValue.Land.GRASS;
-					if(Game.RAND.nextFloat() > 0.75)
-						placeStructure(new Structure(TypeValue.Structure.TREE,TypeValue.Material.WOOD), new Coordinates(i,j));
-				}
-			}
-			break;
-		case("Desert"):
-			for(int i = y; i < y+5;i++){
-				for(int j = x; j< x+5; j++){
-					world[i][j].landType = TypeValue.Land.SAND;
-					if(Game.RAND.nextFloat() > 0.75)
-						placeStructure(new Structure(TypeValue.Structure.CACTUS,TypeValue.Material.CACTIPODE), new Coordinates(i,j));
-				}
-			}
-			break;
 		}
-		
-	
+
+
 	}
+
+	//======================================
+	//END AUSTIN WORK
+	//======================================
 	
 	
 	void placeStructure(Structure structure, Coordinates c){
