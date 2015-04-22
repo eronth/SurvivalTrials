@@ -2,10 +2,14 @@ package com.mtank.game;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.LinkedList;
 
 import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
+
+import org.lwjgl.LWJGLUtil;
+import org.lwjgl.LWJGLUtil.Platform;
 
 import com.mtank.UI.window.LWJGL_Display;
 import com.mtank.UI.window.WindowBase;
@@ -43,6 +47,9 @@ public class mainClass {
 	
 	
 	public static void main(String arg[]) throws BadLocationException{
+		//Set up LWJGL for windows or mac.
+		checkOS();
+		
 		Game.seedRand();
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
 		island=new World(70);
@@ -63,7 +70,6 @@ public class mainClass {
 		island.placeCreature(person.get(0),c);
 		c=new Coordinates(island.worldDimension/2+2, island.worldDimension/2);
 		island.placeCreature(person.get(1),c);
-		
 		
 		
 		 
@@ -149,4 +155,14 @@ public class mainClass {
 			}
 		}/**/
 	 }
+	
+	static void checkOS() {
+		File JGLLib = null;
+		if(LWJGLUtil.getPlatform() == Platform.WINDOWS) {
+            JGLLib = new File("./native/windows/x64/");
+		} else if(LWJGLUtil.getPlatform() == Platform.MACOSX) {
+            JGLLib = new File("./native/macosx/x64/");
+		}
+	    System.setProperty("org.lwjgl.librarypath", JGLLib.getAbsolutePath());
+	}
 }
