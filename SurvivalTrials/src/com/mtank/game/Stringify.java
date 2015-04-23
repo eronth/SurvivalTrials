@@ -84,6 +84,15 @@ import com.mtank.structure.Structure;
 			case TypeValue.Land.STONE:
 				ret=Graphic.STONE;
 				break;
+			case TypeValue.Land.ICE:
+				ret=Graphic.ICE;
+				break;
+			case TypeValue.Land.SNOW:
+				ret=Graphic.SNOW;
+				break;
+			case TypeValue.Land.DESERT:
+				ret=Graphic.DESERT;
+				break;
 			default:
 				ret=""+land;
 		}

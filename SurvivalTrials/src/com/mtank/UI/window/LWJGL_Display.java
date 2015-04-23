@@ -151,12 +151,12 @@ public class LWJGL_Display {
             {
             	for( int j = 0; j < WorldSize; j++)
                 {
-            		switch (GameWorld.world[i][j].landType) {
+            		switch (GameWorld.world[j][i].landType) {
+        				case TypeValue.NONE:
+	        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.BLANK);
+	        				break;
 	        			case TypeValue.Land.SALTWATER:
 	        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.SALTWATER);
-	        				break;
-	        			case TypeValue.NONE:
-	        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.BLANK);
 	        				break;
 	        			case TypeValue.Land.WATER:
 	        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.WATER);
@@ -183,7 +183,7 @@ public class LWJGL_Display {
 	        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.DESERT);
 	        				break;
 	        			default:
-	        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.BLANK);
+	        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.BACKGROUND);
 	        				break;
             		}
                 	//xStart+=xOffset;

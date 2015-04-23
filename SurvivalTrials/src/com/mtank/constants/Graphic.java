@@ -18,9 +18,12 @@ public class Graphic {
 	public static final String SAND=".";
 	public static final String WATER="~";
 	public static final String SALTWATER="w";
-	public static final String DIRT=",";
+	public static final String DIRT=";";
 	public static final String STONE="E";
 	public static final String GRASS=",";
+	public static final String SNOW="X";
+	public static final String ICE="R";
+	public static final String DESERT="Z";
 	
 	// Structure display graphics
 	public static final String STRUCTURE="␚";
