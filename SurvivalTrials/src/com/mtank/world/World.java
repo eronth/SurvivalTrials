@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 
 public class World {
+    int landsToAdd = 5;
+    int changedLands = 0;
 	public int worldDimension=10;
 	public Land[][] world;// = new Land[worldDimension][worldDimension];
     public ArrayList<ArrayList<Coordinates>> biomes;
@@ -169,18 +171,17 @@ public class World {
 
         //"Plains", "Forest", "Desert", "Dessert", "Ice"
         int[] biome = {TypeValue.Land.DIRT, TypeValue.Land.GRASS, TypeValue.Land.SAND, TypeValue.Land.SNOW, TypeValue.Land.ICE};
-		int[] chances = {20,20,0,20,20,20};
         int center=(world.length)/2;
 
-        double angleRads = Math.toRadians(360.0 / (double) chances.length);
-        Coordinates[] endpoints = new Coordinates[chances.length];
-        Coordinates[] startpoints = new Coordinates[chances.length];
+        double angleRads = Math.toRadians(360.0 / (double) biome.length);
+        Coordinates[] endpoints = new Coordinates[biome.length];
+        Coordinates[] startpoints = new Coordinates[biome.length];
 
-        for (int i = 0; i < chances.length; i++) {
+        for (int i = 0; i < biome.length; i++) {
             biomes.add(new ArrayList());
             double currentAngle = i*angleRads;
-            int yStep = Math.round((float)(8*Math.sin(currentAngle)));
-            int xStep = Math.round((float)(8*Math.cos(currentAngle)));
+            int yStep = Math.max(1, Math.round((float) (5 * Math.sin(currentAngle))));
+            int xStep = Math.max(1, Math.round((float) (5 * Math.cos(currentAngle))));
             for(int x = center, y = center, steps = 1; ; steps++) {
 
                 if (world[x][y].landType == TypeValue.Land.SALTWATER) {
@@ -202,7 +203,11 @@ public class World {
         }
 
         int loopCount = 0;
+        int independant = 0;
         for(int i = 0; loopCount < 20 ;i++) {
+            independant++;
+            if(i == 5)
+                i=0;
             if(growList.get(i).isEmpty()) {
                 loopCount++;
                 continue;
@@ -215,9 +220,10 @@ public class World {
             else {
                 growList.get(i).addAll(newSpots);
             }
-            if(i ==4)
-                i = 0;
+            loopCount=0;
         }
+        System.out.println(independant);
+        System.out.println(changedLands);
         //fill un-filled spaces with beach/desert?
 	}
 
@@ -231,11 +237,17 @@ public class World {
             newGrowth.add(new Coordinates(c.x,c.y+1));
         if(world[c.x][c.y-1].landType == TypeValue.NONE)
             newGrowth.add(new Coordinates(c.x,c.y-1));
-        if(newGrowth.size()==0)
+        if(newGrowth.size()==0) {
             return newGrowth;
+        }
         int spot = Game.RAND.nextInt(newGrowth.size());
+
         world[newGrowth.get(spot).x][newGrowth.get(spot).y].landType = biome;
-        System.out.println(c.x + " " + c.y + " " + newGrowth.get(spot).x + " " + newGrowth.get(spot).y + " " + biome);
+        changedLands++;
+        landsToAdd--;
+
+        landsToAdd+=newGrowth.size()-1;
+        System.out.println(c.x + " " + c.y + " " + newGrowth.get(spot).x + " " + newGrowth.get(spot).y + " " + landsToAdd);
         newGrowth.remove(spot);
         return newGrowth;
     }
