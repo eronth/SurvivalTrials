@@ -151,7 +151,7 @@ public class LWJGL_Display {
             {
             	for( int j = 0; j < WorldSize; j++)
                 {
-            		switch (GameWorld.world[i][j].landType) {
+            		switch (GameWorld.world[j][i].landType) {
 	        			case TypeValue.Land.SALTWATER:
 	        				drawSquare(xStart, yStart, blockWidth, blockHeight, GraphicColor.SALTWATER);
 	        				break;
