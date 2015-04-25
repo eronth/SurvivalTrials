@@ -1,66 +1,143 @@
 package com.mtank.UI.gamePanel;
 
-import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import com.mtank.constants.GraphicColor;
 import com.mtank.constants.TypeValue;
 import com.mtank.game.Stringify;
 import com.mtank.world.World;
 
 
 public class GamePanel extends JPanel {
+	//TODO:
+	/*
+	 * Rewrite GamePanel
+	 * Stack character panel over land only panel
+	 * Each write statement will be  █ █ █
+	 * 
+	 */
 
 	//Added to make Eclipse Happy
 	private static final long serialVersionUID = 1L;
 	
 	private JTextPane WorldDisplay;
-	private StyledDocument landMap=new DefaultStyledDocument();
-	private StyledDocument current=new DefaultStyledDocument();
-	private StyledDocument buffered=new DefaultStyledDocument();  //New for triple buffered
+	private StyledDocument landMap = new DefaultStyledDocument();
+	private StyledDocument current = new DefaultStyledDocument();
+	private StyledDocument buffered = new DefaultStyledDocument();  //New for triple buffered
+	
+	private File fontFile = new File("fonts/DejaVuSansMono.ttf");
+	private Font monoSpacedFont;
 	
 	private int fontSize = 12;
+	
+	boolean switchDisplay = false;
+	
+	/*
+	 * STYLE CONSTANTS:
+	 * Used for painting the land.
+	 * Initialized in initialize() so that it is not recreated each time draw land is called.
+	 */
+	Style blank;
+	DefaultHighlighter.DefaultHighlightPainter blankHighlighter;
+	Style saltwater;
+	DefaultHighlighter.DefaultHighlightPainter saltwaterHighlighter;
+	Style water;
+	DefaultHighlighter.DefaultHighlightPainter waterHighlighter;
+	Style land;
+	DefaultHighlighter.DefaultHighlightPainter landHighlighter;
+	//-------------------------------------------------------------
+	// BIOMES STYLES
+	//-------------------------------------------------------------
+	Style dirt;
+	DefaultHighlighter.DefaultHighlightPainter dirtHighlighter;
+	Style grass;
+	DefaultHighlighter.DefaultHighlightPainter grassHighlighter;
+	Style stone;
+	DefaultHighlighter.DefaultHighlightPainter stoneHighlighter;
+	Style sand;
+	DefaultHighlighter.DefaultHighlightPainter sandHighlighter;
     
     public GamePanel() {
     	// Set up main display window
 		WorldDisplay = new JTextPane();
 		
-		Font monoSpace=new Font("Monospaced", Font.PLAIN, fontSize);
-		//Font cNew=new Font("Courier New", 0, fontSize);
+
+		WorldDisplay.setFocusable(false);
+		
+		// Initialize the styles and 
+		blank = WorldDisplay.addStyle("blank", null);
+		StyleConstants.setForeground(blank, GraphicColor.BLANK);
+		blankHighlighter = new DefaultHighlighter.DefaultHighlightPainter(GraphicColor.BLANK);
+		saltwater = WorldDisplay.addStyle("saltwater", null);
+		StyleConstants.setForeground(saltwater, GraphicColor.SALTWATER);
+		saltwaterHighlighter = new DefaultHighlighter.DefaultHighlightPainter(GraphicColor.SALTWATER);
+		water = WorldDisplay.addStyle("water", null);
+		StyleConstants.setForeground(water, GraphicColor.WATER);
+		waterHighlighter = new DefaultHighlighter.DefaultHighlightPainter(GraphicColor.WATER);
+		land = WorldDisplay.addStyle("land", null);
+		StyleConstants.setForeground(land, GraphicColor.LAND);
+		landHighlighter = new DefaultHighlighter.DefaultHighlightPainter(GraphicColor.LAND);
+		//-------------------------------------------------------------
+		// BIOMES STYLES
+		//-------------------------------------------------------------
+		dirt = WorldDisplay.addStyle("dirt", null);
+		StyleConstants.setForeground(dirt, GraphicColor.DIRT);
+		dirtHighlighter = new DefaultHighlighter.DefaultHighlightPainter(GraphicColor.DIRT);
+		grass = WorldDisplay.addStyle("grass", null);
+		StyleConstants.setForeground(grass, GraphicColor.GRASS);
+		grassHighlighter = new DefaultHighlighter.DefaultHighlightPainter(GraphicColor.GRASS);
+		stone = WorldDisplay.addStyle("stone", null);
+		StyleConstants.setForeground(stone, GraphicColor.STONE);
+		stoneHighlighter = new DefaultHighlighter.DefaultHighlightPainter(GraphicColor.STONE);
+		sand = WorldDisplay.addStyle("sand", null);
+		StyleConstants.setForeground(sand, GraphicColor.SAND);
+		sandHighlighter = new DefaultHighlighter.DefaultHighlightPainter(GraphicColor.SAND);
+		
 		// Set display background and font
-		WorldDisplay.setBackground(Color.black); // Set background color. Black seems to work well
-		WorldDisplay.setFont(monoSpace); // Set the font for grid display. Must be monospaced
+		setFontSize(fontSize);
+		WorldDisplay.setBackground(GraphicColor.BACKGROUND); // Set background color. Black seems to work well
 		
 		add(WorldDisplay);
     }
     
     /**
      * Updates the font size for the display.
+     * @param _size - The new size for the font. Must be greater than or eqal to 1.
      */
     public void setFontSize(int _size){
     	if(_size >= 1){
     		fontSize = _size;
-    		WorldDisplay.setFont(new Font("Monospaced", Font.PLAIN, fontSize));
+    		try {
+    			monoSpacedFont = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(Font.PLAIN, fontSize);
+    		} catch (FontFormatException e) {
+    			//In the event custom font cannot be created, fall back to Monospaced
+    			monoSpacedFont = new Font("Monospaced", Font.PLAIN, fontSize);
+    		} catch (IOException e) {
+    			//In the event custom font cannot be loaded, fall back to Monospaced
+    			monoSpacedFont = new Font("Monospaced", Font.PLAIN, fontSize);
+    		}
+    		WorldDisplay.setFont(monoSpacedFont);
     	}
     }
     
-	//TODO REWRITE TO MAKE EVEN FASTER
-    
-    
 	// Testing
     public void display (World canvas) throws BadLocationException {
-    	boolean switchDisplay = false;
     	if( switchDisplay ) {
-    		displayT( canvas, current, buffered );
+    		displayToggled( canvas, current, buffered );
     	} else {
-    		displayT( canvas, buffered, current );
+    		displayToggled( canvas, buffered, current );
     	}
     	switchDisplay = !switchDisplay;
     }
@@ -73,11 +150,11 @@ public class GamePanel extends JPanel {
     // Called to display an image.  Takes in a World class.
     public void display1(World canvas) throws BadLocationException {    	
     	// Create a document for editing
-    	current=MapDisplay.getStyledDocument();
+    	current=WorldDisplay.getStyledDocument();
 		
 		// Clear the current document in preparation of update
     	current.remove(0, current.getLength()); //setText("");
-		MapDisplay.setDocument(altDisplay); // MapDisplay.setDocument(altDisplay);
+		WorldDisplay.setDocument(altDisplay); // WorldDisplay.setDocument(altDisplay);
 		
 		// Cycle through and world array and first display land
 		for (int i = 0; i < canvas.world.length; i++) {
@@ -98,7 +175,7 @@ public class GamePanel extends JPanel {
 			addSpace(current, "\n");
 		}
 		// Once update is complete, set display to updated document
-		MapDisplay.setDocument(current);
+		WorldDisplay.setDocument(current);
     }
     
      ***//*** Keep for reference 
@@ -106,30 +183,31 @@ public class GamePanel extends JPanel {
     */
     
  // Called to display an image.  Takes in a World class.
-    public void displayT(World canvas, StyledDocument workingCanvas, StyledDocument altCanvas) throws BadLocationException {
-		// Create a document for editing
-    	//workingCanvas=MapDisplay.getStyledDocument();
-		
+    public void displayToggled(World canvas, StyledDocument workingCanvas, StyledDocument altCanvas) throws BadLocationException {
 		// Clear the current document in preparation of update
-    	//workingCanvas.remove(0, workingCanvas.getLength());
     	altCanvas = WorldDisplay.getStyledDocument();
     	workingCanvas = new DefaultStyledDocument();
 		WorldDisplay.setDocument(altCanvas);
-		//MapDisplay.setDocument(altCanvas);
+		
+		/*Used to adjust the line height/spacing
+		SimpleAttributeSet sas = new SimpleAttributeSet();
+		StyleConstants.setLineSpacing(sas, -0.2f);
+		workingCanvas.setParagraphAttributes(0, 1, sas, false);*/
 		
 		// Cycle through and world array and first display land
 		for (int i = 0; i < canvas.world.length; i++) {
 			for (int j = 0; j < canvas.world[0].length; j++) {
+				int _landType = canvas.world[j][i].landType;
 				addSpace(workingCanvas, " ");
 				// if there is a creature,structure, or item, they take precedence over land.
 				if (canvas.world[j][i].creature != null && canvas.world[j][i].creature.creatureType != 0) {
-					drawCreature(workingCanvas, Stringify.creature(canvas.world[j][i].creature), canvas.world[j][i].creature.creatureType);
+					drawCreature(workingCanvas, Stringify.creature(canvas.world[j][i].creature), canvas.world[j][i].creature.creatureType, _landType);
 				} else if (canvas.world[j][i].structure != null && canvas.world[j][i].structure.structureType != 0) {
-					drawStructure(workingCanvas, Stringify.structure(canvas.world[j][i].structure), 0);
+					drawStructure(workingCanvas, Stringify.structure(canvas.world[j][i].structure), 0, _landType);
 				} else if (canvas.world[j][i].item[0] != 0) {
-					drawItem(workingCanvas, Stringify.item(canvas.world[j][i].item[0]), 0);
+					drawItem(workingCanvas, Stringify.item(canvas.world[j][i].item[0]), 0, _landType);
 				} else {
-					drawLand(workingCanvas, canvas, Stringify.land(canvas.world[j][i].landType), canvas.world[j][i].landType);
+					drawLand(workingCanvas, canvas, Stringify.land(canvas.world[j][i].landType), _landType);
 				}
 				addSpace(workingCanvas, " ");
 			}
@@ -163,16 +241,17 @@ public class GamePanel extends JPanel {
 		// Cycle through and world array and first display land
 		for (int i = 0; i < canvas.world.length; i++) {
 			for (int j = 0; j < canvas.world[0].length; j++) {
+				int _landType = canvas.world[j][i].landType;
 				addSpace(something, " ");
 				// if there is a creature,structure, or item, they take precedence over land.
 				if (canvas.world[j][i].creature != null && canvas.world[j][i].creature.creatureType != 0) {
-					drawCreature(something, Stringify.creature(canvas.world[j][i].creature), canvas.world[j][i].creature.creatureType);
+					drawCreature(something, Stringify.creature(canvas.world[j][i].creature), canvas.world[j][i].creature.creatureType, _landType);
 				} else if (canvas.world[j][i].structure != null && canvas.world[j][i].structure.structureType != 0) {
-					drawStructure(something, Stringify.structure(canvas.world[j][i].structure), 0);
+					drawStructure(something, Stringify.structure(canvas.world[j][i].structure), 0,_landType);
 				} else if (canvas.world[j][i].item[0] != 0) {
-					drawItem(something, Stringify.item(canvas.world[j][i].item[0]), 0);
+					drawItem(something, Stringify.item(canvas.world[j][i].item[0]), 0,_landType);
 				} else {
-					drawLand(something, canvas, Stringify.land(canvas.world[j][i].landType), canvas.world[j][i].landType);
+					drawLand(something, canvas, Stringify.land(canvas.world[j][i].landType), _landType);
 				}
 				addSpace(something, " ");
 			}
@@ -182,78 +261,104 @@ public class GamePanel extends JPanel {
 		current = something;
     }
 
-    //TODO Use highlight to paint land and water in background.
+	/**
+	 * Calls insertString to input a LAND with into workingCanvas
+	 * @param workingCanvas - A StyledDocument that will be inserted into
+	 * @param str - String character that will be inserted into workingCanvas. Single character
+	 * @param type - The type of the LAND used to determine the graphic to be inserted
+	 * @throws BadLocationException
+	 */
 	public void drawLand(StyledDocument workingCanvas,World canvas, String str, int type) throws BadLocationException {
-		
-		// Set up text styles for landtypes.  Also set up highlights for possible use later
-		Style blank = WorldDisplay.addStyle("blank", null);
-		StyleConstants.setForeground(blank, Color.white);
-		//DefaultHighlighter.DefaultHighlightPainter blankH=new DefaultHighlighter.DefaultHighlightPainter(Color.white);
-		Style saltwater = WorldDisplay.addStyle("saltwater", null);
-		StyleConstants.setForeground(saltwater, Color.blue);
-		//-------------------------------------------------------------
-		Style dirt = WorldDisplay.addStyle("dirt", null);
-		StyleConstants.setForeground(dirt, Color.decode("#964B00"));
-		Style grass = WorldDisplay.addStyle("grass", null);
-		StyleConstants.setForeground(grass, Color.green);
-		Style stone = WorldDisplay.addStyle("stone", null);
-		StyleConstants.setForeground(stone, Color.gray);
-		Style sand = WorldDisplay.addStyle("sand", null);
-		StyleConstants.setForeground(sand, Color.yellow);
-		//-------------------------------------------------------------
-		//DefaultHighlighter.DefaultHighlightPainter saltwaterH=new DefaultHighlighter.DefaultHighlightPainter(Color.blue);
-		Color waterC = new Color(156, 245, 245);
-		Style water = WorldDisplay.addStyle("water", null);
-		StyleConstants.setForeground(water, waterC);
-		//DefaultHighlightPainter waterH=new DefaultHighlighter.DefaultHighlightPainter(waterC);
-		Color landC = Color.green.darker();	
-		Style land = WorldDisplay.addStyle("land", null);
-		StyleConstants.setForeground(land, landC);
-		//DefaultHighlighter.DefaultHighlightPainter landH=new DefaultHighlighter.DefaultHighlightPainter(landC);
+		Style selectedStyle = WorldDisplay.addStyle("selectedStyle", null);
+		DefaultHighlighter.DefaultHighlightPainter selectedHighlighter = blankHighlighter;
 		
 		// Get the current index of the cursor for inputing next character
-		int index=workingCanvas.getLength();
+		int index = workingCanvas.getLength();
 		switch (type) {
 			case TypeValue.Land.SALTWATER:
-				workingCanvas.insertString(index, str, saltwater);
-				//workingCanvas.insertString(index, " ", saltwater); // Used for highlighting 
-				//MapDisplay.getHighlighter().addHighlight(index, index+1, saltwaterH); // Used for highlighting 
+				selectedStyle = saltwater;
+				selectedHighlighter = saltwaterHighlighter;
 				break;
 			case TypeValue.NONE:
-				workingCanvas.insertString(index, str, land);
-				//workingCanvas.insertString(index, "  ", land); // Used for highlighting 
-			    //MapDisplay.getHighlighter().addHighlight(index, index+1, landH); // Used for highlighting 
+				selectedStyle = land;
+				selectedHighlighter = landHighlighter;
 				break;
 			case TypeValue.Land.WATER:
-				workingCanvas.insertString(index, str, water);
-				//workingCanvas.insertString(index, " ", water); // Used for highlighting 
-			    //MapDisplay.getHighlighter().addHighlight(index, index+1, waterH); // Used for highlighting 
+				selectedStyle = water;
+				selectedHighlighter = waterHighlighter;
 				break;
 			case TypeValue.Land.DIRT:
-				workingCanvas.insertString(index, str, dirt);
+				selectedStyle = dirt;
+				selectedHighlighter = dirtHighlighter;
 				break;
 			case TypeValue.Land.SAND:
-				workingCanvas.insertString(index, str, sand);
+				selectedStyle = sand;
+				selectedHighlighter = sandHighlighter;
 				break;
 			case TypeValue.Land.GRASS:
-				workingCanvas.insertString(index, str, grass);
+				selectedStyle = grass;
+				selectedHighlighter = grassHighlighter;
 				break;
 			case TypeValue.Land.STONE:
-				workingCanvas.insertString(index, str, stone);
+				selectedStyle = stone;
+				selectedHighlighter = stoneHighlighter;
 				break;
 			default:
-				workingCanvas.insertString(index, str, null);
-				//workingCanvas.insertString(index, " ", null); // Used for highlighting 
-			    //MapDisplay.getHighlighter().addHighlight(index, index+1, blankH); // Used for highlighting 
+				selectedStyle = blank;
+				selectedHighlighter = blankHighlighter;
 				break;
 		}
+		workingCanvas.insertString(index, " ", selectedStyle);
+		WorldDisplay.getHighlighter().addHighlight(index-1, index+2, selectedHighlighter);
+	}
+	
+	/**
+	 * Return a DefaultHighlighter.DefaultHighlightPainter based off of an input land type.
+	 * Used for drawItem, drawCreature, and drawStructure
+	 * @param landType - the landtype of the given land an item/creature/structure is on.
+	 * @return
+	 */
+	private DefaultHighlighter.DefaultHighlightPainter getLandHighlighter(int landType) {
+		DefaultHighlighter.DefaultHighlightPainter selectedHighlighter = blankHighlighter;
+		switch (landType) {
+			case TypeValue.Land.SALTWATER:
+				selectedHighlighter = saltwaterHighlighter;
+				break;
+			case TypeValue.NONE:
+				selectedHighlighter = landHighlighter;
+				break;
+			case TypeValue.Land.WATER:
+				selectedHighlighter = waterHighlighter;
+				break;
+			case TypeValue.Land.DIRT:
+				selectedHighlighter = dirtHighlighter;
+				break;
+			case TypeValue.Land.SAND:
+				selectedHighlighter = sandHighlighter;
+				break;
+			case TypeValue.Land.GRASS:
+				selectedHighlighter = grassHighlighter;
+				break;
+			case TypeValue.Land.STONE:
+				selectedHighlighter = stoneHighlighter;
+				break;
+			default:
+				selectedHighlighter = blankHighlighter;
+				break;
+		}
+		return selectedHighlighter;
 	}
 
-	// Function to draw creature. Will pull and compare with data class
-	public void drawCreature(StyledDocument workingCanvas, String str, int type) throws BadLocationException {
-		Style blank = WorldDisplay.addStyle("blank", null);
-		StyleConstants.setForeground(blank, Color.WHITE);
-		
+	/**
+	 * Calls insertString to input a CREATURE with into workingCanvas
+	 * @param workingCanvas - A StyledDocument that will be inserted into
+	 * @param str - String character that will be inserted into workingCanvas. Single character
+	 * @param type - The type of the CREATURE used to determine the graphic to be inserted
+	 * @param landType - Int of the land that the CREATURE sits on. Used to draw land under it.
+	 * @throws BadLocationException
+	 */
+	public void drawCreature(StyledDocument workingCanvas, String str, int type, int landType) throws BadLocationException {
+		int index = workingCanvas.getLength();
 		// Switch will be based off of data class once implemented to determine color
 		switch (type) {
 			case 1:
@@ -263,13 +368,20 @@ public class GamePanel extends JPanel {
 		    	workingCanvas.insertString(workingCanvas.getLength(), str, null);
 		        break;
 		}
+		DefaultHighlighter.DefaultHighlightPainter currentLandHighlighter = getLandHighlighter(landType);
+		WorldDisplay.getHighlighter().addHighlight(index-1, index+2, currentLandHighlighter);
 	}
 
-	// Function to draw structure. Will pull and compare with data class
-	public void drawStructure(StyledDocument workingCanvas, String str, int type) throws BadLocationException {
-		Style blank = WorldDisplay.addStyle("blank", null);
-		StyleConstants.setForeground(blank, Color.white);
-		
+	/**
+	 * Calls insertString to input a STRUCTURE with into workingCanvas
+	 * @param workingCanvas - A StyledDocument that will be inserted into
+	 * @param str - String character that will be inserted into workingCanvas. Single character
+	 * @param type - The type of the STRUCTURE used to determine the graphic to be inserted
+	 * @param landType - Int of the land that the STRUCTURE sits on. Used to draw land under it.
+	 * @throws BadLocationException
+	 */
+	public void drawStructure(StyledDocument workingCanvas, String str, int type, int landType) throws BadLocationException {
+		int index = workingCanvas.getLength();
 		// Switch will be based off of data class once implemented to determine color
 		switch (type) {
 		    case 1:
@@ -279,13 +391,20 @@ public class GamePanel extends JPanel {
 		    	workingCanvas.insertString(workingCanvas.getLength(), str, null);
 		        break;
 		}
+		DefaultHighlighter.DefaultHighlightPainter currentLandHighlighter = getLandHighlighter(landType);
+		WorldDisplay.getHighlighter().addHighlight(index-1, index+2, currentLandHighlighter);
 	}
 
-	// Function to draw first item on land from item array. Will pull and compare with data class
-	public void drawItem(StyledDocument workingCanvas, String str, int type) throws BadLocationException {
-		Style blank = WorldDisplay.addStyle("blank", null);
-		StyleConstants.setForeground(blank, Color.white);
-		
+	/**
+	 * Calls insertString to input an ITEM with into workingCanvas
+	 * @param workingCanvas - A StyledDocument that will be inserted into
+	 * @param str - String character that will be inserted into workingCanvas. Single character
+	 * @param type - The type of the ITEM used to determine the graphic to be inserted
+	 * @param landType - Int of the land that the ITEM sits on. Used to 
+	 * @throws BadLocationException
+	 */
+	public void drawItem(StyledDocument workingCanvas, String str, int type, int landType) throws BadLocationException {
+		int index = workingCanvas.getLength();
 		// Switch will be based off of data class once implemented to determine color
 		switch (type) {
 			case TypeValue.NONE:
@@ -295,9 +414,16 @@ public class GamePanel extends JPanel {
 		    	workingCanvas.insertString(workingCanvas.getLength(), str, null);
 		        break;
 		}
+		DefaultHighlighter.DefaultHighlightPainter currentLandHighlighter = getLandHighlighter(landType);
+		WorldDisplay.getHighlighter().addHighlight(index-1, index+2, currentLandHighlighter);
 	}
 
-	// Function to draw a space. Used for spacing
+	/**
+	 * Calls insertString to input a BLANK_SPACE into workingCanvas
+	 * @param workingCanvas - A StyledDocument that will be inserted into
+	 * @param str - String character that will be inserted into workingCanvas. Single character
+	 * @throws BadLocationException
+	 */
 	public void addSpace(StyledDocument workingCanvas, String str) throws BadLocationException {
 		workingCanvas.insertString(workingCanvas.getLength(), str, null);
 	}

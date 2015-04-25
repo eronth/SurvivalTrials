@@ -39,6 +39,15 @@ public class TypeValue {
 		public static final int MAGE_RUNE_SLOT=60;
 	}
 	
+	public class Creature {
+		public static final int PERSON=1;
+		public static final int RAT=2;
+		public static final int BOAR=3;
+		public static final int BEAR=5;
+		public static final int GOAT=4;
+		public static final int CAT=6;
+		public static final int DEER=7;
+	}
 		
 	// Resource type ints
 	public class Resource {

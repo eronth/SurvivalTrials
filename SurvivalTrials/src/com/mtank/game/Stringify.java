@@ -10,10 +10,10 @@ import com.mtank.structure.Structure;
 	public static String creature(Creature creature){
 		return "Y";//✝ deceased
 	}
-	public static String structure(Structure structure){
+	public static String structure(Structure s){
 		String ret="";
-		boolean hasResource = structure.resourceCount>0;
-		switch (structure.structureType){
+		boolean hasResource = s.resource.size()>0;
+		switch (s.structureType){
 			case TypeValue.NONE: 
 				ret=Graphic.STRUCTURE;
 				break;
@@ -38,7 +38,7 @@ import com.mtank.structure.Structure;
 			case TypeValue.Structure.DOOR:
 				ret=Graphic.DOOR;
 			default:
-				ret=""+structure.structureType;
+				ret=""+s.structureType;
 		}
 		return ret;
 	}
