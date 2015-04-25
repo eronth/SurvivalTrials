@@ -9,13 +9,14 @@ public class Item {
 	public Coordinates position = new Coordinates();
 	//public int xPos=-1,yPos=-1;
 
+	// Depreciated due to Container Subclass.
 	int capacity=0; // Total room for other items.
 	Item contents[] = new Item[0]; // Used for bags, chests, or items with capacity.
 	
 	//Base attributes
 	String name="";				// Item name/identifying text.
 	String description="";		// Used for flavor text or unique items.
-	int weight=0;				// Weight is done in kg.
+	float weight=0f;			// Weight is done in kg.
 	int volume=0;				// Might later remove.
 	int materialType=0; 		// Material the item is made of. Used to determine what it is effective against or how strong it is.
 	
