@@ -382,17 +382,27 @@ public class Creature {
 			// TODO all actual walking related stuff here.				
 			// Initialize timer, and countdown.
 			if (acdt <= 0) {
-				// Upon countdown completion, take a step, then check if we made it to target location.
-				// If at location end walk.
-				// If not at location, generate new path, start again.
-				// if at target location, isActing is false, acdt is 0 and we exit.
+				int directionToStep = this.pathfind.path.get(0);
+				// Take a step in the Directiontostep direction
+				position.setDirection(directionToStep);
+				
+				if ( this.position.isAdjacentTo(queuedTarget.get(0)) ) {
+					// TODO includ function for taking a final step for beds or items.
+					queuedAction.remove(0);
+					queuedTarget.remove(0);
+					acdt = 0;
+					isActing = false;
+				} else {
+					// if (path is NOT unblocked) {
+					//   generate a new path
+					// }
+				}
 				acdt = 200/getSpeed();
 			} else {
 				acdt--;
 			}
 		} else {
 			pathfind.setTargetCoords(queuedTarget.get(0));
-			System.out.println("What the fuck is wrong? " +queuedTarget.get(0));
 			pathfind.generatePath(position, 0);
 			pathSet = true;
 			isActing = true;
@@ -912,6 +922,7 @@ public class Creature {
 		return position;
 	}
 	void setPosition(Coordinates c) {
-		position = c;
+		position.x = c.x;
+		position.y = c.y;
 	}
 }

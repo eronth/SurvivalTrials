@@ -94,6 +94,11 @@ public class Coordinates {
 		this.y=y;
 	}
 	
+	/**
+	 * Determines if the given coordinates are immediately adjacent to the param c.
+	 * @param c
+	 * @return
+	 */
 	public boolean isAdjacentTo(Coordinates c) {
 		return ((this.x-1==c.x || this.x+1==c.x) && this.y==c.y) || ((this.y-1==c.y || this.y+1==c.y) && this.x==c.x);
 	}
