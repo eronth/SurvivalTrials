@@ -385,14 +385,14 @@ public class Creature {
 				int directionToStep = this.pathfind.path.get(0);
 				// Take a step in the Directiontostep direction
 				position.setDirection(directionToStep);
-				
 				if ( this.position.isAdjacentTo(queuedTarget.get(0)) ) {
-					// TODO includ function for taking a final step for beds or items.
+					// TODO include function for taking a final step for beds or items.
 					queuedAction.remove(0);
 					queuedTarget.remove(0);
 					acdt = 0;
 					isActing = false;
 				} else {
+					// TODO implement a rewrite function if needed.
 					// if (path is NOT unblocked) {
 					//   generate a new path
 					// }

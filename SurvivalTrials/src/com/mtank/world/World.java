@@ -132,13 +132,13 @@ public class World {
 		for(int i=0; i<world.length;i++){
 			for(int j=0;j<world[0].length;j++){
 				ret+=" ";
-				if (world[j][i].creature!=null && world[j][i].creature.creatureType!=0){
+				if (world[j][i].creature!=null && world[j][i].creature.creatureType!=0) {
 					ret += Stringify.creature(world[j][i].creature);
-				}else if (world[j][i].structure != null && world[j][i].structure.structureType != 0){			
+				} else if (world[j][i].structure != null && world[j][i].structure.structureType != 0) {			
 					ret += Stringify.structure(world[j][i].structure);
-				}else if (world[j][i].item.get(0).itemType!=0){
+				} else if (!world[j][i].item.isEmpty() && world[j][i].item.get(0) != null && world[j][i].item.get(0).itemType!=0) {
 					ret += Stringify.item(world[j][i].item.get(0));
-				}else{
+				} else {
 					ret += Stringify.land(world[j][i].landType);
 				}
 				ret+=" ";
