@@ -57,6 +57,14 @@ public class TypeValue {
 		public static final int CACTIPODE=4;
 		// TODO: fill out with more resources
 	}
+	
+	// Item type ints
+	public class Item {
+		public static final int RESOURCE=1;
+		public static final int CONTAINER=2;
+		public static final int WEARABLE=3;
+		public static final int TOOL=4;
+	}
 
 	// Material type ints
 	public class Material {
@@ -64,12 +72,5 @@ public class TypeValue {
 		public static final int STONE=Resource.STONE;
 		public static final int CACTIPODE=Resource.CACTIPODE;
 		// TODO: fill out with more materials.
-	}
-	// Item type ints
-	public class Item {
-		public static final int WOOD=1;
-		public static final int STONE=2;
-		public static final int FRUIT=3;
-		public static final int CACTIPODE=4;
 	}
 }

@@ -42,18 +42,19 @@ import com.mtank.structure.Structure;
 		}
 		return ret;
 	}
+	//TODO: Update for item rewrite.
 	public static String item(int item){
 		String ret="";
 		switch (item){
 			case TypeValue.NONE: ret=Graphic.ITEM;
 					break;
-			case TypeValue.Item.WOOD: ret=Graphic.WOOD;
+			case TypeValue.Resource.WOOD: ret=Graphic.WOOD;
 					break;
-			case TypeValue.Item.STONE: ret=Graphic.ROCK;
+			case TypeValue.Resource.STONE: ret=Graphic.ROCK;
 					break;
-			case TypeValue.Item.FRUIT: ret=Graphic.FRUIT;
+			case TypeValue.Resource.FRUIT: ret=Graphic.FRUIT;
 					break;
-			case TypeValue.Item.CACTIPODE: ret=Graphic.CACTIPODE;
+			case TypeValue.Resource.CACTIPODE: ret=Graphic.CACTIPODE;
 					break;
 			default:
 				ret=""+item;

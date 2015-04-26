@@ -4,83 +4,169 @@ import com.mtank.constants.TypeValue;
 import com.mtank.game.Coordinates;
 
 
-public class Item {
-	public int itemType=0; // starts typeless
-	public Coordinates position = new Coordinates();
-	//public int xPos=-1,yPos=-1;
+// ITEM Types/Subclasses
+//  Resource
+//  Container
+//  Wearable
+//  Tool/Weapon
 
-	// Depreciated due to Container Subclass.
-	int capacity=0; // Total room for other items.
-	Item contents[] = new Item[0]; // Used for bags, chests, or items with capacity.
+public class Item {
+	// Default name/description.
+	final String undfName="[UNDEFINED_NAME]";
+	final String undefDescr="[UNDEFINED_DESCRIPTION]";
 	
-	//Base attributes
-	String name="";				// Item name/identifying text.
-	String description="";		// Used for flavor text or unique items.
-	float weight=0f;			// Weight is done in kg.
-	int volume=0;				// Might later remove.
-	int materialType=0; 		// Material the item is made of. Used to determine what it is effective against or how strong it is.
+	public Coordinates position = new Coordinates();
 	
-	//Advanced attributes
-	boolean resource=false; 	// Move to subclass?
-	boolean harvestable=false; 	// Same as above
-	boolean held=false; 		// Is item held or placed on the ground.
-	int quantity=0;				// For stacks of items, mostly resources.
+	// Base Attributes
+	public int itemType;								// starts typeless
+	String name="[UNDEFINED_NAME]";						// Item name/identifying text.
+	String description="[UNDEFINED_DESCRIPTION]";		// Used for flavor text or unique items.
+	float weight=0f;									// Weight is done in kg.
+	float volume=0f;									// Might later remove.
+	int materialType=TypeValue.NONE; 					// Material the item is made of. Used to determine what it is effective against or how strong it is.
 	
-	//Weapon attributes
-	int damage=0;
-	int range=0;
-	int speed=0;
+	// Advanced Attributes
+	boolean stackable;									// Can this item be stored in stacks.
+	int quantity=0;										// For stacks of items, mostly resources.
+	boolean held=false; 								// Is item held or placed on the ground.
 	
+	// Create a blank item object
 	Item(){
 	}
-	
-	// Generate default items
-	Item(int _itemType){
-		switch(_itemType){
-			case TypeValue.Item.WOOD:
-			case TypeValue.Item.STONE:
-			case TypeValue.Item.FRUIT:
-			case TypeValue.Item.CACTIPODE:
-				initResource(_itemType);
-				break;
-			case TypeValue.NONE:
-				initUnique();
-				break;
-		}
+
+	Item(int type, String _name, String _description, int _materialType, float _weight, int _volume, int _quantity, Coordinates c){
+		initGeneric(type, _name, _description, _materialType, _weight, _volume,  _quantity, c);
 	}
 	
-	//TODO: migrate to switch case initilization
-	Item(int type, String _name, String _description, int _capacity){ // Constructor for bag, chest, or other item with capacity.
+	private void initGeneric(int type, String _name, String _description, int _materialType, float _weight, int _volume, int _quantity, Coordinates c){
 		itemType=type;
 		name=_name;
 		description=_description;
-		capacity=_capacity;
-		contents=new Item[capacity];
-	}
-	Item(int type, String _name, String _description, int _capacity, Coordinates c){ // Constructor for bag, chest, or other item with capacity.
-		itemType=type;
-		name=_name;
-		description=_description;
-		capacity=_capacity;
-		contents=new Item[capacity];
+		materialType=_materialType;
+		weight=_weight;
+		volume=_volume;
+		quantity=_quantity;
 		this.position.set(c);
 	}
-	// Working on initialization similar to structure.
-	private void initUnique(){
-		initGeneric(0,"","",0,0,0);
+	
+	//TODO: Getters and setters for all attributes
+	/***
+	 * Returns the item's item TypeValue.
+	 * @return
+	 */
+	int getItemType() {
+		return itemType;
 	}
-	private void initResource(int _itemType){
-		initGeneric(_itemType,"Test","used for building things",0,0,1);
-		resource=true;
-		harvestable=true;
+	/***
+	 * Sets the item's item TypeValue.
+	 * @param _itemType
+	 */
+	void setItemType(int _itemType) {
+		this.itemType = _itemType;
 	}
-	private void initGeneric(int type, String _name, String _description, int _capacity, int _materialType, int _quantity){
-		itemType=type;
-		name=_name;
-		description=_description;
-		capacity=_capacity;
-		contents=new Item[capacity];
-		materialType=_materialType;
-		quantity=_quantity;
+
+	/***
+	 * Returns the item's name.
+	 * @return
+	 */
+	String getName() {
+		return name;
+	}
+	/***
+	 * Sets the item's name.
+	 * @param _name
+	 */
+	void setName(String _name) {
+		this.name = _name;
+	}
+
+	/***
+	 * Returns the item's description.
+	 * @return
+	 */
+	String getDescription() {
+		return description;
+	}
+	/***
+	 * Sets the item's description.
+	 * @param _description
+	 */
+	void setDescription(String _description) {
+		this.description = _description;
+	}
+
+	/***
+	 * Returns the item's weight.
+	 * @return
+	 */
+	float getWeight() {
+		return weight;
+	}
+	/***
+	 * Sets the item's weight.
+	 * @param _weight
+	 */
+	void setWeight(float _weight) {
+		this.weight = _weight;
+	}
+
+	/***
+	 * Returns the item's volume.
+	 * @return
+	 */
+	float getVolume() {
+		return volume;
+	}
+	/***
+	 * Sets the item's volume.
+	 * @param _volume
+	 */
+	void setVolume(float _volume) {
+		this.volume = _volume;
+	}
+
+	/***
+	 * Returns the item's materialType.
+	 * @return
+	 */
+	int getMaterialType() {
+		return materialType;
+	}
+	/***
+	 * Sets the item's materialType.
+	 * @param _materialType
+	 */
+	void setMaterialType(int _materialType) {
+		this.materialType = _materialType;
+	}
+
+	/***
+	 * Returns true if the item is able to be stacked.
+	 * @return
+	 */
+	boolean isStackable() {
+		return stackable;
+	}
+	/***
+	 * Sets whether or not the item can be stacked.
+	 * @param _stackable
+	 */
+	void setStackable(boolean _stackable) {
+		this.stackable = _stackable;
+	}
+
+	/***
+	 * Returns true if the item is currently held.
+	 * @return
+	 */
+	boolean isHeld() {
+		return held;
+	}
+	/***
+	 * Sets whether or not the item is currently held.
+	 * @param _stackable
+	 */
+	void setHeld(boolean _held) {
+		this.held = _held;
 	}
 }
