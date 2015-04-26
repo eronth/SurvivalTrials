@@ -136,8 +136,8 @@ public class World {
 					ret += Stringify.creature(world[j][i].creature);
 				}else if (world[j][i].structure != null && world[j][i].structure.structureType != 0){			
 					ret += Stringify.structure(world[j][i].structure);
-				}else if (world[j][i].item[0]!=0){
-					ret += Stringify.item(world[j][i].item[0]);
+				}else if (world[j][i].item[0].itemType!=0){
+					ret += Stringify.item(world[j][i].item[0].itemType);
 				}else{
 					ret += Stringify.land(world[j][i].landType);
 				}
@@ -293,11 +293,11 @@ public class World {
 	}
 	void placeItem(Item item, Coordinates c){
 		int j;
-		for(j=0; j<world[c.x][c.y].item.length; j++){ // creatureycreaturele through itemstructure that creaturean be on eacreatureh land and look for open structurepot
-			if(world[c.x][c.y].item[j]==0){
-				world[c.x][c.y].items[j]=item;
-				world[c.x][c.y].item[j]=item.itemType;
+		boolean placed = false;
+		for(j=0; !placed && j<world[c.x][c.y].item.length; j++){
+			if (world[c.x][c.y].item[j] != null) {
 				item.position.set(c);
+				world[c.x][c.y].item[j] = item;
 			}
 		}
 	}
