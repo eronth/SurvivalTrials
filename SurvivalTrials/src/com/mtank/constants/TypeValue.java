@@ -73,4 +73,10 @@ public class TypeValue {
 		public static final int CACTIPODE=Resource.CACTIPODE;
 		// TODO: fill out with more materials.
 	}
+	
+	// Ammo type ints
+	public class Ammunition {
+		public static final int arrows=1;
+		public static final int pebbles=2;
+	}
 }

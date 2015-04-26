@@ -29,6 +29,8 @@ public class Item {
 	boolean stackable;									// Can this item be stored in stacks.
 	int quantity=0;										// For stacks of items, mostly resources.
 	boolean held=false; 								// Is item held or placed on the ground.
+	float MAXDURABILITY=100f;							// Maximum durability the item can have.
+	float durability=MAXDURABILITY;						// Current durability of the item.
 	
 	// Create a blank item object
 	Item(){
@@ -168,5 +170,47 @@ public class Item {
 	 */
 	void setHeld(boolean _held) {
 		this.held = _held;
+	}
+	
+	/***
+	 * Returns the durability value of the tool/weapon.
+	 * @return
+	 */
+	float getDurability(){
+		return durability;
+	}
+	/***
+	 * Sets the durability of the weapon/tool.
+	 * @param _durability
+	 */
+	void setDurability(float _durability){
+		this.durability=_durability;
+	}
+	/**
+	 * Modifies the items durability. Positives increase and negatives decrease.
+	 * @param durabilityChange
+	 */
+	void modifyDurability(int durabilityChange) {
+		this.durability+=durabilityChange;
+		if (this.durability>MAXDURABILITY) {
+			this.durability=MAXDURABILITY;
+		} else if (this.durability<0) {
+			this.durability=0;
+		}
+	}
+	
+	/***
+	 * Returns the maximum durability value of the tool/weapon.
+	 * @return
+	 */
+	float getMaxDurability(){
+		return MAXDURABILITY;
+	}
+	/***
+	 * Sets the maximum durability of the weapon/tool.
+	 * @param _durability
+	 */
+	void setMaxDurability(float _durability){
+		this.MAXDURABILITY=_durability;
 	}
 }

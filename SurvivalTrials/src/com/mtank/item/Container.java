@@ -3,10 +3,9 @@ package com.mtank.item;
 import java.util.ArrayList;
 
 public class Container extends Item {
-	
-	int maxItems=1;				// Maximum number of items it can contain.
+	// Container specific attributes
 	float maxVolume=1.0f;			// Max volume of items that can be contained.
-	float currentVolume=0f;		// Current volume of all items in the container.
+	float currentVolume=0f;			// Current volume of all items in the container.
 	ArrayList<Item> Items;
 	
 	Container() {

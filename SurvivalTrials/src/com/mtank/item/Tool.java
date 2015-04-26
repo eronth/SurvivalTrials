@@ -1,16 +1,16 @@
 package com.mtank.item;
 
+import com.mtank.constants.TypeValue;
+
 public class Tool extends Item {
-	//  Weapon/Tool attributes
+	// Tool/Weapon specific attributes
 	int damage=0;
 	int range=0;
 	int attackSpeed=0;
 	boolean twoHanded=false;
-	float MAXDURABILITY=100f;
-	float durability;
+	int ammunitionType=TypeValue.NONE;
 	
 	Tool(){
-		durability=MAXDURABILITY;
 	}
 	
 	/***
@@ -59,6 +59,21 @@ public class Tool extends Item {
 	}
 	
 	/***
+	 * Returns the type of ammunition this weapon uses.
+	 * @return
+	 */
+	int getAmmoType(){
+		return ammunitionType;
+	}
+	/***
+	 * Sets the type of ammunition this weapon uses.
+	 * @param _ammunitionType
+	 */
+	void setAmmoType(int _ammunitionType){
+		this.ammunitionType=_ammunitionType;
+	}
+	
+	/***
 	 * Returns true if the tool requires two hands.
 	 * @return
 	 */
@@ -72,47 +87,4 @@ public class Tool extends Item {
 	void setTwoHanded(boolean _twoHanded){
 		this.twoHanded=_twoHanded;
 	}
-	
-	/***
-	 * Returns the durability value of the tool/weapon.
-	 * @return
-	 */
-	float getDurability(){
-		return durability;
-	}
-	/***
-	 * Sets the durability of the weapon/tool.
-	 * @param _durability
-	 */
-	void setDurability(float _durability){
-		this.durability=_durability;
-	}
-	/**
-	 * Modifies the items durability. Positives increase and negatives decrease.
-	 * @param durabilityChange
-	 */
-	void modifyHumanity(int durabilityChange) {
-		this.durability+=durabilityChange;
-		if (this.durability>MAXDURABILITY) {
-			this.durability=MAXDURABILITY;
-		} else if (this.durability<0) {
-			this.durability=0;
-		}
-	}
-	
-	/***
-	 * Returns the maximum durability value of the tool/weapon.
-	 * @return
-	 */
-	float getMaxDurability(){
-		return MAXDURABILITY;
-	}
-	/***
-	 * Sets the maximum durability of the weapon/tool.
-	 * @param _durability
-	 */
-	void setMaxDurability(float _durability){
-		this.MAXDURABILITY=_durability;
-	}
-
 }
