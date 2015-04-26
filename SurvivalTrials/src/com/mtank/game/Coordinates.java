@@ -103,9 +103,12 @@ public class Coordinates {
 		return ((this.x-1==c.x || this.x+1==c.x) && this.y==c.y) || ((this.y-1==c.y || this.y+1==c.y) && this.x==c.x);
 	}
 	
+	/**
+	 * Function to cleanly print coordinates in a (x, y) String format.
+	 */
 	@Override
 	public String toString(){
 		return "("+this.x+","+this.y+")";
 	}
-	
+
 }

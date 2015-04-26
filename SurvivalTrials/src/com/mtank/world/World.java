@@ -136,8 +136,8 @@ public class World {
 					ret += Stringify.creature(world[j][i].creature);
 				}else if (world[j][i].structure != null && world[j][i].structure.structureType != 0){			
 					ret += Stringify.structure(world[j][i].structure);
-				}else if (world[j][i].item[0].itemType!=0){
-					ret += Stringify.item(world[j][i].item[0]);
+				}else if (world[j][i].item.get(0).itemType!=0){
+					ret += Stringify.item(world[j][i].item.get(0));
 				}else{
 					ret += Stringify.land(world[j][i].landType);
 				}
@@ -294,15 +294,41 @@ public class World {
 	void placeItem(Item item, Coordinates c){
 		int j;
 		boolean placed = false;
-		for(j=0; !placed && j<world[c.x][c.y].item.length; j++){
-			if (world[c.x][c.y].item[j] != null) {
+		for(j=0; !placed && j<world[c.x][c.y].item.size(); j++){
+			if (world[c.x][c.y].item.get(j) != null) {
 				item.position.set(c);
-				world[c.x][c.y].item[j] = item;
+				world[c.x][c.y].item.add(item);
 			}
 		}
 	}
 	
-	
-	
-	
+	/**
+	 * Refreshes the world to ensure all items/structures/creatures agree upon where they exist.
+	 */
+	void refresh() {
+		Coordinates i = new Coordinates();
+		Coordinates tmp = new Coordinates();
+		for (i.x = 0; i.x<world.length; i.x++) {
+			for (i.y = 0; i.y<world[0].length; i.y++) {
+				if (world[i.x][i.y].creature != null && !world[i.x][i.y].creature.position.equals(i)) {
+					tmp.set(world[i.x][i.y].creature.position);
+					world[tmp.x][tmp.y].creature = world[i.x][i.y].creature; 
+					world[i.x][i.y].creature = null;
+				}
+				if (world[i.x][i.y].structure != null ) {
+					tmp.set(world[i.x][i.y].structure.position);
+					world[tmp.x][tmp.y].structure = world[i.x][i.y].structure; 
+					world[i.x][i.y].structure = null;
+				}
+				if (world[i.x][i.y].item != null ) {
+					for (int j = 0; j<world[i.x][i.y].item.size(); j++) {
+						tmp.set(world[i.x][i.y].item.get(j).position);
+						world[tmp.x][tmp.y].item.add(world[i.x][i.y].item.get(j));
+						world[i.x][i.y].item = null;
+					}
+				}
+			}
+		}
+		
+	}
 }

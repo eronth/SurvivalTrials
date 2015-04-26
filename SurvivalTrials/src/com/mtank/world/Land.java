@@ -1,5 +1,7 @@
 package com.mtank.world;
 
+import java.util.ArrayList;
+
 import com.mtank.constants.TypeValue;
 import com.mtank.creature.Creature;
 import com.mtank.item.Item;
@@ -8,7 +10,7 @@ import com.mtank.structure.Structure;
 public class Land {
 	// a lot of these ints will likely be changed to something else, such as Structure or Item data types
 	public Structure structure = null; // Structures are walls, doors, firepits, chairs, trees, large rocks, etc. Stuff that people will have trouble walking around.
-	public Item item[] = new Item[4]; // Second array to keep track of special items
+	public ArrayList<Item> item = new ArrayList<Item>();
 	public Creature creature = null;
 	public int landType=0; // starts typeless
 	
