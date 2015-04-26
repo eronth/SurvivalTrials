@@ -4,6 +4,7 @@ package com.mtank.game;
 import com.mtank.constants.Graphic;
 import com.mtank.constants.TypeValue;
 import com.mtank.creature.Creature;
+import com.mtank.item.Item;
 import com.mtank.structure.Structure;
 
 	public class Stringify {
@@ -42,9 +43,9 @@ import com.mtank.structure.Structure;
 		}
 		return ret;
 	}
-	public static String item(int item){
+	public static String item(Item item){
 		String ret="";
-		switch (item){
+		switch (item.itemType){
 			case TypeValue.NONE: ret=Graphic.ITEM;
 					break;
 			case TypeValue.Item.WOOD: ret=Graphic.WOOD;

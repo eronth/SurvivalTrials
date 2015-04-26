@@ -137,7 +137,7 @@ public class World {
 				}else if (world[j][i].structure != null && world[j][i].structure.structureType != 0){			
 					ret += Stringify.structure(world[j][i].structure);
 				}else if (world[j][i].item[0].itemType!=0){
-					ret += Stringify.item(world[j][i].item[0].itemType);
+					ret += Stringify.item(world[j][i].item[0]);
 				}else{
 					ret += Stringify.land(world[j][i].landType);
 				}

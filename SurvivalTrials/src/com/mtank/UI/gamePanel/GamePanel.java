@@ -126,7 +126,7 @@ public class GamePanel extends JPanel {
 					drawCreature(workingCanvas, Stringify.creature(canvas.world[j][i].creature), canvas.world[j][i].creature.creatureType);
 				} else if (canvas.world[j][i].structure != null && canvas.world[j][i].structure.structureType != 0) {
 					drawStructure(workingCanvas, Stringify.structure(canvas.world[j][i].structure), 0);
-				} else if (canvas.world[j][i].item[0] != 0) {
+				} else if (canvas.world[j][i].item[0].itemType != 0) {
 					drawItem(workingCanvas, Stringify.item(canvas.world[j][i].item[0]), 0);
 				} else {
 					drawLand(workingCanvas, canvas, Stringify.land(canvas.world[j][i].landType), canvas.world[j][i].landType);
@@ -169,7 +169,7 @@ public class GamePanel extends JPanel {
 					drawCreature(something, Stringify.creature(canvas.world[j][i].creature), canvas.world[j][i].creature.creatureType);
 				} else if (canvas.world[j][i].structure != null && canvas.world[j][i].structure.structureType != 0) {
 					drawStructure(something, Stringify.structure(canvas.world[j][i].structure), 0);
-				} else if (canvas.world[j][i].item[0] != 0) {
+				} else if (canvas.world[j][i].item[0].itemType != 0) {
 					drawItem(something, Stringify.item(canvas.world[j][i].item[0]), 0);
 				} else {
 					drawLand(something, canvas, Stringify.land(canvas.world[j][i].landType), canvas.world[j][i].landType);
