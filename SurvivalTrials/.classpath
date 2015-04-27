@@ -7,6 +7,5 @@
 			<attribute name="javadoc_location" value="file:/M:/Janig/Documents/Code/Eclipse/SurvivalTrials/SurvivalTrials/doc/javadoc/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="M:/Janig/Documents/Code/Eclipse/SurvivalTrials/SurvivalTrials/jar/slick-util.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
