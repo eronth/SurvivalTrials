@@ -1,15 +1,19 @@
 package com.mtank.game;
 
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.LinkedList;
 
 import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
 
-import com.mtank.UI.window.WindowBase;
+import org.lwjgl.LWJGLUtil;
+import org.lwjgl.LWJGLUtil.Platform;
+
+import com.mtank.UI.window.LWJGL_Display;
 import com.mtank.creature.Creature;
-import com.mtank.structure.Structure;
 import com.mtank.world.World;
 
 /*
@@ -39,21 +43,20 @@ import com.mtank.world.World;
 
 public class mainClass {
 	public static World island;
+	static int n=20;
+	static int maxn=n;
 	static LinkedList<Creature> person=new LinkedList<Creature>();
 	
 	
 	public static void main(String arg[]) throws BadLocationException{
+		//Determine OS and set up.
+		checkOS();
+		
 		Game.seedRand();
 		System.out.print("Main begins here\n======================\n\nWaterworld\n");
-		island=new World(70);
+		island=new World(100);
 		System.out.println("\nFinal World Generation using :"+Game.getSeed());
 		island.printWorld();
-		
-		final WindowBase gameWindow = new WindowBase();
-		
-		//Depreciated Code to run update on game world display
-		//GamepPanelUpdateThread g = new GamepPanelUpdateThread();
-		//g.start();
 		 
 		// Code in place for crappy initialization purposes.
 		person.add(new Creature("Jack","MeHoff",1,70.0,50,2,50));
@@ -77,51 +80,48 @@ public class mainClass {
 		 }
 		 System.out.println("Path! "+ass);*/
 		 
-		 
-		// ==================================================================================================
-		// Rudamentary game loop starts here. int n is used to iterate the number of turns you'd like to run.
-		// This loop will eventually be infinite until user selects to end game.
-		int n=2;
-		int maxn=n;
-		long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
-		long startTime,endTime,elapsedTime;
-		gameWindow.makeVisible();
-		gameWindow.setFontSize(5);
-		Timer windowUpdate = new Timer(300, new ActionListener() {
-		    public void actionPerformed(ActionEvent evt) {    
-		        gameWindow.updateWorldDisplay();
-		    }
-		});
-		windowUpdate.start();
-		while(n!=0){
-			startTime=System.currentTimeMillis();
-			for(int i=0;i<person.size();i++){
-				// TODO: ACTION GOES HERE.
-				person.get(i).action();// TODO: revert this to cycling everyone.
-			}
-			
-			endTime=System.currentTimeMillis();
-			elapsedTime=endTime-startTime;
-			System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
-			gameWindow.print("Turn "+(maxn-n)+" Elapsed Time:"+elapsedTime+" mspt:"+mspt);
-			if(mspt>elapsedTime){
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
 				try {
-					Thread.sleep(mspt-elapsedTime);
-				} catch(InterruptedException ex){
-					Thread.currentThread().interrupt();
+					Timer GameLoop = new Timer(300, new ActionListener() {
+						long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
+						long startTime,endTime;
+						public void actionPerformed(ActionEvent evt) {
+							if(n > 0) {
+								startTime=System.currentTimeMillis();
+								for(int i=0;i<person.size();i++){
+									// TODO: ACTION GOES HERE.
+								}
+								
+								endTime=System.currentTimeMillis();
+								System.out.println("Turn "+(maxn-n)+" Elapsed Time:"+(endTime-startTime)+" mspt:"+mspt);
+								System.out.println("Person 1: " + person.get(0).position.toString());
+								System.out.println("Person 2: " + person.get(1).position.toString());
+								n--;
+							}
+						}
+					});
+					GameLoop.start();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
-			n--;
-		}/**/
-			
-			
-		// TODO: remove all of the following code
-		// testing facility follows. I'm looking at all possible chars with this, just to see what symbols can be used.
-		/*for(char tst=0;tst<=35100+1;tst++){
-			System.out.print("\t"+(int)tst+":"+tst);
-			if(tst%15 == 0){
-				System.out.print("\n");
-			}
-		}/**/
+		});
+		
+		LWJGL_Display Display = new LWJGL_Display();
+		Display.execute();
 	 }
+	
+	/***
+	 * This function determines which OS the program is running on and sets the LWJGL dependencies to match.
+	 */
+	static void checkOS() {
+		File JGLLib = null;
+		if(LWJGLUtil.getPlatform() == Platform.WINDOWS) {
+            JGLLib = new File("./native/windows/x64/");
+		} else if(LWJGLUtil.getPlatform() == Platform.MACOSX) {
+            JGLLib = new File("./native/macosx/x64/");
+		}
+	    System.setProperty("org.lwjgl.librarypath", JGLLib.getAbsolutePath());
+	}
 }
