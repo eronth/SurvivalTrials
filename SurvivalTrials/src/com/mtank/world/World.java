@@ -8,7 +8,10 @@ import com.mtank.game.Stringify;
 import com.mtank.item.Item;
 import com.mtank.structure.Structure;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 
 public class World {
@@ -155,33 +158,38 @@ public class World {
 		return ret;
 	}
 
-	//======================================
-	//START AUSTIN WORK
-    //TODO: Figure out why NONE lands are remaining among the generated.
-    //TODO: Add structures to certain biomes.
-    //TODO: Add mountain and a beach.
-	//======================================
-
-	//Inits biomes for the world
-	void initializeBiomes(){
-        //biomes is a list of biomes containing the various biomes coordinates
-        ArrayList<ArrayList<Coordinates>> biomes = new ArrayList();
+	private void initializeBiomes(){
+        biomes = new ArrayList<ArrayList<Coordinates>>();
         //growlist is a list of biomes and their cells that need to grow.
         ArrayList<ArrayList<Coordinates>> growList = new ArrayList();
 
         //"Plains", "Forest", "Desert", "Dessert", "Ice"
         int[] biome = {TypeValue.Land.DIRT, TypeValue.Land.GRASS, TypeValue.Land.SAND, TypeValue.Land.SNOW, TypeValue.Land.ICE};
+        shuffle(biome);
         int center=(world.length)/2;
 
         double angleRads = Math.toRadians(360.0 / (double) biome.length);
         Coordinates[] endpoints = new Coordinates[biome.length];
         Coordinates[] startpoints = new Coordinates[biome.length];
 
+        //For each biome, generate a starting point between the island center and the beach,
+        // going at an angle depending on the current iteration and # of biomes.
         for (int i = 0; i < biome.length; i++) {
             biomes.add(new ArrayList());
             double currentAngle = i*angleRads;
-            int yStep = Math.max(1, Math.round((float) (5 * Math.sin(currentAngle))));
-            int xStep = Math.max(1, Math.round((float) (5 * Math.cos(currentAngle))));
+            float sine = (float) (5 * Math.sin(currentAngle));
+            float cosine = (float) (5 * Math.cos(currentAngle));
+            if(sine <1 && sine>=0)
+                sine=1;
+            else if(sine >1 && sine <0)
+                sine=-1;
+            if(cosine <1 && cosine>=0)
+                cosine=1;
+            else if(cosine >1 && cosine <0)
+                cosine=-1;
+            int yStep = Math.round(sine);
+            int xStep = Math.round(cosine);
+
             for(int x = center, y = center, steps = 1; ; steps++) {
 
                 if (world[x][y].landType == TypeValue.Land.SALTWATER) {
@@ -197,15 +205,24 @@ public class World {
 
             }
         }
+
+        //Add starting points to growList, init the squares to be of their biome type.
         for(int i = 0; i < startpoints.length; i++) {
+            world[startpoints[i].x][startpoints[i].y].landType = biome[i];
             biomes.get(i).add(startpoints[i]);
             growList.add(biomes.get(i));
         }
 
+        //Fill in lands by following idea
+        /**
+         * 1) coordinates in growLands are pieces of land of a biome type that have LAND type lands surrounding them.
+         * 2) Biomes take turns generating the next land piece, picks a random available grow spot, checks it's neighbors
+         *      Of LAND type neighbors, one becomes that biome type and is added to the growList
+         *      If no LAND type neighbors exist, it is removed from the list.
+         * 3) For (I believe unnecessary) infinite loop prevention, if it goes 20 times without adding a land it quits.
+         */
         int loopCount = 0;
-        int independant = 0;
         for(int i = 0; loopCount < 20 ;i++) {
-            independant++;
             if(i == 5)
                 i=0;
             if(growList.get(i).isEmpty()) {
@@ -213,21 +230,54 @@ public class World {
                 continue;
             }
             int growSpot = Game.RAND.nextInt(growList.get(i).size());
-            ArrayList<Coordinates> newSpots = grow(biome[i], growList.get(i).get(growSpot));
-            if(newSpots.size() == 0) {
+            Coordinates grewAt = grow(biome[i], growList.get(i).get(growSpot));
+            if(grewAt == null) {
                 growList.get(i).remove(growSpot);
             }
             else {
-                growList.get(i).addAll(newSpots);
+                growList.get(i).add(grewAt);
             }
             loopCount=0;
         }
-        System.out.println(independant);
-        System.out.println(changedLands);
-        //fill un-filled spaces with beach/desert?
+
+        //fill un-filled spaces with stone?
+        for(int i = 0; i < world.length;i++) {
+            for(int j = 0; j < world.length; j++) {
+                if(world[i][j].landType == TypeValue.NONE)
+                    world[i][j].landType = TypeValue.Land.STONE;
+            }
+        }
+
+        //(1 square) mountain in the center of the island
+        world[center][center].landType = TypeValue.Land.STONE;
+
+        //Add in beach
+        int beachSize = Game.RAND.nextInt(4)+5;
+        int beachLength = Game.RAND.nextInt(4)+3;
+        for(int i = center-(beachSize/2);i< center+(beachSize/2);i++){
+            int southShore = center-5;
+            while(world[i][southShore].landType != TypeValue.Land.SALTWATER)
+                southShore++;
+            southShore--;
+            for(int j = 0; j < beachLength;j++){
+                world[i][southShore-j].landType = TypeValue.Land.SAND;
+            }
+        }
 	}
 
-    private ArrayList<Coordinates> grow(int biome, Coordinates c) {
+    private static void shuffle(int[] array) {
+        int n = array.length;
+        for (int i = 0; i < array.length; i++) {
+            // Get a random index of the array past i.
+            int random = i + (int) (Math.random() * (n - i));
+            // Swap the random element with the present element.
+            int randomElement = array[random];
+            array[random] = array[i];
+            array[i] = randomElement;
+        }
+    }
+
+    private Coordinates grow(int biome, Coordinates c) {
         ArrayList<Coordinates> newGrowth = new ArrayList();
         if(world[c.x+1][c.y].landType == TypeValue.NONE)
             newGrowth.add(new Coordinates(c.x+1,c.y));
@@ -238,52 +288,13 @@ public class World {
         if(world[c.x][c.y-1].landType == TypeValue.NONE)
             newGrowth.add(new Coordinates(c.x,c.y-1));
         if(newGrowth.size()==0) {
-            return newGrowth;
+            return null;
         }
         int spot = Game.RAND.nextInt(newGrowth.size());
-
         world[newGrowth.get(spot).x][newGrowth.get(spot).y].landType = biome;
-        changedLands++;
-        landsToAdd--;
 
-        landsToAdd+=newGrowth.size()-1;
-        System.out.println(c.x + " " + c.y + " " + newGrowth.get(spot).x + " " + newGrowth.get(spot).y + " " + landsToAdd);
-        newGrowth.remove(spot);
-        return newGrowth;
+        return newGrowth.get(spot);
     }
-
-    //kept to pull out beach and mountain, overrides whatever is in their position.
-	void addBiome(String c, int x, int y){
-		switch(c){
-
-		//Strategy: find south shores for +-(4-6) and each puts sand up for 3-5 squares
-		case("Beach")://current strat, circle around center, replacing land
-			int beachSize = Game.RAND.nextInt(4)+5;
-			int beachLength = Game.RAND.nextInt(4)+3;
-			for(int i = x-(beachSize/2);i< x+(beachSize/2);i++){
-				int southShore = y-5;
-				while(world[i][southShore].landType != TypeValue.Land.SALTWATER)
-					southShore++;
-				southShore--;
-				for(int j = 0; j < beachLength;j++){
-					world[i][southShore-j].landType = TypeValue.Land.SAND;
-				}
-			}
-		break;
-		case("Mountain"):
-			for(int i = y; i < y+5;i++){
-				for(int j = x; j< x+5; j++){
-					world[i][j].landType = TypeValue.Land.STONE;
-				}
-			}
-		}
-
-
-	}
-
-	//======================================
-	//END AUSTIN WORK
-	//======================================
 	
 	
 	void placeStructure(Structure structure, Coordinates c){
