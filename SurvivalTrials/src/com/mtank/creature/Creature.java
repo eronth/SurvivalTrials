@@ -97,6 +97,9 @@ public class Creature {
 	 *  This is the switch case for which action the creature will be performing this turn.
 	 */
 	public void action(){
+		if(queuedAction.isEmpty()) {
+			queuedAction.add(Action.IDLE);
+		}
 		switch (queuedAction.get(0)) {
 		case Action.ATTACK:
 			performAttackAction();
@@ -379,16 +382,27 @@ public class Creature {
 	}
 	public void performWalkAction() {
 		if (pathSet) {
+			System.out.println("Path set.");
 			// TODO all actual walking related stuff here.				
 			// Initialize timer, and countdown.
 			if (acdt <= 0) {
-				int directionToStep = this.pathfind.path.get(0);
-				// Take a step in the Directiontostep direction
-				position.setDirection(directionToStep);
+				if(this.pathfind.path.isEmpty()) {
+					pathSet = false;
+				} else {
+					System.out.println("Countdown complete. Time to walk");
+					int directionToStep = this.pathfind.path.get(0);
+					System.out.println(this.pathfind.path);
+					this.pathfind.path.remove(0);
+					// Take a step in the Directiontostep direction
+					position.setDirection(directionToStep);
+				}
 				if ( this.position.isAdjacentTo(queuedTarget.get(0)) ) {
 					// TODO include function for taking a final step for beds or items.
 					queuedAction.remove(0);
 					queuedTarget.remove(0);
+					System.out.println("Fuck walking.");
+					if (!queuedAction.isEmpty()) System.out.println("No action.");
+					if (!queuedTarget.isEmpty()) System.out.println("No target.");
 					acdt = 0;
 					isActing = false;
 				} else {
@@ -399,14 +413,19 @@ public class Creature {
 				}
 				acdt = 200/getSpeed();
 			} else {
+				System.out.println("Path set.");
 				acdt--;
 			}
 		} else {
-			pathfind.setTargetCoords(queuedTarget.get(0));
-			pathfind.generatePath(position, 0);
-			pathSet = true;
-			isActing = true;
-			acdt = 200/getSpeed(); // Initialize timer.
+			System.out.println("Path not set.");
+			if ( !this.position.isAdjacentTo(queuedTarget.get(0)) ) {
+				pathfind.setTargetCoords(queuedTarget.get(0));
+				pathfind.generatePath(position, 0);
+				pathSet = true;
+				isActing = true;
+				acdt = 200/getSpeed(); // Initialize timer.
+				System.out.println("Path now set.");
+			}
 		}
 		// XXX
 	}

@@ -305,7 +305,7 @@ public class World {
 	/**
 	 * Refreshes the world to ensure all items/structures/creatures agree upon where they exist.
 	 */
-	void refresh() {
+	public void refresh() {
 		Coordinates i = new Coordinates();
 		Coordinates tmp = new Coordinates();
 		for (i.x = 0; i.x<world.length; i.x++) {

@@ -23,7 +23,7 @@ public class PathFindingWorld {
 	public Coordinates startCoords = new Coordinates();
 	public Coordinates tmp = new Coordinates();
 
-	// wd is the world dimension, used to ensure the pathfinding world is of appropriate size.
+	// w is the world dimension, used to ensure the pathfinding world is of appropriate size.
 	public PathFindingWorld(World w) {
 		area=new PathFindingLand[w.world.length][w.world[0].length];
 		for (int i = 0; i<w.world.length; i++) {
@@ -39,66 +39,63 @@ public class PathFindingWorld {
 	
 	
 	public void generatePath(Coordinates cur, int costSoFar) {
-		
-		//TODO clean up? The following only occurs on the first execution.
-		if (costSoFar == 0) {
-			System.out.print("Starter " + targetCoords);
-			startCoords = new Coordinates(cur);
-			area[cur.x][cur.y].setHeuristic(cur, targetCoords);
-			//area[cur.x][cur.y].setIsClosedList(true);
-		}
-		//TODO clean up?
-		
-		Integer total = 0;
-		//Calculate the total cost F for each of the surrounding regions.
-		// Iterate through every direction from north (1) to southwest (8)
-		for (int i = 1; i < 9; i++) {
-			tmp=cur.directionalCoord(i);
-			if (tmp.x>0 && tmp.y>0 && tmp.x<area.length && tmp.y<area.length) {
-				//System.out.println(tmp.toString());// area: " + area[tmp.x][tmp.y]);
-				area[tmp.x][tmp.y].setHeuristic(tmp, targetCoords);
-				// calculate total move distance.
-				// costSoFar increases by 10 if in a cardinal direction and 14 if a diagonal.
-				total = calculateTotalF(tmp, costSoFar+10+(Direction.isCardinalDirection(i)?0:4));
-				if(!area[tmp.x][tmp.y].getIsClosedList() && (!area[tmp.x][tmp.y].getIsOpenList() || total < area[tmp.x][tmp.y].totalCost) ) {
-					area[tmp.x][tmp.y].totalCost = total;
-					area[tmp.x][tmp.y].setIsOpenList(true);
-					area[tmp.x][tmp.y].setDirection(i);//D.invertDirection(i));
-					if (costSoFar==0){
-						System.out.println("CHECKME: Coordinates: "+tmp.toString() + "Direction: "+i);
+		if (cur.equals(targetCoords)) {
+			// Runs if you have reached your destination.
+			fillPath(cur);
+		} else {
+			//TODO clean up? The following only occurs on the first execution.
+			if (costSoFar == 0) {
+				System.out.print("Starter " + targetCoords);
+				startCoords = new Coordinates(cur);
+				area[cur.x][cur.y].setHeuristic(cur, targetCoords);
+				//area[cur.x][cur.y].setIsClosedList(true);
+			}
+			
+			Integer total = 0;
+			//Calculate the total cost F for each of the surrounding regions.
+			// Iterate through every direction from north (1) to southwest (8)
+			for (int i = 1; i < 9; i++) {
+				tmp=cur.directionalCoord(i);
+				if (tmp.x>0 && tmp.y>0 && tmp.x<area.length && tmp.y<area.length) {
+					//System.out.println(tmp.toString());// area: " + area[tmp.x][tmp.y]);
+					area[tmp.x][tmp.y].setHeuristic(tmp, targetCoords);
+					// calculate total move distance.
+					// costSoFar increases by 10 if in a cardinal direction and 14 if a diagonal.
+					total = calculateTotalF(tmp, costSoFar+10+(Direction.isCardinalDirection(i)?0:4));
+					if( !area[tmp.x][tmp.y].getIsClosedList() && (!area[tmp.x][tmp.y].getIsOpenList() || total < area[tmp.x][tmp.y].totalCost) ) {
+						area[tmp.x][tmp.y].totalCost = total;
+						area[tmp.x][tmp.y].setIsOpenList(true);
+						area[tmp.x][tmp.y].setDirection(i);//D.invertDirection(i));
+						if (costSoFar==0) {
+							System.out.println("CHECKME: Coordinates: "+tmp.toString() + "Direction: "+i);
+						}
 					}
 				}
 			}
-		}
 			
-		
-		// Find the lowest F on the open list of Fs.
-		Coordinates next = null;
-		for (int j = 0; j<area[0].length; j++) {
-			for (int i = 0; i<area.length; i++) {
-				//if null
-				
-				if( i>0 && j>0 && i<area.length && j<area.length &&
-						next == null && area[i][j].getIsOpenList() && !area[i][j].getIsClosedList()) {
-					next = new Coordinates(i,j);
-				} else if (next != null 
-						&& (area[i][j].getIsOpenList() && !area[i][j].getIsClosedList()) 
-						&& area[i][j].getIsWalkable()
-						&& area[i][j].totalCost < area[next.x][next.y].totalCost) {
-					next.set(i, j);
-					if (costSoFar==0)System.out.println("CHECKME: next: " + next.toString() + " direction: "+area[i][j].getDirection());
+			// Find the lowest F on the open list of Fs.
+			Coordinates next = null;
+			for (int j = 0; j<area[0].length; j++) {
+				for (int i = 0; i<area.length; i++) {
+					//if null
+					
+					if ( i>0 && j>0 && i<area.length && j<area.length &&
+							next == null && area[i][j].getIsOpenList() && !area[i][j].getIsClosedList()) {
+						next = new Coordinates(i,j);
+					} else if (next != null 
+							&& (area[i][j].getIsOpenList() && !area[i][j].getIsClosedList()) 
+							&& area[i][j].getIsWalkable()
+							&& area[i][j].totalCost < area[next.x][next.y].totalCost) {
+						next.set(i, j);
+						if (costSoFar==0)System.out.println("CHECKME: next: " + next.toString() + " direction: "+area[i][j].getDirection());
+					}
 				}
-				
 			}
-		}
-		//System.out.print("newt" + next + " " + targetCoords + " " + area.length + " ");
-		area[next.x][next.y].setIsClosedList(true);
-		
-		// Recursive call of generatePath() to finish making a path.
-		if (!next.equals(targetCoords)) {
+			//System.out.println("next" + next + " " + targetCoords + " " + area.length + " ");
+			area[next.x][next.y].setIsClosedList(true);
+			
+			// Recursive call of generatePath() to finish making a path.
 			generatePath(next, area[next.x][next.y].totalCost);
-		} else {
-			fillPath(next);
 		}
 	}
 	void fillPath(Coordinates c) {
@@ -107,7 +104,7 @@ public class PathFindingWorld {
 		while (!c.equals(startCoords)) {
 			direction = area[c.x][c.y].getDirection();
 			tempPath.add(direction);
-			c.setDirection(Direction.invert(direction));// = c.directionalCoord(direction);
+			c.setDirection(Direction.invert(direction));
 			//System.out.println(tempPath);
 			//System.out.println("direction: " + direction + " coordinates: " + c.toString());
 			//TODO complete the addition system.

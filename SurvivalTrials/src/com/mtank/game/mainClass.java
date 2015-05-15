@@ -43,7 +43,7 @@ import com.mtank.world.World;
 
 public class mainClass {
 	public static World island;
-	static int n=20;
+	static int n=2000;
 	static int maxn=n;
 	static LinkedList<Creature> person=new LinkedList<Creature>();
 	
@@ -64,10 +64,10 @@ public class mainClass {
 		 
 		Coordinates c=new Coordinates(30,30);
 		island.placeCreature(person.get(0),c);
-		c=new Coordinates(island.worldDimension/2+2, island.worldDimension/2);
+		c=new Coordinates(island.worldDimension/2, island.worldDimension/2);
 		island.placeCreature(person.get(1),c);
 		
-		person.get(0).addWalkAction(new Coordinates(20,20));
+		person.get(0).addWalkAction(new Coordinates(45,45));
 		//person.get(0).addSleepAction(new Structure(1), new Coordinates(1,1));
 		//person.get(0).addBuildAction(new Structure(2), new Coordinates(2,2));
 		
@@ -87,10 +87,12 @@ public class mainClass {
 						long mspt=(long) (.2*1000);//mspt = milliseconds per turn //should run at .2*1000 or .3*1000
 						long startTime,endTime;
 						public void actionPerformed(ActionEvent evt) {
+							island.refresh();
 							if(n > 0) {
 								startTime=System.currentTimeMillis();
 								for(int i=0;i<person.size();i++){
 									// TODO: ACTION GOES HERE.
+									person.get(0).action();
 								}
 								
 								endTime=System.currentTimeMillis();
