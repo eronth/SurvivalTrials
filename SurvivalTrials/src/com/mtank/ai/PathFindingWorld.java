@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.mtank.constants.Direction;
 import com.mtank.game.Coordinates;
+import com.mtank.game.Stringify;
 import com.mtank.world.World;
 
 public class PathFindingWorld {
@@ -39,15 +40,25 @@ public class PathFindingWorld {
 	
 	
 	public void generatePath(Coordinates cur, int costSoFar) {
-		if (cur.equals(targetCoords)) {
+		boolean test=false;
+		//try {
+			test = cur.equals(targetCoords);
+		//} catch (Exception e) {
+			//System.out.println("Current "+cur+" and target "+ targetCoords+".");
+		//}
+		if (test) {
 			// Runs if you have reached your destination.
-			fillPath(cur);
+			if (costSoFar != 0) {
+				fillPath(cur, startCoords, targetCoords);
+			}
 		} else {
-			//TODO clean up? The following only occurs on the first execution.
+			//TODO change code to avoid "un-walkable" squares.
 			if (costSoFar == 0) {
+				area[cur.x][cur.y].setIsClosedList(true);
 				System.out.print("Starter " + targetCoords);
 				startCoords = new Coordinates(cur);
 				area[cur.x][cur.y].setHeuristic(cur, targetCoords);
+				// TODO set cost-modifier on each land here to get characters walking around.
 				//area[cur.x][cur.y].setIsClosedList(true);
 			}
 			
@@ -61,13 +72,13 @@ public class PathFindingWorld {
 					area[tmp.x][tmp.y].setHeuristic(tmp, targetCoords);
 					// calculate total move distance.
 					// costSoFar increases by 10 if in a cardinal direction and 14 if a diagonal.
-					total = calculateTotalF(tmp, costSoFar+10+(Direction.isCardinalDirection(i)?0:4));
+					total = calculateTotalF(tmp, costSoFar, !Direction.isCardinalDirection(i));
 					if( !area[tmp.x][tmp.y].getIsClosedList() && (!area[tmp.x][tmp.y].getIsOpenList() || total < area[tmp.x][tmp.y].totalCost) ) {
 						area[tmp.x][tmp.y].totalCost = total;
 						area[tmp.x][tmp.y].setIsOpenList(true);
 						area[tmp.x][tmp.y].setDirection(i);//D.invertDirection(i));
 						if (costSoFar==0) {
-							System.out.println("CHECKME: Coordinates: "+tmp.toString() + "Direction: "+i);
+							System.out.println("CHECKME: Coordinates: "+tmp.toString() + " Direction: "+i + " Cost:"+total);
 						}
 					}
 				}
@@ -92,39 +103,61 @@ public class PathFindingWorld {
 				}
 			}
 			//System.out.println("next" + next + " " + targetCoords + " " + area.length + " ");
-			area[next.x][next.y].setIsClosedList(true);
+			try {
+				area[next.x][next.y].setIsClosedList(true);
+			} catch (Exception e) {
+				System.out.println("Next (c): " + next);
+				System.out.println("Target (c): " + targetCoords);
+				System.out.println("Area size is " + area.length + ".");
+			}
 			
 			// Recursive call of generatePath() to finish making a path.
 			generatePath(next, area[next.x][next.y].totalCost);
 		}
 	}
-	void fillPath(Coordinates c) {
-		ArrayList<Integer> tempPath = new ArrayList<Integer>(); 
-		int direction = 0;
-		while (!c.equals(startCoords)) {
-			direction = area[c.x][c.y].getDirection();
-			tempPath.add(direction);
-			c.setDirection(Direction.invert(direction));
-			//System.out.println(tempPath);
-			//System.out.println("direction: " + direction + " coordinates: " + c.toString());
-			//TODO complete the addition system.
-		}
-		tempPath.add(area[c.x][c.y].getDirection());
-		path = new ArrayList<Integer>();
-		//TODO remove permanently int numSteps = tempPath.size();
-		for (int i=tempPath.size()-1; i>0; i--) {
-			path.add(tempPath.get(i));//D.invertDirection(tempPath.get(i)));
-		}
+	void fillPath(Coordinates c, Coordinates start, Coordinates end) {
+		// The tempPath will be an inverted version of the final path.
+        ArrayList<Integer> tempPath = new ArrayList<Integer>();
+        System.out.println("Coordinates in space! ");
+        while (!c.equals(startCoords)) {
+            tempPath.add(area[c.x][c.y].getDirection());
+            System.out.print("Head " + Stringify.direction(area[c.x][c.y].getDirection()) + " at " + c + ". ");
+            c.setDirection(Direction.invert(area[c.x][c.y].getDirection()));
+        }
+        //Final add to add the start coordinates in?
+        //tempPath.add(area[c.x][c.y].getDirection());
+        
+        // Clear path and invert tempPath into it.
+        path = new ArrayList<Integer>();
+        for (int i=tempPath.size()-1; i>=0; i--) {
+            path.add(tempPath.get(i));
+        }
+        System.out.println("Going from " + start + " to " + end + "."
+        		+ "\nHere is the path to take: " + path);
 	}
 	
 	/**
 	 * Used to calculate the total cost of movement (F) of a given tile.
 	 */
-	private int calculateTotalF(Coordinates c, int costSoFar) {
-		//TODO actually calculate final F
-		//TODO use the formula F = G + H;
-		//TODO Sorely incomplete
-		return (int) (costSoFar*area[c.x][c.y].movementCostModifier + area[c.x][c.y].heuristicCost);
+	private int calculateTotalF(Coordinates c, int costSoFar, boolean isDiagonal) {
+		///TODO actually calculate final F
+        //TODO Sorely incomplete
+        // Calculated using F (total cost) = G (cost to move) + H (estimated cost left to move)
+        // G is calculated by adding the cost of moving so far to the terrain difficulty (x diagonal if needed).
+        // H is precalculated before now and stored as heuristic.
+        // F (total cost) = CostSoFar + (costModifier*diagonalvsstraight) + Heuristic.
+        
+        //total = calculateTotalF(tmp, costSoFar+10+(Direction.isCardinalDirection(i)?0:4));
+        int f;
+        int g;
+        int h;
+        int newCost;
+        newCost = (int)(  (isDiagonal?14:10) * area[c.x][c.y].movementCostModifier  );
+        h = area[c.x][c.y].heuristicCost;
+        g = costSoFar + newCost;
+        f = g+h;
+        return f;
+        //return (int) (costSoFar*area[c.x][c.y].movementCostModifier + area[c.x][c.y].heuristicCost);
 	}
 	
 	public String printTotalCostWorld() {
