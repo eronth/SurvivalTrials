@@ -1,6 +1,7 @@
 package com.mtank.game;
 
 
+import com.mtank.constants.Direction;
 import com.mtank.constants.Graphic;
 import com.mtank.constants.TypeValue;
 import com.mtank.creature.Creature;
@@ -90,5 +91,37 @@ import com.mtank.structure.Structure;
 		}
 		return ret;
 	}
-	
+	public static String direction(int direction) {
+		String ret="";
+		switch (direction) {
+			case TypeValue.NONE:
+				ret="No Direction";
+				break;
+			case Direction.SOUTH:
+				ret="South";
+				break;
+			case Direction.SOUTHWEST:
+				ret="Southwest";
+				break;
+			case Direction.SOUTHEAST:
+				ret="Southeast";
+				break;
+			case Direction.NORTH:
+				ret="North";
+				break;
+			case Direction.NORTHWEST:
+				ret="Northwest";
+				break;
+			case Direction.NORTHEAST:
+				ret="Northeast";
+				break;
+			case Direction.EAST:
+				ret="East";
+				break;
+			case Direction.WEST:
+				ret="West";
+				break;
+		}
+		return ret;
+	}
 }
