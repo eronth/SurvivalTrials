@@ -156,6 +156,10 @@ public class Creature {
 	}
 	public void performAttackAction() {
 		// XXX
+		// Get closer
+		// Pawnch
+		// Evaluate risk
+		// Flee if in danger
 	}
 	/**
 	 * Adds build structure to the list of actions.
@@ -198,6 +202,7 @@ public class Creature {
 	}
 	public void performDefendAction() {
 		// XXX
+		// Flee slowly. Higher AC.
 	}
 	/**
 	 * Adds an action to destroy a structure. 
